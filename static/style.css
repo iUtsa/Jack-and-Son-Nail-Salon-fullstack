@@ -1,1 +1,113 @@
-abcd
+body{
+    font-family: josefin sans;
+}
+.login-logo img{
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+    justify-content: center;
+    display: block;
+    border-radius: 50%;
+    box-shadow: 5px 5px 5px #141414;
+    margin-top: 150px;
+}
+
+.login-form{
+    width: 300px;
+    height: auto;
+    margin: 0 auto;
+    justify-content: center;
+    background-color:#B7E0FF;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px #000000;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-family: josefin sans;
+    color: #6482AD;
+    font-weight: 600;
+    
+    
+}
+.form-control::placeholder {
+    color: #dfdada; /* Lightest grey */
+    font-size: 13px;
+    font-weight: 100;
+    text-align: center;
+}
+
+.background-container {
+    position: relative;
+    z-index: 1;
+}
+
+.background-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/templates/photos/nail2.jpg');
+    background-size: cover;
+    filter: blur(8px); /* Adjust the blur level as needed */
+    -webkit-filter: blur(8px); /* For Safari */
+    z-index: -1;
+}
+
+.btn-primary {
+    background-color: #B3C8CF; /* Change this to your desired color */
+    border-color: #222422; /* Change this to match the background color */
+    color: white; /* Text color */
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background-color: #B3C8CF; /* Darker shade for hover effect */
+    box-shadow: #1f201f; /* Match the hover background color */
+    font-weight: 600;
+    border-radius: 50%;
+}
+.custom-navbar {
+    background-color: #F0A8D0; /* Change this to your desired color */
+    box-shadow:5px 5px 5px grey;
+    
+}
+
+.custom-navbar .nav-link {
+    color: white; /* Change the link color */
+}
+
+.custom-navbar .nav-link:hover {
+    color: #d3d3d3; /* Change the link hover color */
+}
+.navbar a{
+    color: #ffffff;
+    font-weight: 900;
+}
+
+.register{
+    margin-top: 20px;
+    text-align: center;
+    font-family: josefin sans;
+    color: #6482AD;
+    font-weight: 600;
+
+}
+.register a{
+    color: #51698b;
+    font-weight: 900;
+    
+}
+.navbar-nav{
+    margin-left:auto;
+}
+
+.navbar-nav li{
+    justify-content: end;
+    align-items: end;
+    display:flex;
+    padding: 0 15px; 
+
+}
