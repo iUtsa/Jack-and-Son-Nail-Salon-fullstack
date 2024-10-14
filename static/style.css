@@ -110,6 +110,18 @@ body{
     display:flex;
     padding: 0 15px; 
 
+
+}
+
+.custom-navbar .navbar-toggler {
+    border: none;
+    background-color: #6482AD; /* Change this to your desired color */
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.custom-navbar .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%28255, 255, 255, 0.5%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
 }
 #headline{
     font-family:josefin sans;
@@ -132,7 +144,7 @@ body{
     height: 500px; /* Adjust the height as needed */
     object-fit: cover; /* Ensure the image covers the entire area */
     max-height: 600px;
-    max-width: 90%;
+    max-width: 100%;
     margin:0 auto;
     margin-top: 130px;
 }
@@ -150,4 +162,45 @@ body{
 /* Faster transition */
 .carousel-item {
     transition: transform 0.99s ease-in-out; /* Adjust the transition duration as needed */
+}
+.login-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    text-decoration: none;
+    padding: 10px 20px;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    color: white;
+    border-radius: 5px;
+    z-index: 2; /* Ensure it stays on top of the images */
+    font-family: 'Josefin Sans', sans-serif;
+    text-align: center;
+}
+
+.login-overlay:hover {
+    background-color: rgba(255, 255, 255, 0.8); /* Change the background color on hover */
+    color: black; /* Change the text color on hover */
+}
+
+.social{
+    background-color: #F8EDED;
+    max-width: 100%;
+    max-height: 70px;
+    padding: 5px;
+    display: flex;
+    justify-content: space-around; /* Distribute items evenly */
+    align-items: center; /* Align items to the center */
+    font-size: 10;
+    margin-top:5px;
+    
+
+}
+.social img{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
