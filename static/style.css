@@ -66,7 +66,7 @@ body{
 .btn-primary:hover {
     background-color: #B3C8CF; /* Darker shade for hover effect */
     box-shadow: #1f201f; /* Match the hover background color */
-    font-weight: 600;
+    font-weight: 300;
     border-radius: 50%;
 }
 .custom-navbar {
@@ -84,7 +84,7 @@ body{
 }
 .navbar a{
     color: #ffffff;
-    font-weight: 900;
+    font-weight: 300;
 }
 
 .register{
@@ -110,4 +110,44 @@ body{
     display:flex;
     padding: 0 15px; 
 
+}
+#headline{
+    font-family:josefin sans;
+    font-weight: 600;
+}
+
+.bottom-bar{
+    background-color: #FFEBD4;
+    text-align: center;
+    padding: 5px;
+    bottom:0;
+    width:100%;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    margin-top:50px;
+
+}
+
+/* Carousel styles */
+.carousel-inner img {
+    height: 500px; /* Adjust the height as needed */
+    object-fit: cover; /* Ensure the image covers the entire area */
+    max-height: 600px;
+    max-width: 90%;
+    margin:0 auto;
+    margin-top: 130px;
+}
+
+.carousel-indicators button {
+    background-color: #4CAF50; /* Change this to your desired color */
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    border-radius: 50%; /* Make the controls circular */
+    padding: 10px; /* Add some padding */
+}
+/* Faster transition */
+.carousel-item {
+    transition: transform 0.99s ease-in-out; /* Adjust the transition duration as needed */
 }
