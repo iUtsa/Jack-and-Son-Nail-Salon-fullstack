@@ -209,3 +209,44 @@ body{
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+#store-welcome{
+    display:flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    max-width:100%;
+    margin-top:30px;
+}
+#welcome{
+    width:45%;
+    margin:10px;
+    padding: 10px;
+    text-align: center;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+#welcome p{
+    font-family: josefin sans;
+    font-weight: 400;
+    color: black;
+    text-align: center;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+#welcome h1{
+    font-family: josefin sans;
+    font-weight: 300;
+    color: #6482AD;
+    text-align: center;
+    flex-wrap: wrap;
+}
+#store-pic img{
+    margin: 30px;
+    box-shadow: 5px 5px 5px #141414;
+    width: 500px; 
+    height: auto;
+}
