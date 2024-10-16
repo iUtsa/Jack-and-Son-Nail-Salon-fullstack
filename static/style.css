@@ -232,6 +232,7 @@ body{
 #welcome p{
     font-family: josefin sans;
     font-weight: 400;
+    font-size: 10;
     color: black;
     text-align: center;
     flex-wrap: wrap;
@@ -249,4 +250,112 @@ body{
     box-shadow: 5px 5px 5px #141414;
     width: 500px; 
     height: auto;
+}
+#location {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Full viewport height */
+    margin-top:30px;
+}
+
+#location::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/templates/photos/mapback.avif');
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px); /* Apply blur effect */
+    z-index: -1; /* Ensure it is behind the content */
+}
+
+#map {
+    width: 100%;
+    max-width: 600px; /* Adjust as needed */
+    height: 400px; /* Adjust as needed */
+    z-index: 1; /* Ensure it is above the blurred background */
+    margin-top: 20px;
+}
+
+#location h1 {
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 600;
+    color: white;
+    text-align: center;
+    margin-top:-280px;
+    position:relative;
+    z-index: 1; /* Ensure it is above the blurred background */
+}
+
+#location-text {
+    z-index: 1; /* Ensure it is above the blurred background */
+    margin-top: 50px; /* Add more space above the text */
+    text-align: center;
+    color: white;
+    font-family: 'Josefin Sans', sans-serif;
+    margin-top:-80px;
+    font-size: 16px;
+}
+
+.opening-hours {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 100px; /* Add space above the opening hours section */
+    font-family: josefin sans;
+}
+
+.opening-hours h1 {
+    text-align: center;
+    margin-bottom: 20px; /* Add space below the heading */
+    color:#6482AD
+}
+
+.opening-hours table {
+    width: 100%;
+    max-width: 600px; /* Adjust as needed */
+}
+
+.opening-hours td {
+    text-align: center;
+    padding: 10px 0; /* Add padding for better spacing */
+}
+
+#bottom-bar {
+    background-color: #f8f9fa;
+    padding: 20px;
+    text-align: center;
+}
+
+#bottom-bar-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#bottom-bar-logo {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Add space between the items */
+}
+
+#bottom-bar-logo p {
+    display: flex;
+    align-items: center;
+    margin: 0;
+}
+
+#bottom-bar-logo img {
+    margin-right: 10px; /* Add space between the icon and the text */
+}
+
+.icon-small {
+    width: 24px; /* Adjust the size as needed */
+    height: 24px; /* Adjust the size as needed */
 }
