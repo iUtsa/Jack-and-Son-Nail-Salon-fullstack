@@ -113,6 +113,7 @@ body{
     align-items: end;
     display:flex;
     padding: 0 15px; 
+    font-family: josefin sans;
 
 
 }
@@ -142,6 +143,10 @@ body{
     margin-top:130px;
     
 
+}
+#mail{
+    text-decoration:none;
+    color:#F0A8D0
 }
 
 /* Carousel styles */
@@ -331,6 +336,7 @@ body{
     background-color: #f8f9fa;
     padding: 20px;
     text-align: center;
+    border-top:0.05px solid black;
 }
 
 #bottom-bar-text {
@@ -343,6 +349,9 @@ body{
     display: flex;
     justify-content: center;
     gap: 20px; /* Add space between the items */
+    margin:5 auto;
+    gap:80px;
+    margin-bottom: 20px;
 }
 
 #bottom-bar-logo p {
