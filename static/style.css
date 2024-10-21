@@ -471,3 +471,380 @@ body{
     text-align: center;
     margin-top: 10px;
 }
+
+#social-medias{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    font-family: josefin sans;
+    color: #6482AD;
+    margin-top:100px;
+    max-width: 100%;
+    margin-bottom: 50px;
+    
+}
+
+.social-media-icons{
+    display: flex;
+    justify-content: space-between;
+    align-items:center;
+    margin-top: 20px;
+    width:30%;
+
+}
+.social-media-icons img{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    justify-content: space-between;
+    transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Initial subtle shadow */
+}
+
+.social-media-icons a:hover img {
+    transform: scale(1.2) rotate(5deg); /* Enlarge and slightly rotate the icon */
+    opacity: 0.9; /* Slightly reduce opacity */
+    box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.2); /* Enhanced shadow for elevation effect */
+    filter: hue-rotate(20deg) brightness(1.2); /* Adds a color hue change */
+}
+
+#our-service {
+    text-align: center;
+    padding: 40px 20px;
+    background-image: url(/templates/photos/bgser2.avif); /* Original background */
+    background-position: center;
+    background-size: cover; /* Ensure the image covers the entire area */
+    position: relative; /* Ensure the pseudo-element is positioned correctly */
+    overflow: hidden; /* Prevent overflow of the pseudo-element */
+    z-index: 1; /* Ensure content stays above the pseudo-element */
+}
+
+/* Pseudo-element to create a blurred background */
+#our-service::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 110%; /* Extend slightly beyond the container width */
+    height: 110%; /* Extend slightly beyond the container height */
+    background-image: url(/templates/photos/bgser2.avif); /* Same background image */
+    background-position: center;
+    background-size: cover; /* Ensure the image covers the entire area */
+    filter: blur(12px); /* Apply the blur effect */
+    transform: scale(1.1); /* Slightly scale up to cover edges */
+    z-index: -1; /* Ensure it is behind the content */
+}
+
+#our-service h2 {
+    font-family: josefin sans;
+    font-size: 32px;
+    color:#6482AD;
+    margin-bottom: 40px;    
+}
+
+/* Card container */
+.service-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* Each card */
+.service-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.59);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    width: 300px;
+    height: 350px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+/* Card initial content (service name only) */
+.service-card h3 {
+    font-family: josefin sans;
+    font-size: 24px;
+    color:#6482AD;
+    margin-bottom: 10px;
+    margin-top:20px;
+
+}
+
+/* Hidden description */
+.service-card p {
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.4s ease, box-shadow 0.4s ease, opacity 0.6s ease-in-out;
+    font-family: josefin sans;
+    font-size: 16px;
+    color: #fff;
+    line-height: 1.5;
+    position: absolute;
+    bottom: 20px;
+    left: 10px;
+    right: 10px;
+    z-index: 1; /* Make sure description is above the blur */
+    padding: 10px;
+    background-color: #F0A8D0; /* Semi-transparent pink background */
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.59); /* Add shadow to the description */
+    transform: translateY(20px); /* Start from a lower position */
+    backdrop-filter: blur(12px); /* Apply blur effect */
+}
+
+/* Hover effect */
+.service-card:hover {
+    transform: translateY(-15px) scale(1.05); /* Elevates and enlarges the card slightly */
+    box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.2); /* Enhanced shadow for elevation effect */
+    
+}
+
+/* Blurry background effect using ::before */
+.service-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    background-color: rgba(255, 192, 203, 0.349);; /* Light pink background for the blur */
+    filter: blur(20px); /* Apply blur to the background */
+    z-index: 0; /* Behind the description text */
+    transition: opacity 0.4s ease;
+    opacity: 0;
+}
+
+/* Show description and blurry background on hover */
+.service-card:hover::before {
+    opacity: 1;
+}
+
+.service-card:hover p {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Optional service card image */
+.service-card img {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 20px;
+    z-index: 1;
+}
+
+.book-head{
+    text-align: center;
+    font-family: josefin sans;
+    font-weight: 600;
+    color: white;
+    margin-top: 50px;
+    background-color:#F0A8D0;
+    width:90%;
+    margin:10px auto;
+}
+
+#headlinee{
+    font-family:josefin sans;
+    font-weight: 600;
+    color:#6482AD;
+    text-align: center;
+    font-size: 30px;
+}
+#jsn{
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    margin: 100px auto;
+}
+/* Existing styles */
+
+/* Position the active card horizontally centered, keeping the same vertical position */
+/* Position the active card horizontally centered, keeping the same vertical position */
+.active-card {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-250%);  /* Center horizontally */
+    transition: all 0.5s ease;
+    z-index: 10;
+}
+
+/* Existing card and container styles */
+.card-service-container {
+    position: relative;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 50px auto;
+    width: 100%; /* Ensure container spans full width of page */
+    max-width: 1200px; /* Adjust to ensure the container is not too wide */
+    height: auto;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 250px;
+    height: auto;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.card h2 {
+    font-size: 18px;
+    color: #6482AD;
+    font-family: josefin sans;
+    padding: 15px;
+    background-color: #f1f1f1;
+    margin-bottom: 0;
+    margin-top: auto;
+}
+
+/* Hover effect for all cards before clicking */
+.card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.535); /* Simple elevation */
+    transform: origin 100px;;/* Slight elevation effect */
+}
+
+/* Microservice menu styles */
+.microservice-menu {
+    display: none;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 15px;
+    z-index: 11;
+    width: 300px;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Microservice list styling */
+.microservice-menu ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.microservice-menu ul li {
+    margin: 10px 0;
+    text-align: center;
+}
+
+.microservice-menu ul li a {
+    text-decoration: none;
+    color: #333;
+    font-size: 18px;
+    font-family: 'Josefin Sans', sans-serif;
+    padding: 10px;
+    display: block;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.microservice-menu ul li a:hover {
+    background-color: #F0A8D0;
+    color: #fff;
+}
+/* Popup calendar */
+.calendar-popup {
+    display: none;
+    position: fixed;
+    bottom: -100%; /* Hidden below the screen */
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    padding: 30px;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 10px 10px 0 0;
+    transition: all 0.5s ease;
+    z-index: 12;
+}
+
+.calendar-popup.show {
+    bottom: 0; /* Slide up the calendar from the bottom */
+}
+
+/* Flatpickr input field */
+#datepicker {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    margin: 20px 0;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+}
+
+/* Popup button styling */
+.popup-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    background-color: #5CB85C;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 15px;
+}
+
+.popup-btn:hover {
+    background-color: #4cae4c;
+}
+
+/* Confirmation button hidden initially */
+#confirm-booking {
+    display: none;
+}
+
+/* Booking summary */
+.booking-summary {
+    display: none;
+    padding: 20px;
+    background-color: #f8f8f8;
+    text-align: center;
+    margin-top: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.booking-summary.show {
+    display: block;
+}
+
+/* Animation for smoother transitions */
+@keyframes slideUp {
+    from {
+        bottom: -100%;
+    }
+    to {
+        bottom: 0;
+    }
+}
+
+.calendar-popup.show {
+    animation: slideUp 0.5s ease;
+}
