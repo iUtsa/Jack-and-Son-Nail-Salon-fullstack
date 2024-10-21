@@ -56,9 +56,13 @@ const microserviceList = document.getElementById('microservice-list');
 const calendarPopup = document.getElementById('calendar-popup');
 const bookingSummary = document.getElementById('booking-summary');
 const summaryDetails = document.getElementById('summary-details');
+const addMoreServiceBtn = document.getElementById('add-more-service');
+const finalConfirmBtn = document.getElementById('final-confirm');
 const selectDateBtn = document.getElementById('select-date');
+const confirmDateTimeBtn = document.getElementById('confirm-date-time'); 
 const confirmBookingBtn = document.getElementById('confirm-booking');
 let isCardCentered = false;
+let selectedServices = []; // Store multiple services with dates
 let selectedService = '';
 let selectedTimeSlot = '';
 
@@ -70,22 +74,24 @@ const serviceData = {
     'waxing': ['Facial Wax - $20', 'Hand Wax - $25', 'Full Body Wax - $60', 'Bikini Wax - $45']
 };
 
+
 // Initialize Flatpickr for the calendar
-let calendar = null; 
+let calendar = null;
 function initCalendar() {
-    calendar = flatpickr('#datepicker', {
-        enableTime: true,
-        dateFormat: "Y-m-d H:i",
-        minDate: "today",
-        onChange: function(selectedDates, dateStr, instance) {
-            selectedTimeSlot = dateStr;  // Store selected date and time
-            // Enable the confirm booking button after date is selected
-            confirmBookingBtn.style.display = 'block';
-            selectDateBtn.style.display = 'none'; // Hide the select date button
-        }
-    });
+    if (!calendar) {
+        calendar = flatpickr('#datepicker', {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+            minDate: "today",
+            onChange: function(selectedDates, dateStr, instance) {
+                selectedTimeSlot = dateStr;  // Store selected date and time
+                confirmDateTimeBtn.style.display = 'block';  // Show the button to confirm date and time
+            }
+        });
+    }
 }
 
+// Move clicked card to center
 cards.forEach(card => {
     card.addEventListener('click', () => {
         const service = card.getAttribute('data-service');
@@ -97,7 +103,6 @@ cards.forEach(card => {
                     c.style.display = 'none';  // Hide other cards
                 }
             });
-
             card.classList.add('active-card');
             isCardCentered = true;  // Mark the card as centered
         } else {
@@ -132,23 +137,77 @@ function showMicroserviceMenu(service, card) {
     // Show the microservice menu
     microserviceMenu.style.display = 'block';
 
-    // Attach click event to each service item for the calendar popup
+    // Attach click event to each service item (menu item)
     const serviceItems = document.querySelectorAll('.service-item');
     serviceItems.forEach(item => {
         item.addEventListener('click', (event) => {
             event.preventDefault();
             selectedService = event.target.getAttribute('data-service');
             // Show the calendar popup and initialize the calendar
-            showCalendarPopup();
+            showCalendarPopup();  // User selects date and time for this service
             initCalendar();  // Initialize the Flatpickr calendar
         });
     });
 }
 
-// Function to show calendar popup
+// Function to show the calendar popup
 function showCalendarPopup() {
     calendarPopup.classList.add('show');  // Slide up the calendar
     calendarPopup.style.display = 'block';  // Ensure the popup is visible
+    confirmDateTimeBtn.style.display = 'none'; // Initially hide the 'Confirm Date and Time' button
+}
+
+// Confirm the date and time selection by clicking 'Confirm Date and Time' button
+confirmDateTimeBtn.addEventListener('click', () => {
+    if (selectedTimeSlot) {
+        // Hide the microservice menu
+        microserviceMenu.style.display = 'none';
+
+        // Hide the centered service card
+        const activeCard = document.querySelector('.active-card');
+        if (activeCard) {
+            activeCard.style.display = 'none'; // Hide the centered card
+            activeCard.classList.remove('active-card'); // Optionally remove the class
+        }
+
+        // Show the summary with selected service and time
+        showSummary();
+    }
+});
+
+// Function to show the summary after a service and date/time are selected
+function showSummary() {
+    // Add the selected service and time to the summary
+    selectedServices.push({
+        service: selectedService,
+        timeSlot: selectedTimeSlot
+    });
+
+    // Clear existing summary details
+    summaryDetails.innerHTML = '';
+
+    // Generate the summary dynamically
+    selectedServices.forEach((item, index) => {
+        const summaryHTML = `
+            <div class="summary-item">
+                <i class="fas fa-concierge-bell"></i>
+                <div>
+                    <div class="summary-service">Service ${index + 1}: ${item.service}</div>
+                    <div class="summary-date">Date: ${new Date(item.timeSlot).toLocaleDateString()}</div>
+                    <div class="summary-time">Time: ${new Date(item.timeSlot).toLocaleTimeString()}</div>
+                </div>
+            </div>
+        `;
+        summaryDetails.innerHTML += summaryHTML;
+    });
+
+    // Ensure the booking summary is visible
+    bookingSummary.style.display = 'block';
+
+    // Hide the calendar popup and display the "Add More Service" and "Confirm Booking" buttons
+    hideCalendarPopup();
+    addMoreServiceBtn.style.display = 'block';
+    finalConfirmBtn.style.display = 'block';
 }
 
 // Function to hide the calendar popup
@@ -159,31 +218,40 @@ function hideCalendarPopup() {
     }, 500);  // Match the transition time in the CSS
 }
 
-// Confirm the time slot and show booking summary
-confirmBookingBtn.addEventListener('click', () => {
-    if (!selectedTimeSlot) {
-        alert('Please select a date and time.');
-        return;
-    }
-
-    // Hide the calendar popup
-    hideCalendarPopup();
-
-    // Show the booking summary
-    showBookingSummary();
+// "Add More Service" button allows adding another service without resetting
+addMoreServiceBtn.addEventListener('click', () => {
+    // Allow user to add another service while keeping the existing summary
+    microserviceMenu.style.display = 'none';
+    calendarPopup.style.display = 'none'; // Hide any existing popup
+    isCardCentered = false; // Allow the user to pick a new service
+    document.querySelectorAll('.card').forEach(card => {
+        card.style.display = 'block'; // Show all cards again
+    });
 });
 
-// Function to show the booking summary
-function showBookingSummary() {
-    summaryDetails.innerHTML = `
-        <strong>Service:</strong> ${selectedService}<br>
-        <strong>Time Slot:</strong> ${selectedTimeSlot}
-    `;
-    bookingSummary.classList.add('show');  // Show the summary
+// Final confirmation button to confirm all services and times
+finalConfirmBtn.addEventListener('click', () => {
+    const bookingNumber = generateBookingNumber();  // Generate a booking number
+    alert(`Booking Confirmed! Your booking number is: ${bookingNumber}`);
+    saveBookingHistory(bookingNumber);  // Save booking to the user's profile
+});
+
+// Function to generate a random booking number
+function generateBookingNumber() {
+    return 'BK' + Math.floor(Math.random() * 1000000);
 }
 
+// Function to save the booking history
+function saveBookingHistory(bookingNumber) {
+    // Assuming user profile is managed elsewhere, this will store the booking details
+    const bookingHistory = {
+        services: selectedServices,
+        bookingNumber: bookingNumber,
+        date: new Date().toLocaleString()
+    };
 
-
-
-
-
+    // Save booking to profile (this can be customized based on how you handle user profiles)
+    console.log('Booking saved to profile:', bookingHistory);
+    // Clear selected services after booking is confirmed
+    selectedServices = [];
+}

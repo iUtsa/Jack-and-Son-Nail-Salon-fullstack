@@ -723,6 +723,7 @@ body{
 }
 
 /* Microservice menu styles */
+/* Microservice menu */
 .microservice-menu {
     display: none;
     position: absolute;
@@ -733,9 +734,9 @@ body{
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     padding: 15px;
-    z-index: 11;
+    z-index: 10; /* Lower than booking summary */
     width: 300px;
-    animation: fadeIn 0.5s ease-in-out;
+    animation: fadeIn 0.2s ease-in-out;
 }
 
 /* Microservice list styling */
@@ -754,7 +755,7 @@ body{
     text-decoration: none;
     color: #333;
     font-size: 18px;
-    font-family: 'Josefin Sans', sans-serif;
+    font-family: 'Josefin Sans';
     padding: 10px;
     display: block;
     background-color: #f8f9fa;
@@ -773,12 +774,15 @@ body{
     bottom: -100%; /* Hidden below the screen */
     left: 0;
     right: 0;
-    background-color: #fff;
+    background-color:#F8EDED;
     padding: 30px;
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
     border-radius: 10px 10px 0 0;
     transition: all 0.5s ease;
     z-index: 12;
+    text-align: center;
+    font-family: josefin sans;
+    color:#6482AD;
 }
 
 .calendar-popup.show {
@@ -787,7 +791,7 @@ body{
 
 /* Flatpickr input field */
 #datepicker {
-    width: 100%;
+    width: 70%;
     padding: 15px;
     font-size: 16px;
     margin: 20px 0;
@@ -795,6 +799,7 @@ body{
     border-radius: 8px;
     background-color: #f9f9f9;
     cursor: pointer;
+    align-items: center;
 }
 
 /* Popup button styling */
@@ -802,17 +807,20 @@ body{
     width: 100%;
     padding: 12px;
     font-size: 16px;
-    background-color: #5CB85C;
+    background-color:#6482AD;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
     margin-top: 15px;
+    font-family: josefin sans;
+    font-weight: 600;
+    margin-top: 25px;
 }
 
 .popup-btn:hover {
-    background-color: #4cae4c;
+    background-color:#F0A8D0;
 }
 
 /* Confirmation button hidden initially */
@@ -823,18 +831,78 @@ body{
 /* Booking summary */
 .booking-summary {
     display: none;
-    padding: 20px;
-    background-color: #f8f8f8;
-    text-align: center;
-    margin-top: 20px;
+    background-color: #fff;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.62);
+    margin-top: 30px;
+    width: 90%;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px;
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
+    font-family: josefin sans;
+    justify-content: flex-start;
 }
 
-.booking-summary.show {
-    display: block;
+.booking-summary h3 {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 24px;
+    color:#6482AD;
+    margin-bottom: 20px;
 }
 
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background-color: #f8f8f8;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.589);
+    transition: box-shadow 0.3s ease;
+    
+}
+
+.summary-item:hover {
+    box-shadow: 0 4px 20px rgba(63, 61, 61, 0.709);
+}
+
+.summary-item i {
+    color:#F0A8D0;
+    font-size: 24px;
+}
+
+.summary-service {
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+}
+
+.summary-date {
+    font-size: 16px;
+    color: #666;
+}
+
+.summary-time {
+    font-size: 16px;
+    color: #666;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 /* Animation for smoother transitions */
 @keyframes slideUp {
     from {
