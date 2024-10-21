@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap"
         rel="stylesheet">
@@ -53,20 +54,24 @@
         <ul id="microservice-list"></ul>
     </div>
 
-   <!-- Hidden Calendar Popup -->
+<!-- Hidden Calendar Popup -->
 <div id="calendar-popup" class="calendar-popup">
     <h3>Pick Your Date and Time</h3>
     <input type="text" id="datepicker" placeholder="Choose Date and Time" readonly>
-    <button id="select-date" class="popup-btn">Select Date and Time</button>
-    <button id="confirm-booking" class="popup-btn" style="display: none;">Confirm Booking</button>
+    <button id="confirm-date-time" class="popup-btn" style="display: none;">Confirm Date and Time</button>
 </div>
 
-    <!-- Booking Summary -->
-    <div id="booking-summary" class="booking-summary">
-        <h3>Booking Summary</h3>
-        <p id="summary-details"></p>
-        <button id="final-confirm">Confirm and Book</button>
+<!-- Booking Summary -->
+<div id="booking-summary" class="booking-summary">
+    <h3>Your Booking Summary</h3>
+    <div id="summary-details">
+        <!-- Dynamic content will be injected here -->
     </div>
+    <button id="add-more-service" class="popup-btn" style="display: none;">Add More Service</button>
+    <button id="final-confirm" class="popup-btn" style="display: none;">Confirm Booking</button>
+</div>
+
+
 
     <script src="/static/script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
