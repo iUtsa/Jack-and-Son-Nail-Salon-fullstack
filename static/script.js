@@ -232,9 +232,21 @@ addMoreServiceBtn.addEventListener('click', () => {
 // Final confirmation button to confirm all services and times
 finalConfirmBtn.addEventListener('click', () => {
     const bookingNumber = generateBookingNumber();  // Generate a booking number
+
+    // Save the booking information to localStorage
+    const bookingInfo = {
+        services: selectedServices,
+        bookingNumber: bookingNumber,
+        date: new Date().toLocaleString()
+    };
+
+    localStorage.setItem('latestBooking', JSON.stringify(bookingInfo));
+
+    // Show an alert with booking number and redirect to profile
     alert(`Booking Confirmed! Your booking number is: ${bookingNumber}`);
-    saveBookingHistory(bookingNumber);  // Save booking to the user's profile
+    window.location.href = `/profile?bookingNumber=${bookingNumber}`;
 });
+
 
 // Function to generate a random booking number
 function generateBookingNumber() {
@@ -255,3 +267,84 @@ function saveBookingHistory(bookingNumber) {
     // Clear selected services after booking is confirmed
     selectedServices = [];
 }
+
+
+
+
+//for profile page-----------------------
+
+
+// Simulate user and booking data
+ // Simulate user and booking data
+ const user = {
+    name: "Jane Doe",
+    email: "jane.doe@example.com",
+    phone: "123-456-7890",
+    joinDate: "January 2023",
+    gender: "female",  // Gender can be "male" or "female"
+    bookings: [
+        { service: "Basic Manicure", date: "2024-10-21", time: "10:30 AM", bookingNumber: "BK123456" },
+        { service: "Full Body Wax", date: "2024-11-10", time: "2:00 PM", bookingNumber: "BK654321" }
+    ]
+};
+
+// Populate user data
+document.querySelector('.profile-header h1').textContent = `Welcome, ${user.name}!`;
+document.querySelector('.details').innerHTML = `
+    <h3>User Information</h3>
+    <p><strong>Email:</strong> ${user.email}</p>
+    <p><strong>Phone:</strong> ${user.phone}</p>
+    <p><strong>Member Since:</strong> ${user.joinDate}</p>
+`;
+
+// Assign avatar based on gender
+const avatarElement = document.getElementById('user-avatar');
+if (user.gender === 'male') {
+    avatarElement.src = 'https://via.placeholder.com/150?text=Male+Avatar';
+} else {
+    avatarElement.src = 'https://via.placeholder.com/150?text=Female+Avatar';
+}
+
+// Populate booking history
+const bookingHistoryList = document.getElementById('booking-history-list');
+user.bookings.forEach(booking => {
+    const bookingItem = document.createElement('div');
+    bookingItem.classList.add('booking-item');
+    bookingItem.innerHTML = `
+        <i class="fas fa-calendar-check"></i>
+        <div class="booking-details">
+            <p><strong>Service:</strong> ${booking.service}</p>
+            <p><strong>Date:</strong> ${booking.date} at ${booking.time}</p>
+            <p><strong>Booking Number:</strong> ${booking.bookingNumber}</p>
+        </div>
+    `;
+    bookingHistoryList.appendChild(bookingItem);
+});
+
+// Logout functionality
+document.querySelector('.btn-logout').addEventListener('click', () => {
+    // Clear local storage or session data and redirect to login page
+    localStorage.removeItem('authToken');
+    window.location.href = '/login';
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Retrieve the booking information from localStorage
+    const bookingInfo = JSON.parse(localStorage.getItem('latestBooking'));
+
+    // Check if there is a booking summary to display
+    if (bookingInfo) {
+        const bookingHistoryList = document.getElementById('booking-history-list');
+        const summaryHTML = `
+            <div class="booking-item">
+                <i class="fas fa-calendar-check"></i>
+                <div class="booking-details">
+                    <p><strong>Booking Number:</strong> ${bookingInfo.bookingNumber}</p>
+                    ${bookingInfo.services.map(service => `<p><strong>Service:</strong> ${service.service} at ${service.timeSlot}</p>`).join('')}
+                    <p><strong>Booking Date:</strong> ${bookingInfo.date}</p>
+                </div>
+            </div>
+        `;
+        bookingHistoryList.innerHTML = summaryHTML;
+    }
+});
