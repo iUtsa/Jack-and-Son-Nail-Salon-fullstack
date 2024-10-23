@@ -68,11 +68,43 @@ let selectedTimeSlot = '';
 
 // Define the services for each main service
 const serviceData = {
-    'nail-care': ['Acrylic Nail - $25', 'Color Nail - $30', 'Polish Nail - $15'],
-    'manicure': ['Basic Manicure - $20', 'French Manicure - $30'],
-    'pedicure': ['Basic Pedicure - $35', 'Deluxe Pedicure - $50'],
-    'waxing': ['Facial Wax - $20', 'Hand Wax - $25', 'Full Body Wax - $60', 'Bikini Wax - $45']
+    'nail-care': [
+        'Pink & White Full Set - $60+',
+        'Pink & White Fill In - $50+',
+        'Pink Fill Only - $40',
+        'Color Tips Fill - $45',
+        'Acrylic Full Set - $50+',
+        'Acrylic Fill In - $40+',
+        'Gel Color Full Set - $60',
+        'Gel Color Fill In - $40+',
+        'Dipping Powder - $50+',
+        'UV Gel Full Set - $60+',
+        'UV Gel Fill In - $45+',
+        'Take Off - $10+',
+        'Nails Repair - $5+',
+        'Cut Down, Designs - $5+'
+    ],
+    'manicure-pedicure': [
+        'Pedicure & Manicure - $50',
+        'Regular Pedicure - $30',
+        'Regular Manicure - $20',
+        'Gel Manicure - $35',
+        'Deluxe Pedicure - $40+',
+        'Deluxe Manicure - $35',
+        'Polish Change - $25+'
+    ],
+    'waxing': [
+        'Eyebrows - $10',
+        'Chin - $8+',
+        'Lip - $7',
+        'Full Face - $30+',
+        'Back - $45+',
+        'Half Arms/Full Arms - $25+/$30+',
+        'Half Legs/Full Legs - $30+/$40+',
+        'Bikini - $40+'
+    ]
 };
+
 
 
 // Initialize Flatpickr for the calendar
