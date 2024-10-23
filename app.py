@@ -71,7 +71,9 @@ def logout():
 
 @app.route('/reservation')
 def reservation():
-    return render_template('client/reservation.html')  # Ensure this template exists
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+    return render_template('client/reservation.html')
 
 
 # Profile page
