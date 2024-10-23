@@ -1028,16 +1028,22 @@ body{
 .bd-22{
      background: linear-gradient(135deg, #B3C8CF, #fad0c4);
 }
-
+/*---------------------------------*/
+/* Container for everything */
+.container-fluide {
+    width: 100%;
+    padding: 20px;
+}
 
 /* Card container */
-.service-cardse {
+.service-row {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    gap: 20px;
-    align-item:center;
-
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px; /* Space between the cards */
+    max-width: 1200px; /* Adjust as needed */
+    margin: 0 auto;
 }
 
 /* Each card */
@@ -1050,90 +1056,108 @@ body{
     height: 350px;
     padding: 20px;
     text-align: center;
-    position: relative;
-    overflow: hidden;
     cursor: pointer;
-    margin-top:50px;
+    display: flex;
+    flex-direction: column; /* Ensures text stacks vertically */
+    justify-content: center;
+    align-items: center;
+    margin: 20px; /* Space around each card */
 }
 
-/* Card initial content (service name only) */
-.service-carde h3 {
-    font-family: josefin sans;
+/* Card header */
+.service-carde h5 {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 20px;
+    color:rgb(238, 237, 237);
+    margin-bottom: 10px;
+    margin-top: 20px;
+    background:linear-gradient(135deg, #8fa5ad, #f4b6c2);
+    padding: 10px 10px;
+    top:0;
+    font-weight: 600;
+    border-radius: 20px;
+}
+
+/* Card price */
+.service-carde p {
+    font-family: 'Josefin Sans', sans-serif;
     font-size: 24px;
     color:#6482AD;
-    margin-bottom: 10px;
-    margin-top:20px;
-
 }
 
-/* Hidden description */
-.service-carde p {
-    opacity: 0;
-    visibility: hidden;
-    transition: transform 0.4s ease, box-shadow 0.4s ease, opacity 0.6s ease-in-out;
-    font-family: josefin sans;
-    font-size: 16px;
-    color: #fff;
-    line-height: 1.5;
-    position: absolute;
-    bottom: 20px;
-    left: 10px;
-    right: 10px;
-    z-index: 1; /* Make sure description is above the blur */
-    padding: 10px;
-    background-color: #F0A8D0; /* Semi-transparent pink background */
-    border-radius: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.59); /* Add shadow to the description */
-    transform: translateY(20px); /* Start from a lower position */
-    backdrop-filter: blur(12px); /* Apply blur effect */
-}
-
-/* Hover effect */
+/* Hover effect for each card */
 .service-carde:hover {
-    transform: translateY(-15px) scale(1.05); /* Elevates and enlarges the card slightly */
-    box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.2); /* Enhanced shadow for elevation effect */
-
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.service-carde img {
-    width: 200px;
-    height: 200px;
-    margin-bottom: 20px;
-    z-index: 1;
+/* Service category section */
+.service-category {
+    text-align: center;
+    margin-bottom: 40px;
 }
 
-.service-carde h3 {
-            font-size: 1.75rem;
-            color: #4a4a4a;
-        }
+/* Service category header */
+.service-category h3 {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 28px;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 40px;
+    margin-top:30px;
+    background-color: #6482AD;
+    padding: 20px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    width: 40%;
+    height:auto;
+    margin:60px auto;
+}
+.service-row img{
+    width: 230px;
+    height: 230px;
+    border-radius: 50%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    justify-content: space-between;
+    transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.85); /* Initial subtle shadow */
+}
 
-        .microservice-liste {
-            padding-left: 20px;
-        }
+#book-now{
+    background-color: #F0A8D0;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 50px;
+    font-family: josefin sans;
+    font-weight: 600;
+    position:fixed;
+    width:200px;
+    height:auto;
+    text-align: center;
+    transition: box-shadow 0.3s ease;
+    animation: heartbeat 1.5s infinite; /* Apply the heartbeat animation */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.45); /* Initial subtle shadow */
 
-        .microservice-liste li {
-            font-size: 1.1rem;
-            color: #555;
-        }
+}
+#book-now a{
+    text-decoration: none;
+    color: white;
+}
 
-        .container-fluide {
-            padding: 50px 5%;
-        }
-
-        .service-category {
-            margin: 50px auto;
-            justify-content:space-between;
-            align-item:center;
-        }
-
-        .service-category h3 {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2rem;
-        }
-
-.col-md-4{
-    margin:0 auto;
-    align-item:center;
-
+/* Heartbeat animation */
+@keyframes heartbeat {
+    0%, 20%, 40%, 60%, 80%, 100% {
+        transform: scale(1); /* Normal size */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: scale(1.1); /* Scale up for the "beat" */
+        box-shadow: inset 0 0 15px rgba(255, 0, 0, 0.5); /* Reddish inner shadow */
+    }
 }
