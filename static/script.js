@@ -14,31 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-//for login and logout handle
-document.addEventListener('DOMContentLoaded', function() {
-    const loginLink = document.getElementById('login-link');
-    const logoutLink = document.getElementById('logout-link');
-
-    // Check if the user is logged in (e.g., check for a token in local storage)
-    const isLoggedIn = localStorage.getItem('authToken') !== null;
-
-    if (isLoggedIn) {
-        loginLink.style.display = 'none';
-        logoutLink.style.display = 'block';
-    } else {
-        loginLink.style.display = 'block';
-        logoutLink.style.display = 'none';
-    }
-
-    // Handle logout
-    logoutLink.addEventListener('click', function(event) {
-        event.preventDefault();
-        // Remove the token from local storage
-        localStorage.removeItem('authToken');
-        // Redirect to the login page
-        window.location.href = '/login';
-    });
-});
 
 /*document.addEventListener('DOMContentLoaded', function() {
     // Check if the user is logged in (e.g., check for a token in local storage)
@@ -103,7 +78,6 @@ const serviceData = {
 };
 
 
-
 // Initialize Flatpickr for the calendar
 let calendar = null;
 function initCalendar() {
@@ -141,7 +115,8 @@ cards.forEach(card => {
     });
 });
 
-// Function to show the microservice menu for the clicked service
+// Function to display the microservice menu for the clicked service
+// Function to display the microservice menu for the clicked service
 function showMicroserviceMenu(service, card) {
     const services = serviceData[service];
 
@@ -178,31 +153,6 @@ function showMicroserviceMenu(service, card) {
         });
     });
 }
-
-// "Add More Service" button allows adding another service without resetting
-addMoreServiceBtn.addEventListener('click', () => {
-    // Hide the booking summary temporarily
-    bookingSummary.style.display = 'none';
-    
-    // Allow user to add another service while keeping the existing summary
-    microserviceMenu.style.display = 'none';
-    calendarPopup.style.display = 'none'; // Hide any existing popup
-
-    // Reset card centering state
-    isCardCentered = false; // Allow the user to pick a new service
-
-    // Make all service cards visible again
-    document.querySelectorAll('.card').forEach(card => {
-        card.style.display = 'block'; // Show all cards again
-    });
-
-    // Scroll back to service card section if needed
-    window.scrollTo({
-        top: document.querySelector('.card-service-container').offsetTop,
-        behavior: 'smooth'
-    });
-});
-
 
 // Function to show the calendar popup
 function showCalendarPopup() {
@@ -284,21 +234,34 @@ addMoreServiceBtn.addEventListener('click', () => {
 });
 
 // Final confirmation button to confirm all services and times
+// Final confirmation button to confirm all services and times
 finalConfirmBtn.addEventListener('click', () => {
     const bookingNumber = generateBookingNumber();  // Generate a booking number
 
-    // Save the booking information to localStorage
+    // Save the booking information
     const bookingInfo = {
         services: selectedServices,
         bookingNumber: bookingNumber,
         date: new Date().toLocaleString()
     };
 
-    localStorage.setItem('latestBooking', JSON.stringify(bookingInfo));
-
-    // Show an alert with booking number and redirect to profile
-    alert(`Booking Confirmed! Your booking number is: ${bookingNumber}`);
-    window.location.href = `/profile?bookingNumber=${bookingNumber}`;
+    // Send the data to the Flask backend using POST request
+    fetch('/final-confirm', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bookingInfo)
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Show an alert with the booking number and then redirect
+        alert(`Booking Confirmed! Your booking number is: ${bookingNumber}`);
+        window.location.href = `/profile?bookingNumber=${bookingNumber}`;
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
 });
 
 

@@ -74,7 +74,7 @@ body{
     border-radius: 50%;
 }
 .custom-navbar {
-    background-color: #F0A8D0; /* Change this to your desired color */
+    background: linear-gradient(135deg, #8fa5ad, #f1b6aa); /* Change this to your desired color */
     box-shadow:5px 5px 5px grey;
     
 }
@@ -649,6 +649,7 @@ body{
     background-color:#F0A8D0;
     width:50%;
     margin:10px auto;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
 }
 
 #headlinee{
@@ -1007,4 +1008,132 @@ body{
 }
 .btn-logout:hover {
     background-color: #e95a50;
+}
+
+
+
+}
+    .input-group-text {
+        border-radius: 50px 0 0 50px;
+    }
+    .form-control {
+        border-radius: 0 50px 50px 0;
+    }
+    .btn-light:hover {
+        background-color: #f06292;
+        color: #fff;
+    }
+
+
+.bd-22{
+     background: linear-gradient(135deg, #B3C8CF, #fad0c4);
+}
+
+
+/* Card container */
+.service-cardse {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    align-item:center;
+
+}
+
+/* Each card */
+.service-carde {
+    background: linear-gradient(135deg, #B3C8CF, #fad0c4);
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.59);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    width: 300px;
+    height: 350px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    margin-top:50px;
+}
+
+/* Card initial content (service name only) */
+.service-carde h3 {
+    font-family: josefin sans;
+    font-size: 24px;
+    color:#6482AD;
+    margin-bottom: 10px;
+    margin-top:20px;
+
+}
+
+/* Hidden description */
+.service-carde p {
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.4s ease, box-shadow 0.4s ease, opacity 0.6s ease-in-out;
+    font-family: josefin sans;
+    font-size: 16px;
+    color: #fff;
+    line-height: 1.5;
+    position: absolute;
+    bottom: 20px;
+    left: 10px;
+    right: 10px;
+    z-index: 1; /* Make sure description is above the blur */
+    padding: 10px;
+    background-color: #F0A8D0; /* Semi-transparent pink background */
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.59); /* Add shadow to the description */
+    transform: translateY(20px); /* Start from a lower position */
+    backdrop-filter: blur(12px); /* Apply blur effect */
+}
+
+/* Hover effect */
+.service-carde:hover {
+    transform: translateY(-15px) scale(1.05); /* Elevates and enlarges the card slightly */
+    box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.2); /* Enhanced shadow for elevation effect */
+
+}
+
+.service-carde img {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 20px;
+    z-index: 1;
+}
+
+.service-carde h3 {
+            font-size: 1.75rem;
+            color: #4a4a4a;
+        }
+
+        .microservice-liste {
+            padding-left: 20px;
+        }
+
+        .microservice-liste li {
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+        .container-fluide {
+            padding: 50px 5%;
+        }
+
+        .service-category {
+            margin: 50px auto;
+            justify-content:space-between;
+            align-item:center;
+        }
+
+        .service-category h3 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+.col-md-4{
+    margin:0 auto;
+    align-item:center;
+
 }
