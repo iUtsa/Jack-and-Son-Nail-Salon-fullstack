@@ -69,38 +69,35 @@ let selectedTimeSlot = '';
 // Define the services for each main service
 const serviceData = {
     'nail-care': [
-        'Pink & White Full Set - $60+',
-        'Pink & White Fill In - $50+',
-        'Pink Fill Only - $40',
-        'Color Tips Fill - $45',
-        'Acrylic Full Set - $50+',
-        'Acrylic Fill In - $40+',
-        'Gel Color Full Set - $60',
-        'Gel Color Fill In - $40+',
+        'Pink & White Full Set - $60',
+        'Pink & White Fill In - $50',
+        'Acrylic Full Set - $50',
+        'Acrylic Fill In - $40',
+        'Gel Color Full Set - $50',
+        'Gel Color Fill In - $40',
         'Dipping Powder - $50+',
-        'UV Gel Full Set - $60+',
-        'UV Gel Fill In - $45+',
-        'Take Off - $10+',
-        'Nails Repair - $5+',
-        'Cut Down, Designs - $5+'
+        'UV Gel Full Set - $60',
+        'UV Gel Fill In - $45',
+        'Nail Repair - $5+',
+        'Cut Down Designs - $5+'
     ],
-    'manicure-pedicure': [
+    'manicure': [
         'Pedicure & Manicure - $50',
         'Regular Pedicure - $30',
         'Regular Manicure - $20',
         'Gel Manicure - $35',
-        'Deluxe Pedicure - $40+',
-        'Deluxe Manicure - $35',
+        'Deluxe Manicure - $30',
         'Polish Change - $25+'
     ],
+    'pedicure': ['Basic Pedicure - $35', 'Deluxe Pedicure - $50','Polish Change - $25+', 'Gel Pedicure - $45'],
     'waxing': [
         'Eyebrows - $10',
         'Chin - $8+',
         'Lip - $7',
         'Full Face - $30+',
         'Back - $45+',
-        'Half Arms/Full Arms - $25+/$30+',
-        'Half Legs/Full Legs - $30+/$40+',
+        'Half Arms / Full Arms - $25+ / $35+',
+        'Half Legs / Full Legs - $30+ / $40+',
         'Bikini - $40+'
     ]
 };
@@ -144,7 +141,7 @@ cards.forEach(card => {
     });
 });
 
-// Function to display the microservice menu for the clicked service
+// Function to show the microservice menu for the clicked service
 function showMicroserviceMenu(service, card) {
     const services = serviceData[service];
 
@@ -163,7 +160,7 @@ function showMicroserviceMenu(service, card) {
     const menuWidth = microserviceMenu.offsetWidth;
 
     const cardCenterX = cardRect.left + (cardRect.width / 2);
-    microserviceMenu.style.top = `${cardRect.bottom + window.scrollY + 20}px`; // 20px below the card
+    microserviceMenu.style.top = `${cardRect.bottom + window.scrollY + 20}px`; // Position 20px below the card
     microserviceMenu.style.left = `${cardCenterX - (menuWidth / 2)}px`;  // Center the menu below the card
 
     // Show the microservice menu
@@ -181,6 +178,31 @@ function showMicroserviceMenu(service, card) {
         });
     });
 }
+
+// "Add More Service" button allows adding another service without resetting
+addMoreServiceBtn.addEventListener('click', () => {
+    // Hide the booking summary temporarily
+    bookingSummary.style.display = 'none';
+    
+    // Allow user to add another service while keeping the existing summary
+    microserviceMenu.style.display = 'none';
+    calendarPopup.style.display = 'none'; // Hide any existing popup
+
+    // Reset card centering state
+    isCardCentered = false; // Allow the user to pick a new service
+
+    // Make all service cards visible again
+    document.querySelectorAll('.card').forEach(card => {
+        card.style.display = 'block'; // Show all cards again
+    });
+
+    // Scroll back to service card section if needed
+    window.scrollTo({
+        top: document.querySelector('.card-service-container').offsetTop,
+        behavior: 'smooth'
+    });
+});
+
 
 // Function to show the calendar popup
 function showCalendarPopup() {
