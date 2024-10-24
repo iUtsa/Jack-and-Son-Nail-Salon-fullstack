@@ -339,11 +339,16 @@ user.bookings.forEach(booking => {
 });
 
 // Logout functionality
-document.querySelector('.btn-logout').addEventListener('click', () => {
-    // Clear local storage or session data and redirect to login page
-    localStorage.removeItem('authToken');
-    window.location.href = '/login';
+document.addEventListener('DOMContentLoaded', function() {
+    const logoutButton = document.querySelector('.btn-logout');
+
+    logoutButton.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default form submit for a moment
+        alert('See you soon again!');
+        window.location.href = '/logout'; // Then proceed with the logout
+    });
 });
+
 
 document.addEventListener('DOMContentLoaded', () => {
     // Retrieve the booking information from localStorage
