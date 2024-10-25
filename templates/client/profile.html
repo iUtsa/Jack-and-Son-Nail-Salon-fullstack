@@ -98,17 +98,26 @@
             <ol id="booking-details-items">
                 <li>
                     <div id="upcoming-booking-list">
-                        <ol id="booking-details-items">
+                        
                             <!-- Booking items will be dynamically injected here -->
-
+                        <div>
                             <p> <strong id="bdi">Service:</strong> [Service Name]<br>
                                 <strong id="bdi">Date:</strong> [Booking Date]<br>
                                 <strong id="bdi">Time:</strong> [Booking Time]<br>
                                 <strong id="bdi">Booking Number:</strong> [Booking-Number]
                             </p>
-
+                        </div>
+                            <!-- Cancel Booking Button (STILL NEED TO ADD THIS ON PYCHARM) -->
+                            <div id="cancel-booking">
+                                <form action="{{ url_for('cancel_booking') }}" method="POST" style="display:inline;">
+                                    <input type="hidden" name="booking_number" value="[Booking-Number]">
+                                    <button type="button" class="btn-cancel">Cancel Booking</button>
+                                </form>
+                            </div>
 
                     </div>
+                    
+                    
                 </li>
             </ol>
         </div>
