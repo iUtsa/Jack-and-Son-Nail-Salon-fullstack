@@ -1485,7 +1485,7 @@ body{
     flex-wrap: wrap; /* Allows cards to wrap to the next line */
     justify-content: space-evenly; /* Distribute cards evenly */
     align-items: flex-start;
-    margin-top: -600px; /* Adjust this as per your layout */
+    margin-top: -580px; /* Adjust this as per your layout */
     margin-left: 500px; /* Adjust this as per your layout */
     width: 60%; /* Increased width to allow more space for the cards */
 }
@@ -1497,14 +1497,14 @@ body{
     transition: transform 0.5s ease, box-shadow 0.5s ease;
     width: 220px; /* Adjusted width for proper distribution */
     height: auto;
-    padding: 20px;
+    padding: 10px;
     text-align: center;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: 20px 10px; /* Adds space around the cards */
+    margin: 20px 80px; /* Adds space around the cards */
     font-family: josefin sans;
 }
 .manage-card:hover {
@@ -1539,7 +1539,7 @@ body{
 
 #seller-pic{
     width:100%;
-    background-color:#6482AD;
+    background: linear-gradient(135deg, #B3C8CF, #fad0c4);
     justify-content: center;
     margin:5px auto;
     display: flex;
