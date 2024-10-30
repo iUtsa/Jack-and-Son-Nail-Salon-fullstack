@@ -1415,3 +1415,132 @@ body{
     margin-top: 30px;
     margin-bottom: 20px;
 }
+
+
+/*-----------------seller side -----------------*/
+
+
+/* login page */
+
+.container-fluid-nav{
+    font-weight: 600;
+    font-family: 'Josefin Sans', sans-serif;
+    color: white;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+}
+.container-fluid-nav img{
+    margin-left:20px;
+}
+
+.manager-info-box{
+    background-color: rgba(243, 243, 243, 0.899);
+    padding: 20px;
+    border-radius: 0px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.669);
+    margin-top: 135px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-family: josefin sans;
+    color:#6482AD;
+    width:30%;
+    height:590px;
+    margin-left:10px;
+    text-align: left;
+    display:flex;
+    flex-direction:column;
+    align-items: center;
+    margin-left:10px;
+    
+}
+.manager-info-box h1{
+    font-size: 24px;
+    margin: 0;
+    margin-top: 10px;
+    
+}
+.manager-info-box h2{
+    font-size: 20px;
+    margin: 0;
+    margin-top: 35px;
+}
+.manager-info-box img{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+    margin-top: 20px;
+    margin-bottom: 20px;
+    align-items: center;
+    display: flex;
+}
+#manager-info{
+    margin-top:60px;
+}
+
+.manage-card-container {
+    display: flex;
+    flex-wrap: wrap; /* Allows cards to wrap to the next line */
+    justify-content: space-evenly; /* Distribute cards evenly */
+    align-items: flex-start;
+    margin-top: -600px; /* Adjust this as per your layout */
+    margin-left: 500px; /* Adjust this as per your layout */
+    width: 60%; /* Increased width to allow more space for the cards */
+}
+
+.manage-card {
+    background: linear-gradient(135deg, #B3C8CF, #fad0c4);
+    border-radius: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.69);
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+    width: 220px; /* Adjusted width for proper distribution */
+    height: auto;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 10px; /* Adds space around the cards */
+    font-family: josefin sans;
+}
+.manage-card:hover {
+    transform: translateY(-5px); /* Elevate card on hover */
+    box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.65); /* Increase shadow on hover */
+}
+
+.card {
+    margin:0px; /* Space around the cards */
+    margin-bottom: 2px; /* Less bottom space between cards */
+}
+.btn-primaryy {
+    background-color: #6683ac !important; /* Add !important */
+    border-color: #000000 !important;
+    color: white !important;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1;
+}
+
+
+.btn-primaryy:hover {
+    background-color:#F0A8D0 !important; /* Darker shade on hover (Dark Slate Blue) */
+    border-color:#000000; /* Match the border color on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Add a hover shadow effect */
+    color: white;
+}
+
+
+.seller-booking{
+    margin-top:130px;
+}
+
+#seller-pic{
+    width:100%;
+    background-color:#6482AD;
+    justify-content: center;
+    margin:5px auto;
+    display: flex;
+}
