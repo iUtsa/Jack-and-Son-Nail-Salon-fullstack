@@ -7,14 +7,15 @@
     <meta name="description" content="Login Page: Jack&Son Website">
     <title>Jack & Son Nail Salon</title>
     <link rel="stylesheet" href="/static/style.css">
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
-    
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap"
+        rel="stylesheet">
+
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
@@ -25,15 +26,18 @@
 </head>
 
 <body class="d-flex flex-column min-vh-100">
-    <nav class="navbar navbar-expand-lg custom-navbar fixed-top">
-        <div class="container-fluid-nav">
-            <a class="navbar-brand" href="index.html" text-decoration="none">
-                <img src="/static/photos/js-logo.webp" alt="logo" style="height: 100px; margin-right: 10px; border-radius: 50%;" ><span id="headline">Jack & Son Nails Spa</span></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
+    <div>
+        <nav class="navbar navbar-expand-lg custom-navbar fixed-top">
+            <div class="container-fluid-nav">
+                <a class="navbar-brand" href="index.html" text-decoration="none">
+                    <img src="/static/photos/js-logo.webp" alt="logo"
+                        style="height: 100px; margin-right: 10px; border-radius: 50%;"><span id="headline">Jack & Son
+                        Nails Spa</span></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
@@ -42,156 +46,468 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/templates/client/index.html" target="_blank">Client View</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout" target="_blank">Logout</a>
+                    </li>
                 </ul>
             </div>
-        
-    </nav>
 
-
-<div class="manage-services">
-    <div class="table-container">
-        <h1>Manage Services</h1>
-        <table class="table table-bordered">
-            <thead class="table-dark">
-                <tr>
-                    <th>Service Name</th>
-                    <th>Image</th>
-                    <th>Price</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Nail Care Services -->
-                <tr>
-                    <td>Pink & White Full Set</td>
-                    <td><img src="/static/photos/nc1final.jpg" alt="Pink & White Full Set"></td>
-                    <td>$60</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editService(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Pink & White Fill In</td>
-                    <td><img src="/static/photos/nc2.jpg" alt="Pink & White Fill In"></td>
-                    <td>$50</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editService(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Acrylic Full Set</td>
-                    <td><img src="/static/photos/nc3.jpg" alt="Acrylic Full Set"></td>
-                    <td>$50</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editService(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Acrylic Fill In</td>
-                    <td><img src="/static/photos/nc4.jpg" alt="Acrylic Fill In"></td>
-                    <td>$40</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editService(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Gel Color Full Set</td>
-                    <td><img src="/static/photos/nc5.jpg" alt="Gel Color Full Set"></td>
-                    <td>$50</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editService(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Gel Color Fill In</td>
-                    <td><img src="/static/photos/nc6.jpg" alt="Gel Color Fill In"></td>
-                    <td>$40</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editService(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
-                    </td>
-                </tr>
-                <!-- Add other services following this format -->
-                <!-- Manicure Services -->
-                <tr>
-                    <td>Pedicure & Manicure</td>
-                    <td><img src="/static/photos/mani1.jpg" alt="Pedicure & Manicure"></td>
-                    <td>$50</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editService(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Regular Pedicure</td>
-                    <td><img src="/static/photos/mani2.jpg" alt="Regular Pedicure"></td>
-                    <td>$30</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editService(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Regular Manicure</td>
-                    <td><img src="/static/photos/mani3.jpg" alt="Regular Manicure"></td>
-                    <td>$20</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editService(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Gel Manicure</td>
-                    <td><img src="/static/photos/mani4.jpg" alt="Gel Manicure"></td>
-                    <td>$35</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editService(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
-                    </td>
-                </tr>
-                <!-- Add other categories similarly as needed -->
-            </tbody>
-        </table>
+        </nav>
     </div>
 
-        <!-- Add New Service Form -->
-         <div class="add-service-form">
-        <h3>Add New Service</h3>
-        <form id="addServiceForm" onsubmit="addService(event)">
-            <div class="row">
-                <div class="col-md-4">
-                    <input type="text" class="form-control" placeholder="Service Name" id="newServiceName" required>
-                </div>
-                <div class="col-md-3">
-                    <input type="number" class="form-control" placeholder="Price" id="newServicePrice" required>
-                </div>
-                <div class="col-md-4">
-                    <input type="file" class="form-control" id="newServiceImage" required>
-                </div>
-                <div class="col-md-1">
-                    <button type="submit" class="btn btn-success">Add</button>
-                </div>
+
+    <div class="manage-services">
+        <div class="table-container">
+            <h1>Manage Services</h1>
+            <h2>Nail Care</h2>
+            <table id="nailcare-table" class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Service Name</th>
+                        <th>Image</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Nail Care Services -->
+                    <tr>
+                        <td>Pink & White Full Set</td>
+                        <td><img src="/static/photos/nc1final.jpg" alt="Pink & White Full Set"></td>
+                        <td>$60</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Pink & White Fill In</td>
+                        <td><img src="/static/photos/nc2.jpg" alt="Pink & White Fill In"></td>
+                        <td>$50</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Acrylic Full Set</td>
+                        <td><img src="/static/photos/nc3.jpg" alt="Acrylic Full Set"></td>
+                        <td>$50</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Acrylic Fill In</td>
+                        <td><img src="/static/photos/nc4.jpg" alt="Acrylic Fill In"></td>
+                        <td>$40</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Gel Color Full Set</td>
+                        <td><img src="/static/photos/nc5.jpg" alt="Gel Color Full Set"></td>
+                        <td>$50</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Gel Color Fill In</td>
+                        <td><img src="/static/photos/nc6.jpg" alt="Gel Color Fill In"></td>
+                        <td>$40</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Dipping Powder</td>
+                        <td><img src="/static/photos/nc7.jpg" alt="Gel Color Fill In"></td>
+                        <td>$50+</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>UV Gell Full Set</td>
+                        <td><img src="/static/photos/nc8.jpg" alt="Gel Color Fill In"></td>
+                        <td>$60</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>UV Fill In</td>
+                        <td><img src="/static/photos/nc9.jpg" alt="Gel Color Fill In"></td>
+                        <td>$45</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Nail Repair</td>
+                        <td><img src="/static/photos/nc10.jpg" alt="Gel Color Fill In"></td>
+                        <td>$5+</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Cut Down Designs</td>
+                        <td><img src="/static/photos/nc11.jpg" alt="Gel Color Fill In"></td>
+                        <td>$5+</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <!-- Add other services following this format -->
+                </tbody>
+            </table>
+
+            <!-- Add New Service Form -->
+            <div class="add-service-form">
+                <h3>Add New Service</h3>
+                <form id="addServiceForm-nailcare" onsubmit="addService(event)">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="Service Name" id="newServiceName-nailcare" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="number" class="form-control" placeholder="Price" id="newServicePrice-nailcare" required>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="file" class="form-control" id="newServiceImage-nailcare" required>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="submit" class="btn btn-success">Add</button>
+                        </div>
+                    </div>
+                </form>
             </div>
-        </form>
+
+
+            <h2>Manicure</h2>
+            <table id="manicure-table" class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Service Name</th>
+                        <th>Image</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Manicure Services -->
+                    <tr>
+                        <td>Pedicure & Manicure</td>
+                        <td><img src="/static/photos/mani1.jpg" alt="Pedicure & Manicure"></td>
+                        <td>$50</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Regular Pedicure</td>
+                        <td><img src="/static/photos/mani2.jpg" alt="Regular Pedicure"></td>
+                        <td>$30</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Regular Manicure</td>
+                        <td><img src="/static/photos/mani3.jpg" alt="Regular Manicure"></td>
+                        <td>$20</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Gel Manicure</td>
+                        <td><img src="/static/photos/mani4.jpg" alt="Gel Manicure"></td>
+                        <td>$35</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Deluxe Manicure</td>
+                        <td><img src="/static/photos/mani5.jpg" alt="Gel Manicure"></td>
+                        <td>$30</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Polish Change</td>
+                        <td><img src="/static/photos/mani6.jpg" alt="Gel Manicure"></td>
+                        <td>$25+</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <!-- Add other categories similarly as needed -->
+                </tbody>
+            </table>
+
+            <!-- Add New Service Form -->
+            <div class="add-service-form">
+                <h3>Add New Service</h3>
+                <form id="addServiceForm-manicure" onsubmit="addService(event)">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="Service Name" id="newServiceName-manicure" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="number" class="form-control" placeholder="Price" id="newServicePrice-manicure" required>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="file" class="form-control" id="newServiceImage-manicure" required>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="submit" class="btn btn-success">Add</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+            <h2>Padicure</h2>
+            <table id="padicure-table" class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Service Name</th>
+                        <th>Image</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Manicure Services -->
+                    <tr>
+                        <td>Basic Pedicure</td>
+                        <td><img src="/static/photos/padi1.jpg" alt="Pedicure & Manicure"></td>
+                        <td>$35</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Deluxe Pedicure</td>
+                        <td><img src="/static/photos/padi2.jpg" alt="Regular Pedicure"></td>
+                        <td>$50</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Polish Change</td>
+                        <td><img src="/static/photos/padi3.jpg" alt="Regular Manicure"></td>
+                        <td>$25+</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Gel Padicure</td>
+                        <td><img src="/static/photos/padi4.jpg" alt="Gel Manicure"></td>
+                        <td>$35</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <!-- Add other categories similarly as needed -->
+                </tbody>
+            </table>
+
+            <!-- Add New Service Form -->
+            <div class="add-service-form">
+                <h3>Add New Service</h3>
+                <form id="addServiceForm-padicure" onsubmit="addService(event)">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="Service Name"
+                                id="newServiceName-padicure" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="number" class="form-control" placeholder="Price" id="newServicePrice-padicure"
+                                required>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="file" class="form-control" id="newServiceImage-padicure" required>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="submit" class="btn btn-success">Add</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <h2>Waxing</h2>
+            <table id="waxing-table" class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Service Name</th>
+                        <th>Image</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Manicure Services -->
+                    <tr>
+                        <td>Eyebrows</td>
+                        <td><img src="/static/photos/wax1.jpg" alt="Pedicure & Manicure"></td>
+                        <td>$10</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Chin</td>
+                        <td><img src="/static/photos/wax2.jpg" alt="Regular Pedicure"></td>
+                        <td>$8+</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Lip</td>
+                        <td><img src="/static/photos/wax3.jpg" alt="Regular Manicure"></td>
+                        <td>$7</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Full Face</td>
+                        <td><img src="/static/photos/wax4.jpg" alt="Gel Manicure"></td>
+                        <td>$30+</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Back</td>
+                        <td><img src="/static/photos/wax5.jpg" alt="Gel Manicure"></td>
+                        <td>$45+</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Half Arms</td>
+                        <td><img src="/static/photos/wax6.jpg" alt="Gel Manicure"></td>
+                        <td>$25+</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Full Arms</td>
+                        <td><img src="/static/photos/wax6.jpg" alt="Gel Manicure"></td>
+                        <td>$35+</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Half Leg</td>
+                        <td><img src="/static/photos/wax7.jpg" alt="Gel Manicure"></td>
+                        <td>$30+</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Full Leg</td>
+                        <td><img src="/static/photos/wax7.jpg" alt="Gel Manicure"></td>
+                        <td>$40+</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Bikini</td>
+                        <td><img src="/static/photos/wax8.jpg" alt="Gel Manicure"></td>
+                        <td>$40+</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                        </td>
+                    </tr>
+                    <!-- Add other categories similarly as needed -->
+                </tbody>
+            </table>
+
+
+            <!-- Add New Service Form -->
+            <div class="add-service-form">
+                <h3>Add New Service</h3>
+                <form id="addServiceForm-waxing" onsubmit="addService(event)">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="Service Name" id="newServiceName-waxing" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="number" class="form-control" placeholder="Price" id="newServicePrice-waxing" required>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="file" class="form-control" id="newServiceImage-waxing" required>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="submit" class="btn btn-success">Add</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+        </div>
+
     </div>
-    
-
-</div>
 
 
 
 
-    
+
 
 
     <div class="bottom-bar">
         <p>Copyright: all right reserved to Jack&Son Nails Spa <br> and the development team</p>
     </div>
+
+    <script src="/static/script.js"></script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
