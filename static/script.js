@@ -376,88 +376,206 @@ document.addEventListener('DOMContentLoaded', () => {
 
 //=====================seller side start =============================================================> 
 
-// edit services
-
-
-// Function to edit a service
-function editService(button) {
-    const row = button.closest('tr');
-    const serviceName = row.cells[0];
-    const serviceImage = row.cells[1].querySelector('img');
-    const servicePrice = row.cells[2];
-
-    console.log("Editing:", serviceName.textContent); // Debugging log
-
-    // Allow user to edit service name and price
-    const newName = prompt("Edit Service Name:", serviceName.textContent);
-    if (newName) {
-        serviceName.textContent = newName;
-        console.log("Updated Name:", newName);
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll("form[id^='addServiceForm']").forEach((form) => {
+            form.addEventListener("submit", addService);
+        });
+    });
+    
+    function addService(event) {
+        event.preventDefault();
+    
+        const form = event.target;
+        const category = form.id.split("-")[1]; // e.g., "nailcare" from "addServiceForm-nailcare"
+        const table = document.querySelector(`#${category}-table tbody`);
+    
+        if (!table) {
+            console.error(`Table for category "${category}" not found.`);
+            return;
+        }
+    
+        const serviceName = form.querySelector(`input[id$='ServiceName-${category}']`).value;
+        const servicePrice = form.querySelector(`input[id$='ServicePrice-${category}']`).value;
+        const serviceImageInput = form.querySelector(`input[id$='ServiceImage-${category}']`);
+    
+        if (serviceImageInput.files.length === 0) {
+            alert("Please select an image for the new service.");
+            return;
+        }
+    
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imageURL = e.target.result;
+    
+            const newRow = document.createElement("tr");
+            newRow.innerHTML = `
+                <td>${serviceName}</td>
+                <td><img src="${imageURL}" alt="${serviceName}" style="width: 80px; height: 60px;"></td>
+                <td>$${servicePrice}</td>
+                <td>
+                    <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                    <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+                </td>
+            `;
+    
+            table.appendChild(newRow);
+    
+            // Reset form fields after adding service
+            form.querySelector(`input[id$='ServiceName-${category}']`).value = '';
+            form.querySelector(`input[id$='ServicePrice-${category}']`).value = '';
+            serviceImageInput.value = '';
+        };
+    
+        reader.readAsDataURL(serviceImageInput.files[0]);
     }
-
-    const newPrice = prompt("Edit Price:", servicePrice.textContent.replace('$', ''));
-    if (newPrice) {
-        servicePrice.textContent = `$${newPrice}`;
-        console.log("Updated Price:", newPrice);
-    }
-
-    // Allow user to replace image by entering new URL
-    const newImageURL = prompt("Edit Image URL:", serviceImage.src);
-    if (newImageURL) {
-        serviceImage.src = newImageURL;
-        console.log("Updated Image URL:", newImageURL);
-    }
-}
-
-// Function to remove a service
-function removeService(button) {
-    if (confirm("Are you sure you want to remove this service?")) {
+    
+    function editService(button) {
         const row = button.closest('tr');
-        row.remove();
-        console.log("Service removed");
+        const serviceNameCell = row.cells[0];
+        const serviceImageCell = row.cells[1];
+        const servicePriceCell = row.cells[2];
+    
+        if (button.textContent === 'Save') {
+            const newName = serviceNameCell.querySelector('input').value;
+            const newPrice = servicePriceCell.querySelector('input').value;
+            const newImageFile = serviceImageCell.querySelector('input[type="file"]').files[0];
+            
+            serviceNameCell.textContent = newName;
+            servicePriceCell.textContent = `$${newPrice}`;
+    
+            if (newImageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    serviceImageCell.innerHTML = `<img src="${e.target.result}" alt="${newName}" style="width: 80px; height: 60px;">`;
+                };
+                reader.readAsDataURL(newImageFile);
+            } else {
+                const currentImageURL = serviceImageCell.querySelector('img').src;
+                serviceImageCell.innerHTML = `<img src="${currentImageURL}" alt="${newName}" style="width: 80px; height: 60px;">`;
+            }
+    
+            button.textContent = 'Edit';
+        } else {
+            const currentName = serviceNameCell.textContent;
+            const currentPrice = servicePriceCell.textContent.replace('$', '');
+            const currentImageURL = serviceImageCell.querySelector('img').src;
+    
+            serviceNameCell.innerHTML = `<input type="text" value="${currentName}" class="form-control">`;
+            servicePriceCell.innerHTML = `<input type="number" value="${currentPrice}" class="form-control">`;
+            serviceImageCell.innerHTML = `
+                <img src="${currentImageURL}" alt="${currentName}" style="width: 80px; height: 60px; display:block; margin-bottom: 10px;">
+                <input type="file" class="form-control" style="width: 80px; font-size: 12px;">
+            `;
+    
+            button.textContent = 'Save';
+        }
     }
-}
-
-// Function to add a new service
-function addService(event) {
-    event.preventDefault();
-
-    const serviceName = document.getElementById('newServiceName').value;
-    const servicePrice = document.getElementById('newServicePrice').value;
-    const serviceImageInput = document.getElementById('newServiceImage');
-
-    // Ensure an image file is selected
-    if (serviceImageInput.files.length === 0) {
-        alert("Please select an image for the new service.");
-        return;
+    
+    function removeService(button) {
+        if (confirm("Are you sure you want to remove this service?")) {
+            const row = button.closest('tr');
+            row.remove();
+            console.log("Service removed");
+        }
     }
+    
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const imageURL = e.target.result;
 
-        // Add the new row to the services table
-        const table = document.querySelector('.table tbody');
-        const newRow = document.createElement('tr');
+    //search employee
 
-        newRow.innerHTML = `
-            <td>${serviceName}</td>
-            <td><img src="${imageURL}" alt="${serviceName}" style="width: 80px; height: 60px;"></td>
-            <td>$${servicePrice}</td>
-            <td>
-                <button class="btn btn-edit" onclick="editService(this)">Edit</button>
-                <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
-            </td>
-        `;
+    document.getElementById('search-button').addEventListener('click', function() {
+        const query = document.getElementById('search-employee').value.toLowerCase().trim();
+        const employeeBoxes = document.querySelectorAll('.employee-info-box');
+        let found = false;
+    
+        if (query === "") {
+            alert("Please enter a search term.");
+            return;
+        }
+    
+        employeeBoxes.forEach(box => {
+            const name = box.getAttribute('data-name') ? box.getAttribute('data-name').toLowerCase() : "";
+            const phone = box.getAttribute('data-phone') ? box.getAttribute('data-phone').toLowerCase() : "";
+    
+            // Check if query matches name or phone
+            if (name.includes(query) || phone.includes(query)) {
+                // Remove highlights from other boxes
+                employeeBoxes.forEach(box => box.style.border = "none");
+    
+                // Apply highlight and scroll into view
+                box.style.border = "3px solid blue"; // Highlight the found box
+                box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setTimeout(() => box.focus(), 300); // Bring focus to the box after scrolling
+                found = true;
+                console.log(`Match found for: ${query}`); // Log the match found
+            }
+        });
+    
+        if (!found) {
+            alert("No employee found with that name or phone number.");
+            console.log("No match found"); // Log if no match found
+        }
+    });
+    
 
-        table.appendChild(newRow);
 
-        // Clear form fields after adding service
-        document.getElementById('newServiceName').value = '';
-        document.getElementById('newServicePrice').value = '';
-        serviceImageInput.value = '';
-    };
+    // employee edit and delete 
 
-    reader.readAsDataURL(serviceImageInput.files[0]);
-}
-
+    document.addEventListener("DOMContentLoaded", function() {
+        // Add event listeners for edit and delete buttons
+        document.querySelectorAll(".edit-button-employee").forEach(button => {
+            button.addEventListener("click", editEmployee);
+        });
+        
+        document.querySelectorAll(".delete-button-employee").forEach(button => {
+            button.addEventListener("click", deleteEmployee);
+        });
+    });
+    
+    // Function to handle editing employee details
+    function editEmployee(event) {
+        const employeeBox = event.target.closest(".employee-info-box");
+        const infoDiv = employeeBox.querySelector("#employee-info");
+    
+        if (event.target.textContent === "Edit") {
+            // Switch to edit mode
+            infoDiv.innerHTML = `
+                <h5>Name: <input type="text" value="${employeeBox.getAttribute('data-name')}" class="form-control" id="edit-name"></h5>
+                <h5>Employee ID: <input type="text" value="123456" class="form-control" id="edit-id" disabled></h5>
+                <h5>Position: <input type="text" value="Nail Technician" class="form-control" id="edit-position"></h5>
+                <h5>Phone Number: <input type="text" value="${employeeBox.getAttribute('data-phone')}" class="form-control" id="edit-phone"></h5>
+                <h5>Email: <input type="email" value="abc@gmail.com" class="form-control" id="edit-email"></h5>
+                <h5>Upload New Picture: <input type="file" class="form-control" id="edit-picture"></h5>
+            `;
+            event.target.textContent = "Save";
+        } else {
+            // Save changes
+            const name = document.getElementById("edit-name").value;
+            const position = document.getElementById("edit-position").value;
+            const phone = document.getElementById("edit-phone").value;
+            const email = document.getElementById("edit-email").value;
+            
+            // Update the display with new data
+            infoDiv.innerHTML = `
+                <h5>Name: [ ${name} ]</h5>
+                <h5>Employee ID: [ 123456 ]</h5>
+                <h5>Position: [ ${position} ]</h5>
+                <h5>Phone Number: [ ${phone} ]</h5>
+                <h5>Email: [ ${email} ]</h5>
+            `;
+            
+            // Update data attributes for future reference
+            employeeBox.setAttribute('data-name', name);
+            employeeBox.setAttribute('data-phone', phone);
+            
+            // Change button text back to "Edit"
+            event.target.textContent = "Edit";
+        }
+    }
+    
+    // Function to handle deleting an employee
+    function deleteEmployee(event) {
+        const employeeBox = event.target.closest(".employee-info-box");
+        employeeBox.remove();
+    }
+    

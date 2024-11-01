@@ -1567,6 +1567,10 @@ body{
     margin:50px auto;
     padding:15px;
 }
+.table-container h2{
+    color:#6482AD;  
+    font-family: josefin sans;
+}
 .btn-edit {
     background-color: #4CAF50 !important;
     color: white;
@@ -1592,6 +1596,7 @@ body{
     width:80% ;
     margin:0 auto;
     font-family: josefin sans;
+    margin-bottom:50px;
 }
 .add-service-form h3{
     font-family: josefin sans;
@@ -1599,8 +1604,6 @@ body{
     color: #6482AD;
     text-align: center;
     font-size: 30px;
-    margin-top: 50px;
-    background: linear-gradient(135deg, #B3C8CF, #fad0c4);
     width: 40%;
     border-radius: 15px;
     margin:50px auto;
@@ -1608,3 +1611,107 @@ body{
 
 }
 
+.manage-services{
+    margin-top:-10px;
+}
+
+#employee-header{
+    font-family: josefin sans;
+    font-weight: 600;
+    color: #6482AD;
+    text-align: center;
+    font-size: 30px;
+    background: linear-gradient(135deg, #B3C8CF, #fad0c4);
+    width: 60%;
+    border-radius: 15px;
+    margin:140px auto;
+    padding:10px;
+}
+
+.employee-info-box{
+    background-color: rgba(243, 243, 243, 0.899);
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.669);
+    margin:0 auto;
+    text-align: center;
+    font-family: josefin sans;
+    color:#6482AD;
+    width:80%;
+    height:auto;
+    text-align: left;
+    display:flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+    margin-left:110px;
+    margin-top:50px;
+    justify-content: space-between;
+    gap:-80px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Elevate effect */
+    transition: box-shadow 0.3s ease; /* Smooth transition */
+}
+.employee-info-box:hover{
+    transform: translateY(-5px); /* Elevate card on hover */
+    box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.65); /* Increase shadow on hover */
+}
+
+#employee-pics{
+    width:25%;
+    background-color:#6482AD;
+    justify-content: center;
+    align-items: center;
+    display:flex;
+}
+#employee-pics img{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+    margin-top: 20px;
+    margin-bottom: 20px;
+    align-items: center;
+    display: flex;
+}
+
+#employee-search{
+    margin:0 auto;
+    width:80%;
+    align-items: center;
+    justify-content: center;
+    gap:10px;
+    margin-left:25%;
+
+}
+#search-employee{
+    width:50%;
+    margin:0 auto;
+}
+
+#edit-button-employee {
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#delete-button-employee {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Optional hover effect for better UX */
+#edit-button-employee:hover {
+    background-color: darkgreen;
+}
+
+#delete-button-employee:hover {
+    background-color: darkred;
+}
