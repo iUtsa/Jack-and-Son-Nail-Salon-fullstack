@@ -370,3 +370,94 @@ document.addEventListener('DOMContentLoaded', () => {
         bookingHistoryList.innerHTML = summaryHTML;
     }
 });
+
+
+
+
+//=====================seller side start =============================================================> 
+
+// edit services
+
+
+// Function to edit a service
+function editService(button) {
+    const row = button.closest('tr');
+    const serviceName = row.cells[0];
+    const serviceImage = row.cells[1].querySelector('img');
+    const servicePrice = row.cells[2];
+
+    console.log("Editing:", serviceName.textContent); // Debugging log
+
+    // Allow user to edit service name and price
+    const newName = prompt("Edit Service Name:", serviceName.textContent);
+    if (newName) {
+        serviceName.textContent = newName;
+        console.log("Updated Name:", newName);
+    }
+
+    const newPrice = prompt("Edit Price:", servicePrice.textContent.replace('$', ''));
+    if (newPrice) {
+        servicePrice.textContent = `$${newPrice}`;
+        console.log("Updated Price:", newPrice);
+    }
+
+    // Allow user to replace image by entering new URL
+    const newImageURL = prompt("Edit Image URL:", serviceImage.src);
+    if (newImageURL) {
+        serviceImage.src = newImageURL;
+        console.log("Updated Image URL:", newImageURL);
+    }
+}
+
+// Function to remove a service
+function removeService(button) {
+    if (confirm("Are you sure you want to remove this service?")) {
+        const row = button.closest('tr');
+        row.remove();
+        console.log("Service removed");
+    }
+}
+
+// Function to add a new service
+function addService(event) {
+    event.preventDefault();
+
+    const serviceName = document.getElementById('newServiceName').value;
+    const servicePrice = document.getElementById('newServicePrice').value;
+    const serviceImageInput = document.getElementById('newServiceImage');
+
+    // Ensure an image file is selected
+    if (serviceImageInput.files.length === 0) {
+        alert("Please select an image for the new service.");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const imageURL = e.target.result;
+
+        // Add the new row to the services table
+        const table = document.querySelector('.table tbody');
+        const newRow = document.createElement('tr');
+
+        newRow.innerHTML = `
+            <td>${serviceName}</td>
+            <td><img src="${imageURL}" alt="${serviceName}" style="width: 80px; height: 60px;"></td>
+            <td>$${servicePrice}</td>
+            <td>
+                <button class="btn btn-edit" onclick="editService(this)">Edit</button>
+                <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
+            </td>
+        `;
+
+        table.appendChild(newRow);
+
+        // Clear form fields after adding service
+        document.getElementById('newServiceName').value = '';
+        document.getElementById('newServicePrice').value = '';
+        serviceImageInput.value = '';
+    };
+
+    reader.readAsDataURL(serviceImageInput.files[0]);
+}
+

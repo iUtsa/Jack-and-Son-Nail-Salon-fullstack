@@ -1544,3 +1544,67 @@ body{
     margin:5px auto;
     display: flex;
 }
+
+
+
+.table-container {
+    max-width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    margin-top:130px;
+    font-family: josefin sans;
+}
+.table-container h1{
+    font-family: josefin sans;
+    font-weight: 600;
+    color: #6482AD;
+    text-align: center;
+    font-size: 30px;
+    margin-top: 50px;
+    background: linear-gradient(135deg, #B3C8CF, #fad0c4);
+    width: 60%;
+    border-radius: 15px;
+    margin:50px auto;
+    padding:15px;
+}
+.btn-edit {
+    background-color: #4CAF50 !important;
+    color: white;
+
+}
+.btn-edit:hover {
+    background-color: #4acdcb !important;
+}
+.btn-remove {
+    background-color: #f44336 !important;
+    color: white;
+}
+.btn-remove:hover {
+    background-color: #ff002f !important;
+}
+.table img {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+.add-service-form{
+    width:80% ;
+    margin:0 auto;
+    font-family: josefin sans;
+}
+.add-service-form h3{
+    font-family: josefin sans;
+    font-weight: 600;
+    color: #6482AD;
+    text-align: center;
+    font-size: 30px;
+    margin-top: 50px;
+    background: linear-gradient(135deg, #B3C8CF, #fad0c4);
+    width: 40%;
+    border-radius: 15px;
+    margin:50px auto;
+    padding:15px;
+
+}
+
