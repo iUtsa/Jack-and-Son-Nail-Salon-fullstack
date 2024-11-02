@@ -58,284 +58,165 @@
     <div id="employee-header">
         <h1>Employee Management</h1>
     </div>
-    <div id="employee-search">
-        <input type="text" id="search-employee" placeholder="Search for employee">
-        <button id="search-button">Search</button>
-    </div>
 
-    <div id="employee-names">
-        <div class="employee-info-box" data-name="Arnab Das Utsa" data-phone="123-456-7890">
-            <div id="employee-pics">
-                <img src="https://img.icons8.com/?size=160&id=bVQ9LCrNmSRM&format=png" alt="employee-icon">
-            </div>
-            <div id="edit-emplyee-btn">
-                <button id="edit-button-employee">Edit</button>
 
-            </div>
-            <div id="delete-employee-btn">
-                <button id="delete-button-employee">Delete</button>
-            </div>
-            <div id="employee-info">
-                <h5>Name: [ Arnab Das Utsa ]<h5>
-                        <h5>Employee ID: [ 123456 ]</h5>
-                        <h5>Position: [ Nail Technician ]</h5>
-                        <h5>Phone Number: [ 123-456-7890 ]</h5>
-                        <h5>Email: [abc@gmail.com]</h5>
-            </div>
+    <div class="table-container" id="edit-emp-table">
+        <table id="edit-employee-table" class="table table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Employee Name</th>
+                    <th>Phone Number</th>
+                    <th>Position</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Nail Care Services -->
+                <tr>
+                    <td>David Backham</td>
+                    <td>1234567899</td>
+                    <td>Nailcare Expert</td>
+                    <td>abc@gmail.com</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
+                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Lional Messi</td>
+                    <td>1234567899</td>
+                    <td>Manicure Expert</td>
+                    <td>bcd@yahoo.com</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
+                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Cristiano Ronaldo</td>
+                    <td>1234567899</td>
+                    <td>Manicure Expert</td>
+                    <td>cde@hotmail.com</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
+                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Neymar Jr.</td>
+                    <td>1234567899</td>
+                    <td>Padicure Expert</td>
+                    <td>def@outlook.com</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
+                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Vinicius Junior</td>
+                    <td>1234567899</td>
+                    <td>Waxing Expert</td>
+                    <td>fdsd@icould.com</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
+                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Diego Maradona</td>
+                    <td>1234567899</td>
+                    <td>Manicure Expert</td>
+                    <td>dfff@gmail.com</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
+                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>King Pele</td>
+                    <td>1234567899</td>
+                    <td>Padiicure Expert</td>
+                    <td>fdf@yahoo.com</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
+                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Ricardo Kaka</td>
+                    <td>1234567899</td>
+                    <td>Nailcare Expert</td>
+                    <td>kaka@gmail.com</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
+                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Roberto Carlos</td>
+                    <td>1234567899</td>
+                    <td>Manicure Expert</td>
+                    <td>carlos@gmail.com</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
+                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Zinedin Zidan</td>
+                    <td>1234567899</td>
+                    <td>Padicure Expert</td>
+                    <td>csdvh@gmail.com</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
+                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Ronaldinho</td>
+                    <td>1234567899</td>
+                    <td>Waxing Expert</td>
+                    <td>ron@icloud.com</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
+                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
+                    </td>
+                </tr>
+
+                <!-- Add other services following this format -->
+            </tbody>
+        </table>
+
+        <!-- Add New Employee Form -->
+        <div class="add-employee-form">
+            <h3>Add New Employee</h3>
+            <form id="addEmployeeForm-editemp" onsubmit="addEmployee(event)">
+                <div class="row">
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" placeholder="Employee Name" id="newEmployeeName-editemp" required>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" placeholder="Phone" id="newEmployeePhone-editemp" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" placeholder="Position" id="newEmployeePosition-editemp" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" placeholder="Email" id="newEmployeeEmail-editemp" required>
+                    </div>
+                    <div class="col-md-1">
+                        <button type="submit" class="btn btn-success w-100">Add</button>
+                    </div>
+                </div>
+                
+            </form>
         </div>
-        <div class="employee-info-box" data-name="Arnab Das Utsa" data-phone="123-456-7890">
-            <div id="employee-pics">
-                <img src="https://img.icons8.com/?size=160&id=bVQ9LCrNmSRM&format=png" alt="employee-icon">
-            </div>
-            <div id="edit-emplyee-btn">
-                <button id="edit-button-employee">Edit</button>
-
-            </div>
-            <div id="delete-employee-btn">
-                <button id="delete-button-employee">Delete</button>
-            </div>
-            <div id="employee-info">
-                <h5>Name: [ Arnab Das Utsa ]<h5>
-                        <h5>Employee ID: [ 123456 ]</h5>
-                        <h5>Position: [ Nail Technician ]</h5>
-                        <h5>Phone Number: [ 123-456-7890 ]</h5>
-                        <h5>Email: [abc@gmail.com]</h5>
-            </div>
-        </div>
-        
-        <div class="employee-info-box" data-name="Arnab Das Utsa" data-phone="123-456-7890">
-            <div id="employee-pics">
-                <img src="https://img.icons8.com/?size=160&id=bVQ9LCrNmSRM&format=png" alt="employee-icon">
-            </div>
-            <div id="edit-emplyee-btn">
-                <button id="edit-button-employee">Edit</button>
-
-            </div>
-            <div id="delete-employee-btn">
-                <button id="delete-button-employee">Delete</button>
-            </div>
-            <div id="employee-info">
-                <h5>Name: [ Arnab Das Utsa ]<h5>
-                        <h5>Employee ID: [ 123456 ]</h5>
-                        <h5>Position: [ Nail Technician ]</h5>
-                        <h5>Phone Number: [ 123-456-7890 ]</h5>
-                        <h5>Email: [abc@gmail.com]</h5>
-            </div>
-        </div>
-        <div class="employee-info-box" data-name="Arnab Das Utsa" data-phone="123-456-7890">
-            <div id="employee-pics">
-                <img src="https://img.icons8.com/?size=160&id=bVQ9LCrNmSRM&format=png" alt="employee-icon">
-            </div>
-            <div id="edit-emplyee-btn">
-                <button id="edit-button-employee">Edit</button>
-
-            </div>
-            <div id="delete-employee-btn">
-                <button id="delete-button-employee">Delete</button>
-            </div>
-            <div id="employee-info">
-                <h5>Name: [ Arnab Das Utsa ]<h5>
-                        <h5>Employee ID: [ 123456 ]</h5>
-                        <h5>Position: [ Nail Technician ]</h5>
-                        <h5>Phone Number: [ 123-456-7890 ]</h5>
-                        <h5>Email: [abc@gmail.com]</h5>
-            </div>
-        </div>
-        <div class="employee-info-box" data-name="Arnab Das Utsa" data-phone="123-456-7890">
-            <div id="employee-pics">
-                <img src="https://img.icons8.com/?size=160&id=bVQ9LCrNmSRM&format=png" alt="employee-icon">
-            </div>
-            <div id="edit-emplyee-btn">
-                <button id="edit-button-employee">Edit</button>
-
-            </div>
-            <div id="delete-employee-btn">
-                <button id="delete-button-employee">Delete</button>
-            </div>
-            <div id="employee-info">
-                <h5>Name: [ Arnab Das Utsa ]<h5>
-                        <h5>Employee ID: [ 123456 ]</h5>
-                        <h5>Position: [ Nail Technician ]</h5>
-                        <h5>Phone Number: [ 123-456-7890 ]</h5>
-                        <h5>Email: [abc@gmail.com]</h5>
-            </div>
-        </div>
-        <div class="employee-info-box" data-name="Arnab Das Utsa" data-phone="123-456-7890">
-            <div id="employee-pics">
-                <img src="https://img.icons8.com/?size=160&id=bVQ9LCrNmSRM&format=png" alt="employee-icon">
-            </div>
-            <div id="edit-emplyee-btn">
-                <button id="edit-button-employee">Edit</button>
-
-            </div>
-            <div id="delete-employee-btn">
-                <button id="delete-button-employee">Delete</button>
-            </div>
-            <div id="employee-info">
-                <h5>Name: [ Arnab Das Utsa ]<h5>
-                        <h5>Employee ID: [ 123456 ]</h5>
-                        <h5>Position: [ Nail Technician ]</h5>
-                        <h5>Phone Number: [ 123-456-7890 ]</h5>
-                        <h5>Email: [abc@gmail.com]</h5>
-            </div>
-        </div>
-        <div class="employee-info-box" data-name="Arnab Das Utsa" data-phone="123-456-7890">
-            <div id="employee-pics">
-                <img src="https://img.icons8.com/?size=160&id=bVQ9LCrNmSRM&format=png" alt="employee-icon">
-            </div>
-            <div id="edit-emplyee-btn">
-                <button id="edit-button-employee">Edit</button>
-
-            </div>
-            <div id="delete-employee-btn">
-                <button id="delete-button-employee">Delete</button>
-            </div>
-            <div id="employee-info">
-                <h5>Name: [ Arnab Das Utsa ]<h5>
-                        <h5>Employee ID: [ 123456 ]</h5>
-                        <h5>Position: [ Nail Technician ]</h5>
-                        <h5>Phone Number: [ 123-456-7890 ]</h5>
-                        <h5>Email: [abc@gmail.com]</h5>
-            </div>
-        </div>
-        <div class="employee-info-box" data-name="Arnab Das Utsa" data-phone="123-456-7890">
-            <div id="employee-pics">
-                <img src="https://img.icons8.com/?size=160&id=bVQ9LCrNmSRM&format=png" alt="employee-icon">
-            </div>
-            <div id="edit-emplyee-btn">
-                <button id="edit-button-employee">Edit</button>
-
-            </div>
-            <div id="delete-employee-btn">
-                <button id="delete-button-employee">Delete</button>
-            </div>
-            <div id="employee-info">
-                <h5>Name: [ Arnab Das Utsa ]<h5>
-                        <h5>Employee ID: [ 123456 ]</h5>
-                        <h5>Position: [ Nail Technician ]</h5>
-                        <h5>Phone Number: [ 123-456-7890 ]</h5>
-                        <h5>Email: [abc@gmail.com]</h5>
-            </div>
-        </div>
-        <div class="employee-info-box" data-name="Arnab Das Utsa" data-phone="123-456-7890">
-            <div id="employee-pics">
-                <img src="https://img.icons8.com/?size=160&id=bVQ9LCrNmSRM&format=png" alt="employee-icon">
-            </div>
-            <div id="edit-emplyee-btn">
-                <button id="edit-button-employee">Edit</button>
-
-            </div>
-            <div id="delete-employee-btn">
-                <button id="delete-button-employee">Delete</button>
-            </div>
-            <div id="employee-info">
-                <h5>Name: [ Arnab Das Utsa ]<h5>
-                        <h5>Employee ID: [ 123456 ]</h5>
-                        <h5>Position: [ Nail Technician ]</h5>
-                        <h5>Phone Number: [ 123-456-7890 ]</h5>
-                        <h5>Email: [abc@gmail.com]</h5>
-            </div>
-        </div>
-        <div class="employee-info-box" data-name="Arnab Das Utsa" data-phone="123-456-7890">
-            <div id="employee-pics">
-                <img src="https://img.icons8.com/?size=160&id=bVQ9LCrNmSRM&format=png" alt="employee-icon">
-            </div>
-            <div id="edit-emplyee-btn">
-                <button id="edit-button-employee">Edit</button>
-
-            </div>
-            <div id="delete-employee-btn">
-                <button id="delete-button-employee">Delete</button>
-            </div>
-            <div id="employee-info">
-                <h5>Name: [ Arnab Das Utsa ]<h5>
-                        <h5>Employee ID: [ 123456 ]</h5>
-                        <h5>Position: [ Nail Technician ]</h5>
-                        <h5>Phone Number: [ 123-456-7890 ]</h5>
-                        <h5>Email: [abc@gmail.com]</h5>
-            </div>
-        </div>
-        <div class="employee-info-box" data-name="Arnab Das Utsa" data-phone="123-456-7890">
-            <div id="employee-pics">
-                <img src="https://img.icons8.com/?size=160&id=bVQ9LCrNmSRM&format=png" alt="employee-icon">
-            </div>
-            <div id="edit-emplyee-btn">
-                <button id="edit-button-employee">Edit</button>
-
-            </div>
-            <div id="delete-employee-btn">
-                <button id="delete-button-employee">Delete</button>
-            </div>
-            <div id="employee-info">
-                <h5>Name: [ Arnab Das Utsa ]<h5>
-                        <h5>Employee ID: [ 123456 ]</h5>
-                        <h5>Position: [ Nail Technician ]</h5>
-                        <h5>Phone Number: [ 123-456-7890 ]</h5>
-                        <h5>Email: [abc@gmail.com]</h5>
-            </div>
-        </div>
-        <div class="employee-info-box" data-name="Arnab Das Utsa" data-phone="123-456-7890">
-            <div id="employee-pics">
-                <img src="https://img.icons8.com/?size=160&id=bVQ9LCrNmSRM&format=png" alt="employee-icon">
-            </div>
-            <div id="edit-emplyee-btn">
-                <button id="edit-button-employee">Edit</button>
-
-            </div>
-            <div id="delete-employee-btn">
-                <button id="delete-button-employee">Delete</button>
-            </div>
-            <div id="employee-info">
-                <h5>Name: [ Arnab Das Utsa ]<h5>
-                        <h5>Employee ID: [ 123456 ]</h5>
-                        <h5>Position: [ Nail Technician ]</h5>
-                        <h5>Phone Number: [ 123-456-7890 ]</h5>
-                        <h5>Email: [abc@gmail.com]</h5>
-            </div>
-        </div>
-        <div class="employee-info-box" data-name="Arnab Das Utsa" data-phone="123-456-7890">
-            <div id="employee-pics">
-                <img src="https://img.icons8.com/?size=160&id=bVQ9LCrNmSRM&format=png" alt="employee-icon">
-            </div>
-            <div id="edit-emplyee-btn">
-                <button id="edit-button-employee">Edit</button>
-
-            </div>
-            <div id="delete-employee-btn">
-                <button id="delete-button-employee">Delete</button>
-            </div>
-            <div id="employee-info">
-                <h5>Name: [ Arnab Das Utsa ]<h5>
-                        <h5>Employee ID: [ 123456 ]</h5>
-                        <h5>Position: [ Nail Technician ]</h5>
-                        <h5>Phone Number: [ 123-456-7890 ]</h5>
-                        <h5>Email: [abc@gmail.com]</h5>
-            </div>
-        </div>
-        <div class="employee-info-box" data-name="Arnab Das Utsa" data-phone="123-456-7890">
-            <div id="employee-pics">
-                <img src="https://img.icons8.com/?size=160&id=bVQ9LCrNmSRM&format=png" alt="employee-icon">
-            </div>
-            <div id="edit-emplyee-btn">
-                <button id="edit-button-employee">Edit</button>
-
-            </div>
-            <div id="delete-employee-btn">
-                <button id="delete-button-employee">Delete</button>
-            </div>
-            <div id="employee-info">
-                <h5>Name: [ Arnab Das Utsa ]<h5>
-                        <h5>Employee ID: [ 123456 ]</h5>
-                        <h5>Position: [ Nail Technician ]</h5>
-                        <h5>Phone Number: [ 123-456-7890 ]</h5>
-                        <h5>Email: [abc@gmail.com]</h5>
-            </div>
-        </div>
-    </div>
 
 
 
 
+</div>
 
 
     <div class="bottom-bar">
