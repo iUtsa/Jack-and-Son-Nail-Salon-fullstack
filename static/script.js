@@ -429,6 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsDataURL(serviceImageInput.files[0]);
     }
     
+    
     function editService(button) {
         const row = button.closest('tr');
         const serviceNameCell = row.cells[0];
@@ -493,21 +494,19 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
     
+        // Clear any previous highlights
+        employeeBoxes.forEach(box => box.style.border = "none");
+    
+        // Find and scroll to the first matching employee box
         employeeBoxes.forEach(box => {
             const name = box.getAttribute('data-name') ? box.getAttribute('data-name').toLowerCase() : "";
             const phone = box.getAttribute('data-phone') ? box.getAttribute('data-phone').toLowerCase() : "";
     
-            // Check if query matches name or phone
-            if (name.includes(query) || phone.includes(query)) {
-                // Remove highlights from other boxes
-                employeeBoxes.forEach(box => box.style.border = "none");
-    
-                // Apply highlight and scroll into view
+            if (!found && (name.includes(query) || phone.includes(query))) {
                 box.style.border = "3px solid blue"; // Highlight the found box
-                box.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                setTimeout(() => box.focus(), 300); // Bring focus to the box after scrolling
-                found = true;
-                console.log(`Match found for: ${query}`); // Log the match found
+                box.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Smooth scroll to the box
+                found = true; // Stop after the first match
+                console.log(`Match found for: ${query}`); // Log the match for debugging
             }
         });
     
@@ -516,6 +515,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("No match found"); // Log if no match found
         }
     });
+    
     
 
 
@@ -578,4 +578,136 @@ document.addEventListener('DOMContentLoaded', () => {
         const employeeBox = event.target.closest(".employee-info-box");
         employeeBox.remove();
     }
+
+
+
+
+    //==========employee editing===========
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Bind form submission to add new employee
+        document.getElementById("addEmployeeForm-editemp").addEventListener("submit", addEmployee);
+    });
     
+    function addEmployee(event) {
+        event.preventDefault();
+    
+        // Get form values
+        const name = document.getElementById("newEmployeeName-editemp").value;
+        const phone = document.getElementById("newEmployeePhone-editemp").value;
+        const position = document.getElementById("newEmployeePosition-editemp").value;
+        const email = document.getElementById("newEmployeeEmail-editemp").value;
+    
+        // Create new row in the table
+        const table = document.getElementById("edit-employee-table").getElementsByTagName("tbody")[0];
+        const newRow = document.createElement("tr");
+    
+        newRow.innerHTML = `
+            <td>${name}</td>
+            <td>${phone}</td>
+            <td>${position}</td>
+            <td>${email}</td>
+            <td>
+                <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
+                <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
+            </td>
+        `;
+    
+        table.appendChild(newRow);
+    
+        // Clear input fields after adding employee
+        document.getElementById("newEmployeeName-editemp").value = '';
+        document.getElementById("newEmployeePhone-editemp").value = '';
+        document.getElementById("newEmployeePosition-editemp").value = '';
+        document.getElementById("newEmployeeEmail-editemp").value = '';
+    }
+    
+    function editEmp(button) {
+        const row = button.closest("tr");
+        const cells = row.getElementsByTagName("td");
+    
+        if (button.textContent === "Save") {
+            // Save edited values
+            const newName = cells[0].querySelector("input").value;
+            const newPhone = cells[1].querySelector("input").value;
+            const newPosition = cells[2].querySelector("input").value;
+            const newEmail = cells[3].querySelector("input").value;
+    
+            // Set updated values to cells
+            cells[0].textContent = newName;
+            cells[1].textContent = newPhone;
+            cells[2].textContent = newPosition;
+            cells[3].textContent = newEmail;
+    
+            button.textContent = "Edit";
+        } else {
+            // Switch to edit mode by creating input fields
+            const currentName = cells[0].textContent.trim();
+            const currentPhone = cells[1].textContent.trim();
+            const currentPosition = cells[2].textContent.trim();
+            const currentEmail = cells[3].textContent.trim();
+    
+            cells[0].innerHTML = `<input type="text" value="${currentName}" class="form-control">`;
+            cells[1].innerHTML = `<input type="text" value="${currentPhone}" class="form-control">`;
+            cells[2].innerHTML = `<input type="text" value="${currentPosition}" class="form-control">`;
+            cells[3].innerHTML = `<input type="text" value="${currentEmail}" class="form-control">`;
+    
+            button.textContent = "Save";
+        }
+    }
+    
+    function removeEmp(button) {
+        if (confirm("Are you sure you want to remove this employee?")) {
+            const row = button.closest("tr");
+            row.remove();
+            console.log("Employee removed");
+        }
+    }
+    
+
+    //=======edit store timing======
+    function editTime(button) {
+        const row = button.closest("tr"); // Get the row of the clicked button
+        const openCell = row.cells[1]; // Access the "Open" cell
+        const closeCell = row.cells[2]; // Access the "Close" cell
+
+        if (button.textContent === "Edit") {
+            // Get the current time values in 12-hour format
+            const currentOpen = to12HourFormat(openCell.textContent.trim());
+            const currentClose = to12HourFormat(closeCell.textContent.trim());
+
+            // Replace text content with input fields
+            openCell.innerHTML = `<input type="time" value="${to24HourFormat(currentOpen)}" class="form-control">`;
+            closeCell.innerHTML = `<input type="time" value="${to24HourFormat(currentClose)}" class="form-control">`;
+
+            // Change button text to "Save"
+            button.textContent = "Save";
+        } else {
+            // Retrieve values in 24-hour format and convert them to 12-hour format for display
+            const newOpen = openCell.querySelector("input").value;
+            const newClose = closeCell.querySelector("input").value;
+
+            openCell.textContent = to12HourFormat(newOpen);
+            closeCell.textContent = to12HourFormat(newClose);
+
+            // Change button text back to "Edit"
+            button.textContent = "Edit";
+        }
+    }
+
+    // Function to convert 24-hour time to 12-hour format
+    function to12HourFormat(time) {
+        const [hours, minutes] = time.split(":");
+        const period = hours >= 12 ? "PM" : "AM";
+        const adjustedHours = hours % 12 || 12; // Adjust 0 or 24 to 12
+        return `${adjustedHours}:${minutes} ${period}`;
+    }
+
+    // Function to convert 12-hour time to 24-hour format (for input field compatibility)
+    function to24HourFormat(time) {
+        const [timePart, period] = time.split(" ");
+        let [hours, minutes] = timePart.split(":");
+        if (period === "PM" && hours !== "12") hours = parseInt(hours) + 12;
+        if (period === "AM" && hours === "12") hours = "00";
+        return `${hours}:${minutes}`;
+    }
