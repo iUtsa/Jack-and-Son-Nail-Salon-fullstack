@@ -1747,3 +1747,65 @@ body{
     margin-top:-110px;
     width:80%;
 }
+
+
+/*-----------------schedule-----------------*/
+
+#edit-schedule-table{
+    margin-top:-30px;
+    width:100%;
+}
+.table-container {
+    max-width: 90%;
+    overflow-x: auto;
+    padding: 0 15px; /* Optional: Adds padding on both sides */
+}
+
+.table-container table {
+    width: 100%;
+    max-width: 100%;
+    table-layout: fixed; /* Ensures columns don’t expand unevenly */
+}
+
+/* Assign different text colors for each day column */
+#edit-time-table th:nth-child(2),
+#edit-time-table td:nth-child(2) {
+    color: green; /* Monday - Orange */
+}
+
+#edit-time-table th:nth-child(3),
+#edit-time-table td:nth-child(3) {
+    color: orange; /* Tuesday - Blue */
+}
+
+#edit-time-table th:nth-child(4),
+#edit-time-table td:nth-child(4) {
+    color: rgb(71, 182, 234); /* Wednesday - Green */
+}
+
+#edit-time-table th:nth-child(5),
+#edit-time-table td:nth-child(5) {
+    color: lavender; /* Thursday - Light Orange */
+}
+
+#edit-time-table th:nth-child(6),
+#edit-time-table td:nth-child(6) {
+    color: yellow; /* Friday - Red */
+}
+
+#edit-time-table th:nth-child(7),
+#edit-time-table td:nth-child(7) {
+    color: #9575cd; /* Saturday - Purple */
+}
+
+#edit-time-table th:nth-child(8),
+#edit-time-table td:nth-child(8) {
+    color: red; /* Sunday - Yellow */
+}
+
+.small-input {
+    width: 120px; /* Adjust this width as needed */
+    padding: 2px; /* Smaller padding */
+    font-size: 0.8rem; /* Smaller font size */
+    text-align: center; /* Centers text within the field */
+}

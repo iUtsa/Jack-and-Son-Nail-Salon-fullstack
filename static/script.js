@@ -711,3 +711,36 @@ document.addEventListener('DOMContentLoaded', () => {
         if (period === "AM" && hours === "12") hours = "00";
         return `${hours}:${minutes}`;
     }
+
+
+
+
+    //===========scheudle edit =========
+    
+   //===========schedule edit =========
+
+function editSch(button) {
+    const row = button.closest('tr');
+    const cells = row.querySelectorAll('td:not(:first-child):not(:last-child)');
+
+    // Check if the cells are already editable
+    if (button.textContent === 'Edit') {
+        cells.forEach(cell => {
+            const currentText = cell.textContent;
+            cell.innerHTML = `<input type="text" value="${currentText}" class="small-input" />`;
+        });
+        button.textContent = 'Save';
+    } else {
+        // Save the input values back to the cells
+        cells.forEach(cell => {
+            const input = cell.querySelector('input');
+            if (input) {
+                cell.textContent = input.value;
+            }
+        });
+        button.textContent = 'Edit';
+    }
+}
+
+    
+
