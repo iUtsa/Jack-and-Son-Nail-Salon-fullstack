@@ -1,68 +1,55 @@
--- Create USERS table
-CREATE TABLE users (
-    CustomerID INT PRIMARY KEY AUTO_INCREMENT,
-    UserName VARCHAR(50) NOT NULL,
-    passcode VARCHAR(50) NOT NULL,
-    Email VARCHAR(100) NULL,
-    Phone VARCHAR(15) NOT NULL,
-    User_type ENUM('customer', 'employee') NOT NULL
-);
+CREATE TABLE `users` (
+  `CustomerID` int NOT NULL AUTO_INCREMENT,
+  `UserName` varchar(50) NOT NULL,
+  `passcode` varchar(255) NOT NULL,
+  `Email` varchar(100) DEFAULT NULL,
+  `Phone` varchar(15) NOT NULL,
+  `User_type` enum('customer','employee') NOT NULL,
+  PRIMARY KEY (`CustomerID`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Create CUSTOMERS table referencing USERS
-CREATE TABLE customers (
-    CustomerID INT PRIMARY KEY,
-    UserName VARCHAR(50) NOT NULL,
-    Email VARCHAR(100),
-    Phone VARCHAR(15),
-    FOREIGN KEY (CustomerID) REFERENCES users(CustomerID)
-);
+CREATE TABLE `customers` (
+  `CustomerID` int NOT NULL,
+  `UserName` varchar(50) NOT NULL,
+  `Email` varchar(100) DEFAULT NULL,
+  `Phone` varchar(15) DEFAULT NULL,
+  PRIMARY KEY (`CustomerID`),
+  CONSTRAINT `customers_ibfk_1` FOREIGN KEY (`CustomerID`) REFERENCES `users` (`CustomerID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Create EMPLOYEE table referencing USERS
-CREATE TABLE employee (
-    CustomerID INT PRIMARY KEY,
-    UserName VARCHAR(50) NOT NULL,
-    Email VARCHAR(100),
-    Phone VARCHAR(15),
-    FOREIGN KEY (CustomerID) REFERENCES users(CustomerID)
-);
+CREATE TABLE `employee` (
+  `CustomerID` int NOT NULL,
+  `UserName` varchar(50) NOT NULL,
+  `Email` varchar(100) DEFAULT NULL,
+  `Phone` varchar(15) DEFAULT NULL,
+  PRIMARY KEY (`CustomerID`),
+  CONSTRAINT `employee_ibfk_1` FOREIGN KEY (`CustomerID`) REFERENCES `users` (`CustomerID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Create APPOINTMENTS table referencing USERS
-CREATE TABLE appointments (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    customer_id INT,
-    employee_id INT,
-    service_type VARCHAR(50),
-    appointment_time DATETIME,
-    appointment_end DATETIME,
-    calendar_event_id VARCHAR(100),
-    status ENUM('scheduled', 'confirmed', 'cancelled') NOT NULL,
-    FOREIGN KEY (customer_id) REFERENCES users(CustomerID),
-    FOREIGN KEY (employee_id) REFERENCES users(CustomerID)
-);
 
--- Create SERVICES table
-CREATE TABLE services (
-    service_id INT PRIMARY KEY AUTO_INCREMENT,
-    service_name VARCHAR(100) NOT NULL,
-    duration INT NOT NULL,
-    price DECIMAL(10, 2) NOT NULL
-);
 
--- Create EMPLOYEE_SCHEDULE table referencing USERS
-CREATE TABLE employee_schedule (
-    schedule_id INT PRIMARY KEY AUTO_INCREMENT,
-    employee_id INT,
-    day_of_week ENUM('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday') NOT NULL,
-    start_time TIME NOT NULL,
-    end_time TIME NOT NULL,
-    FOREIGN KEY (employee_id) REFERENCES users(CustomerID)
-);
 
--- Create SESSIONS table referencing USERS
-CREATE TABLE sessions (
-    session_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT,
-    session_token VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(CustomerID)
-);
+CREATE TABLE `services` (
+  `service_id` int NOT NULL AUTO_INCREMENT,
+  `service_name` varchar(100) NOT NULL,
+  `duration` int NOT NULL,
+  `price` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`service_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `appointments` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `booking_number` varchar(50) DEFAULT NULL,
+  `customer_id` int DEFAULT NULL,
+  `employee_id` int DEFAULT NULL,
+  `service_type` varchar(50) DEFAULT NULL,
+  `appointment_date` date DEFAULT NULL,
+  `appointment_start_time` time DEFAULT NULL,
+  `appointment_end_time` time DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `customer_id` (`customer_id`),
+  KEY `employee_id` (`employee_id`),
+  CONSTRAINT `appointments_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `users` (`CustomerID`),
+  CONSTRAINT `appointments_ibfk_2` FOREIGN KEY (`employee_id`) REFERENCES `users` (`CustomerID`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
