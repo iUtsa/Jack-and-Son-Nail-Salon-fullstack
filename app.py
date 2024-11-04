@@ -3,6 +3,7 @@ from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Mail, Message
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime, timedelta, time, date
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Required for session handling
@@ -13,8 +14,18 @@ db = mysql.connector.connect(
     host="localhost",
     user="root",
     password="Utsh@das2001",
-    database="Customer_and_Employee_Information"
+    database="test1"
 )
+
+
+## Add function to create account to check for existed username!!!!!
+
+
+
+
+
+
+
 
 
 # Home route
@@ -82,17 +93,36 @@ def reservation():
 def profile():
     # Render the profile template
     # Check if user is logged in
+    appt_list = []
+    current_date = datetime.now().date()
     if 'loggedin' not in session:
         flash('Please log in to view your profile.', 'warning')
         return redirect(url_for('login'))
-
-    # Fetch the user information from the database
+    customer_id = session['CustomerID']
     cursor = db.cursor(dictionary=True)
-    cursor.execute('SELECT * FROM users WHERE CustomerID = %s', (session['CustomerID'],))
+    cursor.execute('SELECT service_type, appointment_date, appointment_start_time, booking_number FROM appointments WHERE customer_id = %s ORDER BY appointment_date ASC, appointment_start_time DESC', (customer_id,))
+    appt_avail = cursor.fetchall()
+
+    if appt_avail:
+        for appt in appt_avail:
+            # Get the 24-hour format appointment time
+            time_hour_24 = appt['appointment_start_time']
+            
+            # Update the appointment dictionary with the new time format
+            time_hour_12 = timedelta_to_time(time_hour_24)  # Format as 12-hour time
+
+            appt['appointment_start_time'] = time_hour_12 # reassigning 12-hours cycle into each appointment_time
+            
+            
+            #Filter out any appointments with a None service_type
+        appt_avail = [appt for appt in appt_avail if appt['service_type'] is not None]
+        appt_list = appt_avail
+    # Fetch the user information from the database
+    cursor.execute('SELECT * FROM users WHERE CustomerID = %s', (customer_id,))
     user = cursor.fetchone()
     avatar_url = 'https://via.placeholder.com/150?text=Female+Avatar'
-
-    return render_template('client/profile.html', user=user, avatar_url=avatar_url)
+    cursor.close()
+    return render_template('client/profile.html', user=user, avatar_url=avatar_url,appt_list=appt_list, current_date=current_date)
 
 
 @app.route('/final-confirm', methods=['POST'])
@@ -103,29 +133,46 @@ def final_confirm():
     # Extract details from the JSON data
     selected_services = data.get('services')
     booking_number = data.get('bookingNumber')
-    date = data.get('date')
+    start_date_str = data.get('date')
 
-    # You can store this in a database, or append it to the session
-    # Example of storing it in a session
+    # Store in the session
     if 'reservations' not in session:
         session['reservations'] = []
 
     session['reservations'].append({
         'booking_number': booking_number,
-        'date': date,
+        'start_date': start_date_str,
         'services': selected_services
     })
 
-    # Or you can insert this data into your database directly
-    # Assuming you have a `reservations` table
+    # Insert data into the database
     cursor = db.cursor()
     for service in selected_services:
-        cursor.execute('INSERT INTO reservations (service, date, time) VALUES (%s, %s, %s)',
-                       (service['service'], service['timeSlot'].split()[0], service['timeSlot'].split()[1]))
+        # Access `service` and `timeSlot` properties from each entry
+        service_type = service['service']
+        time_slot = service['timeSlot']
+        
+        # Ensure the format of time_slot is correct
+        start_date = datetime.strptime(time_slot, "%m/%d/%Y %I:%M:%S %p")  # Adjust format as necessary
+
+        # Extract the time component
+        appt_date = start_date.date()
+        start_time = start_date.time()
+        
+        # Add 30 minutes to start_date for end time
+        end_date = start_date + timedelta(minutes=30)
+        end_time = end_date.time()
+
+        # Insert each service individually into the database
+        cursor.execute(
+            'INSERT INTO appointments (booking_number, customer_id, employee_id, service_type, appointment_date, appointment_start_time, appointment_end_time) VALUES (%s, %s, %s, %s, %s, %s, %s)',
+            (booking_number, session['CustomerID'], 5, service_type, appt_date, start_time, end_time)
+        )
+
     db.commit()
 
-    # Return a JSON response to acknowledge the booking confirmation
-    return jsonify({'status': 'success', 'message': 'Booking confirmed!'})
+    # Return a JSON response to confirm the booking
+    return jsonify({"status": "success", "bookingNumber": booking_number})
 
 
 # login
@@ -174,19 +221,32 @@ def create_account():
 
         # Hash the password before saving it
         hashed_password = generate_password_hash(passcode)
-
-        cursor = db.cursor()
-        cursor.execute(
-            'INSERT INTO users (UserName, passcode, Email, Phone, User_type) VALUES (%s, %s, %s, %s, %s)',
-            (UserName, hashed_password, Email, Phone, 'customer')  # You can adjust 'customer' as needed
-        )
-        db.commit()
-        cursor.close()
-        flash('Account created successfully! Please log in.', 'success')
-        return redirect(url_for('login'))  # Redirect to login page after successful registration
-
+        if check_user(UserName):
+            flash('Username is already in use', 'danger')
+        else:
+            if not db.is_connected():
+                db.reconnect(attempts=3, delay=5)
+            cursor = db.cursor()
+            cursor.execute(
+                'INSERT INTO test1.users (UserName, passcode, Email, Phone, User_type) VALUES (%s, %s, %s, %s, %s)',
+                (UserName, hashed_password, Email, Phone, 'customer')
+            )
+            db.commit()
+            cursor.close()
+            flash('Account created successfully! Please log in.', 'success')
+            return redirect(url_for('login'))
     return render_template('client/createac.html')
 
+
+def check_user(name: str) -> bool:
+    cursor = db.cursor()
+    cursor.execute('SELECT * FROM users WHERE UserName = %s', (name,))
+    have_name = cursor.fetchone()
+    db.close()
+    if have_name:
+        return True
+    else:
+        return False
 
 # Flask-Mail configuration
 app.config['MAIL_SERVER'] = 'smtp.example.com'
@@ -257,6 +317,24 @@ def reset_password(token):
             flash('Your password has been updated!', 'success')
             return redirect(url_for('login'))
     return render_template('client/reset_password.html', token=token)
+
+def timedelta_to_time(td):
+    # Extract total seconds from timedelta
+    total_seconds = int(td.total_seconds())
+    
+    # Calculate hours, minutes, and seconds
+    hours, remainder = divmod(total_seconds, 3600)  # 3600 seconds in an hour
+    minutes, seconds = divmod(remainder, 60)        # 60 seconds in a minute
+
+    # Create a time object
+    t = time(hour=hours % 24, minute=minutes, second=seconds)
+    
+    # Format the time in 12-hour format
+    hour_12 = t.hour % 12 or 12  # Convert to 12-hour format
+    am_pm = "AM" if t.hour < 12 else "PM"
+    
+    return f"{hour_12:02}:{t.minute:02}:{t.second:02} {am_pm}"
+
 
 
 # Run the app
