@@ -14,14 +14,14 @@ Jack and Son Nails Spa is a scheduling and employee management system designed t
 | **Shift Scheduling**    | Assign shifts to employees with unique color-coded blocks per slot.    |
 | **Client Booking**      | Clients can view and book based on available time slots.               |
 | **Responsive Layout**   | Works smoothly on any device, adapting to different screen sizes.      |
---------------------------|------------------------------------------------------------------------|
+
 
 ## 📂 Project Structure
 
 - **Frontend**: HTML/CSS/JavaScript for managing UI, forms, and real-time editing.
 - **Backend**: Flask handles server requests, scheduling logic, and data persistence.
 - **Styling**: Bootstrap provides a clean, responsive design for intuitive navigation.
-- **Database**: Relational Database for backend efficiency and better data store management.
+- **Database**: MySql provides Relational Database for backend efficiency and better data store management.
 
 ## 🔧 Setup & Installation
 
