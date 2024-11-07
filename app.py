@@ -1,31 +1,45 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, make_response
 from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Mail, Message
 import mysql.connector
+from mysql.connector import Error
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta, time, date
+import background
+
+# The following environment is selected: ~/Downloads/latestJ&S V3/.venv/bin/python÷
+
 
 app = Flask(__name__)
+app.register_blueprint(background.background_bp)
 app.secret_key = 'your_secret_key'  # Required for session handling
 # Define the secret key for token generation
+
+app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_TYPE'] = 'filesystem'  # Store session data in the filesystem
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 
 # Database connection
 db = mysql.connector.connect(
     host="localhost",
     user="root",
     password="Utsh@das2001",
-    database="test1"
+    database="test2"
 )
 
-
-## Add function to create account to check for existed username!!!!!
-
-
-
-
-
-
-
+def get_db_connection():
+    try:
+        db = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="Utsh@das2001",
+            database="test2"
+        )
+        if db.is_connected():
+            return db
+    except Error as e:
+        print("Error connecting to MySQL database:", e)
+        return None
 
 
 # Home route
@@ -71,14 +85,12 @@ def req_password():
 @app.route('/logout', methods=['POST'])
 @app.route('/logout')
 def logout():
-    # Clear the session data to log the user out
+
     session.clear()
 
-    # Redirect to the login page after logging out
-    # Redirect to the home page after logging out
-    flash('You have been logged out successfully.', 'info')
     return redirect(url_for('home'))
 
+@app.route('/seller/index.html')
 
 @app.route('/reservation')
 def reservation():
@@ -88,99 +100,81 @@ def reservation():
 
 
 # Profile page
-@app.route('/profile', methods=['POST'])
+@app.route('/profile', methods=['POST', 'GET'])
 @app.route('/profile')
 def profile():
-    # Render the profile template
+    msg = ''
     # Check if user is logged in
+    if 'loggedin' not in session:
+        msg = 'Please log in to view your profile.'
+        return render_template('client/login.html', msg=msg)
+
+    # Initialize variables
     appt_list = []
     current_date = datetime.now().date()
-    if 'loggedin' not in session:
-        flash('Please log in to view your profile.', 'warning')
-        return redirect(url_for('login'))
     customer_id = session['CustomerID']
+    
+    # Fetch appointments for the logged-in user
+    db = get_db_connection()  # Ensure you get a fresh connection here
     cursor = db.cursor(dictionary=True)
-    cursor.execute('SELECT service_type, appointment_date, appointment_start_time, booking_number FROM appointments WHERE customer_id = %s ORDER BY appointment_date ASC, appointment_start_time DESC', (customer_id,))
+    
+    cursor.execute(
+    '''
+    SELECT 
+        a.appt_id,
+        a.customer_id, 
+        a.service_id, 
+        s.service_type,
+        s.service_name, 
+        a.appointment_date, 
+        a.appointment_start_time, 
+        a.booking_number 
+    FROM 
+        appointments a
+    JOIN 
+        services s ON a.service_id = s.service_id
+    WHERE 
+        a.customer_id = %s
+    ORDER BY 
+        a.appointment_date ASC, 
+        a.appointment_start_time DESC
+    ''',
+    (customer_id,)
+    )
     appt_avail = cursor.fetchall()
 
+    # Process appointments to convert time format and filter out None service types
     if appt_avail:
         for appt in appt_avail:
-            # Get the 24-hour format appointment time
             time_hour_24 = appt['appointment_start_time']
-            
-            # Update the appointment dictionary with the new time format
-            time_hour_12 = timedelta_to_time(time_hour_24)  # Format as 12-hour time
+            time_hour_12 = background.timedelta_to_time(time_hour_24)  # Convert to 12-hour format
+            appt['appointment_start_time'] = time_hour_12
 
-            appt['appointment_start_time'] = time_hour_12 # reassigning 12-hours cycle into each appointment_time
-            
-            
-            #Filter out any appointments with a None service_type
-        appt_avail = [appt for appt in appt_avail if appt['service_type'] is not None]
-        appt_list = appt_avail
-    # Fetch the user information from the database
+        appt_list = [appt for appt in appt_avail if appt['service_id'] is not None]
+
+    # Fetch user information
     cursor.execute('SELECT * FROM users WHERE CustomerID = %s', (customer_id,))
     user = cursor.fetchone()
     avatar_url = 'https://via.placeholder.com/150?text=Female+Avatar'
+    
     cursor.close()
-    return render_template('client/profile.html', user=user, avatar_url=avatar_url,appt_list=appt_list, current_date=current_date)
+    db.close()
+    
+    # Render the profile page with a no-cache header
+    response = make_response(render_template(
+        'client/profile.html', user=user, avatar_url=avatar_url, appt_list=appt_list, current_date=current_date
+    ))
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '-1'
+    
+    return response
 
 
-@app.route('/final-confirm', methods=['POST'])
-def final_confirm():
-    # Get the JSON data sent from the frontend
-    data = request.get_json()
 
-    # Extract details from the JSON data
-    selected_services = data.get('services')
-    booking_number = data.get('bookingNumber')
-    start_date_str = data.get('date')
-
-    # Store in the session
-    if 'reservations' not in session:
-        session['reservations'] = []
-
-    session['reservations'].append({
-        'booking_number': booking_number,
-        'start_date': start_date_str,
-        'services': selected_services
-    })
-
-    # Insert data into the database
-    cursor = db.cursor()
-    for service in selected_services:
-        # Access `service` and `timeSlot` properties from each entry
-        service_type = service['service']
-        time_slot = service['timeSlot']
-        
-        # Ensure the format of time_slot is correct
-        start_date = datetime.strptime(time_slot, "%m/%d/%Y %I:%M:%S %p")  # Adjust format as necessary
-
-        # Extract the time component
-        appt_date = start_date.date()
-        start_time = start_date.time()
-        
-        # Add 30 minutes to start_date for end time
-        end_date = start_date + timedelta(minutes=30)
-        end_time = end_date.time()
-
-        # Insert each service individually into the database
-        cursor.execute(
-            'INSERT INTO appointments (booking_number, customer_id, employee_id, service_type, appointment_date, appointment_start_time, appointment_end_time) VALUES (%s, %s, %s, %s, %s, %s, %s)',
-            (booking_number, session['CustomerID'], 5, service_type, appt_date, start_time, end_time)
-        )
-
-    db.commit()
-
-    # Return a JSON response to confirm the booking
-    return jsonify({"status": "success", "bookingNumber": booking_number})
-
-
-# login
-# Login page route
-# Login page
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    msg = ''  # Output message if something goes wrong
+    msg = '' 
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         # Create variables for easy access
         UserName = request.form['username']
@@ -210,7 +204,8 @@ def login():
     return render_template('client/login.html', msg=msg)
 
 
-# create ac
+
+# create account
 @app.route('/create_account', methods=['GET', 'POST'])
 def create_account():
     if request.method == 'POST':
@@ -222,13 +217,14 @@ def create_account():
         # Hash the password before saving it
         hashed_password = generate_password_hash(passcode)
         if check_user(UserName):
-            flash('Username is already in use', 'danger')
+            msg = 'Username is already in use!!!'
+            return render_template('client/createac.html', msg=msg)
         else:
             if not db.is_connected():
                 db.reconnect(attempts=3, delay=5)
             cursor = db.cursor()
             cursor.execute(
-                'INSERT INTO test1.users (UserName, passcode, Email, Phone, User_type) VALUES (%s, %s, %s, %s, %s)',
+                'INSERT INTO users (UserName, passcode, Email, Phone, User_type) VALUES (%s, %s, %s, %s, %s)',
                 (UserName, hashed_password, Email, Phone, 'customer')
             )
             db.commit()
@@ -318,25 +314,31 @@ def reset_password(token):
             return redirect(url_for('login'))
     return render_template('client/reset_password.html', token=token)
 
-def timedelta_to_time(td):
-    # Extract total seconds from timedelta
-    total_seconds = int(td.total_seconds())
-    
-    # Calculate hours, minutes, and seconds
-    hours, remainder = divmod(total_seconds, 3600)  # 3600 seconds in an hour
-    minutes, seconds = divmod(remainder, 60)        # 60 seconds in a minute
 
-    # Create a time object
-    t = time(hour=hours % 24, minute=minutes, second=seconds)
-    
-    # Format the time in 12-hour format
-    hour_12 = t.hour % 12 or 12  # Convert to 12-hour format
-    am_pm = "AM" if t.hour < 12 else "PM"
-    
-    return f"{hour_12:02}:{t.minute:02}:{t.second:02} {am_pm}"
+
+
+@app.route('/employee-login')
+def seller_login():
+    return render_template('seller/sellerlogin.html')
+
+@app.route('/employee-editor')
+def employee_editor():
+    return render_template('seller/employeeeditor.html')
+
+@app.route('/seller-info')
+def employee_info():
+    return render_template('seller/sellerinfo.html')
+
 
 
 
 # Run the app
 if __name__ == "__main__":
+    print("Starting server at http://127.0.0.1:8000/")
     app.run(host='0.0.0.0', port=8000, debug=True)
+    # db = get_db_connection()
+    # cursor = db.cursor(dictionary=True)
+    # cursor.execute('SELECT appt_id FROM appointments')
+    # results = cursor.fetchall();
+    # print(results)
+    
