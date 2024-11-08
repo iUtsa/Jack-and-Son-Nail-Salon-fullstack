@@ -21,7 +21,7 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 db = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="Utsh@das2001",
+    password="1349U3of1393ND$",
     database="test1"
 )
 
@@ -30,7 +30,7 @@ def get_db_connection():
         db = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="Utsh@das2001",
+            password="1349U3of1393ND$",
             database="test1"
         )
         if db.is_connected():

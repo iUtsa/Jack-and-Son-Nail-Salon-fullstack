@@ -12,8 +12,8 @@ background_bp = Blueprint('background', __name__)
 db = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="Utsh@das2001",
-    database="test2"
+    password="1349U3of1393ND$",
+    database="test1"
 )
 
 def get_db_connection():
@@ -21,8 +21,8 @@ def get_db_connection():
         db = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="Utsh@das2001",
-            database="test2"
+            password="1349U3of1393ND$",
+            database="test1"
         )
         if db.is_connected():
             return db
