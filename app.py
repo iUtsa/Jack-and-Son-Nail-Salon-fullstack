@@ -22,7 +22,7 @@ db = mysql.connector.connect(
     host="localhost",
     user="root",
     password="Utsh@das2001",
-    database="test2"
+    database="test1"
 )
 
 def get_db_connection():
@@ -31,7 +31,7 @@ def get_db_connection():
             host="localhost",
             user="root",
             password="Utsh@das2001",
-            database="test2"
+            database="test1"
         )
         if db.is_connected():
             return db
@@ -251,7 +251,7 @@ def create_account():
 
         # Hash the password before saving it
         hashed_password = generate_password_hash(passcode)
-        if check_user(UserName):
+        if background.check_user(UserName):
             msg = 'Username is already in use!!!'
             return render_template('client/createac.html', msg=msg)
         else:
@@ -269,15 +269,6 @@ def create_account():
     return render_template('client/createac.html')
 
 
-def check_user(name: str) -> bool:
-    cursor = db.cursor()
-    cursor.execute('SELECT * FROM users WHERE UserName = %s', (name,))
-    have_name = cursor.fetchone()
-    db.close()
-    if have_name:
-        return True
-    else:
-        return False
 
 # Flask-Mail configuration
 app.config['MAIL_SERVER'] = 'smtp.example.com'
