@@ -7,11 +7,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta, time, date
 import background
 
-# The following environment is selected: ~/Downloads/latestJ&S V3/.venv/bin/python÷
-
 
 app = Flask(__name__)
-app.register_blueprint(background.background_bp)
+app.register_blueprint(background.background_bp) 
 app.secret_key = 'your_secret_key'  # Required for session handling
 # Define the secret key for token generation
 
@@ -44,8 +42,45 @@ def get_db_connection():
 
 # Home route
 @app.route('/')
+@app.route('/index')
 def home():
     return render_template('client/index.html')
+
+@app.route('/employee-login')
+def seller_login():
+    return render_template('seller/sellerlogin.html')
+
+@app.route('/employee-editor')
+def employee_editor():
+    return render_template('seller/employeeeditor.html')
+
+@app.route('/employee-info')
+def employee_info():
+    return render_template('seller/employeeinfo.html')
+
+@app.route('/seller-homepage')
+def seller_homepage():
+    return render_template('seller/index.html')
+
+@app.route('/add-manager')
+def add_manager():
+    return render_template('seller/addowner.html')
+
+@app.route('/price-management')
+def price_manage():
+    return render_template('seller/priceeditor.html')
+
+@app.route('/schedule')
+def schedule():
+    return render_template('seller/schedule.html')
+
+@app.route('/store-schedule')
+def store_schedule():
+    return render_template('seller/storetime.html')
+
+@app.route('/appt-manage')
+def manage_appt():
+    return render_template('seller/viewappt.html')
 
 
 # About page
@@ -313,22 +348,6 @@ def reset_password(token):
             flash('Your password has been updated!', 'success')
             return redirect(url_for('login'))
     return render_template('client/reset_password.html', token=token)
-
-
-
-
-@app.route('/employee-login')
-def seller_login():
-    return render_template('seller/sellerlogin.html')
-
-@app.route('/employee-editor')
-def employee_editor():
-    return render_template('seller/employeeeditor.html')
-
-@app.route('/seller-info')
-def employee_info():
-    return render_template('seller/sellerinfo.html')
-
 
 
 
