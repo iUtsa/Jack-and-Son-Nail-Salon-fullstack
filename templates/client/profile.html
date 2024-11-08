@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Login Page: Jack&Son Website">
     <title>Jack & Son Nail Salon</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,10 +27,10 @@
 <body class="bd-2">
     <nav class="navbar navbar-expand-lg custom-navbar fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="index.html" text-decoration="none">
-                <img src="/static/photos/js-logo.webp" alt="JS Logo"
+            <a class="navbar-brand" href="{{ url_for('home') }}" text-decoration="none">
+                <img src="{{ url_for('static', filename='photos/js-logo.webp') }}" alt="JS Logo"
                     style="height: 100px; margin-right: 10px; border-radius: 50%;"><span id="headline">Jack & Son Nails
-                    Spa<span></a>
+                    Spa</span></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -38,33 +38,34 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li>
-                        <a class="nav-link" href="index.html">Home</a>
+                        <a class="nav-link" href="{{ url_for('home') }}">Home</a>
                     </li>
                     <li>
-                        <a class="nav-link" href="about.html">About</a>
+                        <a class="nav-link" href="{{ url_for('about') }}">About</a>
                     </li>
                     <li>
-                        <a class="nav-link" href="services.html">Services</a>
+                        <a class="nav-link" href="{{ url_for('services') }}">Services</a>
                     </li>
                     <li>
-                        <a class="nav-link" href="login.html" id="login-link">Login</a>
+                        <a class="nav-link" href="{{ url_for('nailcare') }}">NailCare</a>
                     </li>
                     <li>
-                        <a class="nav-link" href="nailcare.html">NailCare</a>
+                        <a class="nav-link" href="{{ url_for('reservation') }}">Book</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
                     </li>
 
+                    <!-- Show Login or Logout based on session status -->
+                    {% if session['loggedin'] %}
                     <li>
-                        <a class="nav-link" href="reservation.html">Book</a>
+                        <a class="nav-link" href="{{ url_for('logout') }}" id="logout-link">Logout</a>
                     </li>
+                    {% else %}
                     <li>
-                        <a class="nav-link" href="profile.html">Profile</a>
+                        <a class="nav-link" href="{{ url_for('login') }}" id="login-link">Login</a>
                     </li>
-                    <li>
-                        <a class="nav-link" href="/logout" id="logout-link" style="display: none;">Logout</a>
-                    </li>
-
-
-
+                    {% endif %}
                 </ul>
             </div>
         </div>
@@ -73,8 +74,9 @@
 
     <!-- Profile Header -->
     <header class="profile-header">
-        <h1>Welcome, [User Name]!</h1>
+        <h1>Welcome, {{ user['UserName'] }}!</h1>
     </header>
+
 
     <!-- Profile Information -->
     <div class="container profile-container">
@@ -82,13 +84,13 @@
             <!-- User Details -->
             <div class="details">
                 <h3>User Information</h3>
-                <p><strong>Email:</strong> [User Email]</p>
-                <p><strong>Phone:</strong> [User Phone]</p>
+                <p><strong>Email:</strong> {{ user['Email'] }}</p>
+                <p><strong>Phone:</strong> {{ user['Phone'] }}</p>
             </div>
 
             <!-- User Avatar -->
             <div class="avatar">
-                <img src="https://img.icons8.com/?size=120&id=XwHRENB5Drli&format=png" alt="User Avatar">
+                <img src="{{ avatar_url }}" alt="User Avatar">
             </div>
         </div>
 
@@ -96,59 +98,80 @@
         <div id="upcoming-booking">
             <h2>Your Upcoming Booking</h2>
             <ol id="booking-details-items">
-                <li>
-                    <div id="upcoming-booking-list">
-                        
-                            <!-- Booking items will be dynamically injected here -->
-                        <div>
-                            <p> <strong id="bdi">Service:</strong> [Service Name]<br>
-                                <strong id="bdi">Date:</strong> [Booking Date]<br>
-                                <strong id="bdi">Time:</strong> [Booking Time]<br>
-                                <strong id="bdi">Booking Number:</strong> [Booking-Number]
-                            </p>
-                        </div>
-                            <!-- Cancel Booking Button (STILL NEED TO ADD THIS ON PYCHARM) -->
-                            <div id="cancel-booking">
-                                <form action="{{ url_for('cancel_booking') }}" method="POST" style="display:inline;">
-                                    <input type="hidden" name="booking_number" value="[Booking-Number]">
-                                    <button type="button" class="btn-cancel">Cancel Booking</button>
-                                </form>
-                            </div>
+                <!-- Booking items will be dynamically injected here -->
+                {% set ns = namespace(has_current_appt=false) %}
+                {% if appt_list is not none and appt_list | length > 0 %}
 
-                    </div>
-                    
-                    
-                </li>
+                {% for appt in appt_list %} <!-- Loop through each appointment -->
+                    {% if appt['appointment_date'] >= current_date %}
+                        {% if not ns.has_current_appt %}
+                            {% set ns.has_current_appt = true %}
+                        {% endif %} 
+                        <li>
+                            <div id="upcoming-booking-list">
+                                <p>
+                                    <strong id="bdii">Service:</strong> {{ appt['service_name'] }}<br>
+                                    <strong id="bdii">Date:</strong> {{ appt['appointment_date'] }} <br>
+                                    <strong id="bdii">Time:</strong> {{ appt['appointment_start_time'] }} <br>
+                                    <strong id="bdii">Booking Number:</strong> {{ appt['booking_number'] }}
+                                    <div id="cancel-booking">
+                                        <button type="button" class="btn-cancel" onclick="cancelBooking('{{ appt.appt_id }}')">Cancel Booking</button>
+                                    </div>
+                                </p>
+                            </div>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                {% if not ns.has_current_appt %}
+                    <li>No upcoming bookings found.</li>
+                {% endif %}    
+                {% else %}
+                    <li>No upcoming bookings found.</li>
+                {% endif %}
             </ol>
         </div>
 
 
-        <!-- Logout Button -->
-        <div class="text-end">
-            <form action="{{ url_for('logout') }}" method="POST" style="display:inline;">
-                <button type="button" class="btn-logout">Logout</button>
-            </form>
-        </div>
-    </div>
         
+    </div>
+    <!-- Logout Button -->
+    <div class="text-end">
+        <form action="{{ url_for('logout') }}" method="POST" style="display:inline;">
+            <button type="submit" class="btn-logout">Logout</button>
+        </form>
+    </div>
 
     <div class="booking-history">
         <h2>Your Booking History</h2>
-        <ul id="booking-history-items">
-        <li>  
-        <!-- Booking items will be dynamically injected here -->
-        <div id="booking-history-list">
-            <!-- Booking items will be dynamically injected here -->
-            <p>
-                <strong id="bdi">Service:</strong> [Service Name]<br>
-                <strong id="bdi">Date:</strong> [Booking Date]<br>
-                <strong id="bdi">Time:</strong> [Booking Time]
-            </p>
-        </div>
-        </li>
-        </ul>
-    </div>
+        {% set ns = namespace(has_appt=false) %}
 
+                {% if appt_list is not none and appt_list | length > 0 %}
+                    {% set has_appt = false %}
+
+                    {% for appt in appt_list %}
+
+                        {% if appt['appointment_date'] < current_date %}
+                            {% if not ns.has_appt %}
+                                {% set ns.has_appt = true %}
+                            {% endif %}
+                            <div id="upcoming-booking-list">
+                                <p>
+                                    <strong id="bdii">Service:</strong> {{ appt['service_name'] }}<br>
+                                    <strong id="bdii">Date:</strong> {{ appt['appointment_date'] }} <br>
+                                    <strong id="bdii"> Time:</strong> {{  appt['appointment_start_time'] }} <br>
+                                    <strong id="bdii">Booking Number:</strong> {{ appt['booking_number'] }}<br>
+                                </p>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if not ns.has_appt %}
+                        <li>No appointent history found</li>
+                    {% endif %}
+                {% else %}
+                <li> No appointent history found</li>
+                {% endif %}
+    </div>
 
 
     <script src="/static/script.js"></script>
