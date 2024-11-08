@@ -39,59 +39,128 @@ const confirmBookingBtn = document.getElementById('confirm-booking');
 let isCardCentered = false;
 let selectedServices = []; // Store multiple services with dates
 let selectedService = '';
+let selectedServiceId = '';
 let selectedTimeSlot = '';
+// let serviceData = {};
 
-// Define the services for each main service
-const serviceData = {
-    'nail-care': [
-        'Pink & White Full Set - $60',
-        'Pink & White Fill In - $50',
-        'Acrylic Full Set - $50',
-        'Acrylic Fill In - $40',
-        'Gel Color Full Set - $50',
-        'Gel Color Fill In - $40',
-        'Dipping Powder - $50+',
-        'UV Gel Full Set - $60',
-        'UV Gel Fill In - $45',
-        'Nail Repair - $5+',
-        'Cut Down Designs - $5+'
-    ],
-    'manicure': [
-        'Pedicure & Manicure - $50',
-        'Regular Pedicure - $30',
-        'Regular Manicure - $20',
-        'Gel Manicure - $35',
-        'Deluxe Manicure - $30',
-        'Polish Change - $25+'
-    ],
-    'pedicure': ['Basic Pedicure - $35', 'Deluxe Pedicure - $50','Polish Change - $25+', 'Gel Pedicure - $45'],
-    'waxing': [
-        'Eyebrows - $10',
-        'Chin - $8+',
-        'Lip - $7',
-        'Full Face - $30+',
-        'Back - $45+',
-        'Half Arms / Full Arms - $25+ / $35+',
-        'Half Legs / Full Legs - $30+ / $40+',
-        'Bikini - $40+'
-    ]
-};
+// // Define the services for each main service
+// const serviceData = {
+//     'nail-care': [
+//         'Pink & White Full Set - $60',
+//         'Pink & White Fill In - $50',
+//         'Acrylic Full Set - $50',
+//         'Acrylic Fill In - $40',
+//         'Gel Color Full Set - $50',
+//         'Gel Color Fill In - $40',
+//         'Dipping Powder - $50+',
+//         'UV Gel Full Set - $60',
+//         'UV Gel Fill In - $45',
+//         'Nail Repair - $5+',
+//         'Cut Down Designs - $5+'
+//     ],
+//     'manicure': [
+//         'Pedicure & Manicure - $50',
+//         'Regular Pedicure - $30',
+//         'Regular Manicure - $20',
+//         'Gel Manicure - $35',
+//         'Deluxe Manicure - $30',
+//         'Polish Change - $25+'
+//     ],
+//     'pedicure': ['Basic Pedicure - $35', 'Deluxe Pedicure - $50','Polish Change - $25+', 'Gel Pedicure - $45'],
+//     'waxing': [
+//         'Eyebrows - $10',
+//         'Chin - $8+',
+//         'Lip - $7',
+//         'Full Face - $30+',
+//         'Back - $45+',
+//         'Half Arms / Full Arms - $25+ / $35+',
+//         'Half Legs / Full Legs - $30+ / $40+',
+//         'Bikini - $40+'
+//     ]
+// };
+
+
+function cancelBooking(apptId) {
+    fetch('/cancel_booking', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'appt_id=' + encodeURIComponent(apptId)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.success);
+            // Reload the profile page to reflect the updated appointment list
+            location.reload();
+        } else {
+            alert(data.error || 'An error occurred.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    });
+}
+
 
 
 // Initialize Flatpickr for the calendar
 let calendar = null;
+
 function initCalendar() {
+    const employeeSchedule = [0, 1, 1, 1, 1, 1, 1]; // Sunday to Saturday schedule (0: off, 1: on)
+
     if (!calendar) {
+        const now = new Date();
+        const maxDate = new Date();
+        maxDate.setDate(now.getDate() + 7); // Set max date to 7 days from now
+
         calendar = flatpickr('#datepicker', {
             enableTime: true,
-            dateFormat: "Y-m-d H:i",
-            minDate: "today",
+            dateFormat: "m/d/Y h:i:S K",
+            minDate: now,
+            maxDate: maxDate, // Limit to 7 days ahead
+            minuteIncrement: 30,
+
+            // Enable only the days that are working days
+            enable: [
+                function(date) {
+                    // Get day of the week (0 for Sunday, 6 for Saturday)
+                    const day = date.getDay();
+                    // Check if the day is a working day (1) in the employee schedule
+                    return employeeSchedule[day] === 1;
+                }
+            ],
+
             onChange: function(selectedDates, dateStr, instance) {
                 selectedTimeSlot = dateStr;  // Store selected date and time
                 confirmDateTimeBtn.style.display = 'block';  // Show the button to confirm date and time
             }
         });
     }
+}
+
+// Call fetchServiceData once when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    fetchServiceData().then(() => {
+        // Call the function that uses serviceData once it’s loaded
+        showMicroserviceMenu(serviceType, cardElement); // Pass the appropriate arguments here
+    });
+});
+
+
+
+let serviceData = {};
+function fetchServiceData() {
+    return fetch('/get_services') // Ensure this route matches your Flask endpoint
+        .then(response => response.json())
+        .then(data => {
+            serviceData = data;
+            console.log("Service data loaded:", serviceData); // For debugging
+        })
+        .catch(error => console.error('Error fetching service data:', error));
 }
 
 // Move clicked card to center
@@ -115,10 +184,19 @@ cards.forEach(card => {
     });
 });
 
-// Function to display the microservice menu for the clicked service
-// Function to display the microservice menu for the clicked service
+
+
+
+
+
+// Function to show microservice menu for a selected service type
 function showMicroserviceMenu(service, card) {
     const services = serviceData[service];
+
+    if (!services) {
+        console.error(`No services found for type: ${service}`);
+        return;
+    }
 
     // Clear any existing services
     microserviceList.innerHTML = '';
@@ -126,30 +204,26 @@ function showMicroserviceMenu(service, card) {
     // Populate the list with the selected service's microservices
     services.forEach(item => {
         const li = document.createElement('li');
-        li.innerHTML = `<a href="#" class="service-item" data-service="${item}">${item}</a>`;
+        // Include service_id as a data attribute for future use
+        li.innerHTML = `<a href="#" class="service-item" data-service-id="${item.service_id}" data-service="${item.service_name}">${item.service_name}</a>`;
         microserviceList.appendChild(li);
     });
-
-    // Position the menu below the card
-    const cardRect = card.getBoundingClientRect();
-    const menuWidth = microserviceMenu.offsetWidth;
-
-    const cardCenterX = cardRect.left + (cardRect.width / 2);
-    microserviceMenu.style.top = `${cardRect.bottom + window.scrollY + 20}px`; // Position 20px below the card
-    microserviceMenu.style.left = `${cardCenterX - (menuWidth / 2)}px`;  // Center the menu below the card
 
     // Show the microservice menu
     microserviceMenu.style.display = 'block';
 
-    // Attach click event to each service item (menu item)
+    // Attach click event to each service item
     const serviceItems = document.querySelectorAll('.service-item');
     serviceItems.forEach(item => {
         item.addEventListener('click', (event) => {
             event.preventDefault();
-            selectedService = event.target.getAttribute('data-service');
+            // console.log("Clicked element:", event.target); // Add this to check the element
+             selectedService = event.target.getAttribute('data-service');
+             selectedServiceId = event.target.getAttribute('data-service-id');  // Now we retrieve the ID as well
+    
             // Show the calendar popup and initialize the calendar
-            showCalendarPopup();  // User selects date and time for this service
-            initCalendar();  // Initialize the Flatpickr calendar
+            showCalendarPopup();
+            initCalendar();
         });
     });
 }
@@ -183,6 +257,7 @@ confirmDateTimeBtn.addEventListener('click', () => {
 function showSummary() {
     // Add the selected service and time to the summary
     selectedServices.push({
+        service_id: selectedServiceId,
         service: selectedService,
         timeSlot: selectedTimeSlot
     });
@@ -192,11 +267,15 @@ function showSummary() {
 
     // Generate the summary dynamically
     selectedServices.forEach((item, index) => {
+        const date = new Date(item.timeSlot); // Create a date object from the time slot
+        // const formattedTime = formatTimeTo12Hour(date); // Format time in 12-hour format
+
         const summaryHTML = `
             <div class="summary-item">
                 <i class="fas fa-concierge-bell"></i>
                 <div>
                     <div class="summary-service">Service ${index + 1}: ${item.service}</div>
+                    <div class="summary-service">Service ID: ${item.service_id}</div>
                     <div class="summary-date">Date: ${new Date(item.timeSlot).toLocaleDateString()}</div>
                     <div class="summary-time">Time: ${new Date(item.timeSlot).toLocaleTimeString()}</div>
                 </div>
@@ -234,7 +313,6 @@ addMoreServiceBtn.addEventListener('click', () => {
 });
 
 // Final confirmation button to confirm all services and times
-// Final confirmation button to confirm all services and times
 finalConfirmBtn.addEventListener('click', () => {
     const bookingNumber = generateBookingNumber();  // Generate a booking number
 
@@ -270,143 +348,60 @@ function generateBookingNumber() {
     return 'BK' + Math.floor(Math.random() * 1000000);
 }
 
-// Function to save the booking history
-function saveBookingHistory(bookingNumber) {
-    // Assuming user profile is managed elsewhere, this will store the booking details
-    const bookingHistory = {
-        services: selectedServices,
-        bookingNumber: bookingNumber,
-        date: new Date().toLocaleString()
-    };
+// // Function to save the booking history
+// function saveBookingHistory(bookingNumber) {
+//     // Assuming user profile is managed elsewhere, this will store the booking details
+//     const bookingHistory = {
+//         services: selectedServices,
+//         bookingNumber: bookingNumber,
+//         date: new Date().toLocaleString()
+//     };
 
-    // Save booking to profile (this can be customized based on how you handle user profiles)
-    console.log('Booking saved to profile:', bookingHistory);
-    // Clear selected services after booking is confirmed
-    selectedServices = [];
-}
-
-
-
-
-//for profile page-----------------------
-
-
-// Simulate user and booking data
- // Simulate user and booking data
- const user = {
-    name: "Jane Doe",
-    email: "jane.doe@example.com",
-    phone: "123-456-7890",
-    joinDate: "January 2023",
-    gender: "female",  // Gender can be "male" or "female"
-    bookings: [
-        { service: "Basic Manicure", date: "2024-10-21", time: "10:30 AM", bookingNumber: "BK123456" },
-        { service: "Full Body Wax", date: "2024-11-10", time: "2:00 PM", bookingNumber: "BK654321" }
-    ]
-};
-
-// Populate user data
-document.querySelector('.profile-header h1').textContent = `Welcome, ${user.name}!`;
-document.querySelector('.details').innerHTML = `
-    <h3>User Information</h3>
-    <p><strong>Email:</strong> ${user.email}</p>
-    <p><strong>Phone:</strong> ${user.phone}</p>
-    <p><strong>Member Since:</strong> ${user.joinDate}</p>
-`;
-
-// Assign avatar based on gender
-const avatarElement = document.getElementById('user-avatar');
-if (user.gender === 'male') {
-    avatarElement.src = 'https://via.placeholder.com/150?text=Male+Avatar';
-} else {
-    avatarElement.src = 'https://via.placeholder.com/150?text=Female+Avatar';
-}
-
-// Populate booking history
-const bookingHistoryList = document.getElementById('booking-history-list');
-user.bookings.forEach(booking => {
-    const bookingItem = document.createElement('div');
-    bookingItem.classList.add('booking-item');
-    bookingItem.innerHTML = `
-        <i class="fas fa-calendar-check"></i>
-        <div class="booking-details">
-            <p><strong>Service:</strong> ${booking.service}</p>
-            <p><strong>Date:</strong> ${booking.date} at ${booking.time}</p>
-            <p><strong>Booking Number:</strong> ${booking.bookingNumber}</p>
-        </div>
-    `;
-    bookingHistoryList.appendChild(bookingItem);
-});
-
-// Logout functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const logoutButton = document.querySelector('.btn-logout');
-
-    logoutButton.addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent default form submit for a moment
-        alert('See you soon again!');
-        window.location.href = '/logout'; // Then proceed with the logout
-    });
-});
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Retrieve the booking information from localStorage
-    const bookingInfo = JSON.parse(localStorage.getItem('latestBooking'));
-
-    // Check if there is a booking summary to display
-    if (bookingInfo) {
-        const bookingHistoryList = document.getElementById('booking-history-list');
-        const summaryHTML = `
-            <div class="booking-item">
-                <i class="fas fa-calendar-check"></i>
-                <div class="booking-details">
-                    <p><strong>Booking Number:</strong> ${bookingInfo.bookingNumber}</p>
-                    ${bookingInfo.services.map(service => `<p><strong>Service:</strong> ${service.service} at ${service.timeSlot}</p>`).join('')}
-                    <p><strong>Booking Date:</strong> ${bookingInfo.date}</p>
-                </div>
-            </div>
-        `;
-        bookingHistoryList.innerHTML = summaryHTML;
-    }
-});
+//     // Save booking to profile (this can be customized based on how you handle user profiles)
+//     console.log('Booking saved to profile:', bookingHistory);
+//     // Clear selected services after booking is confirmed
+//     selectedServices = [];
+// }
 
 
 
+//seller side =========================================================
 
-//=====================seller side start =============================================================> 
+
+//============================seller side================================
+
 
     document.addEventListener("DOMContentLoaded", function() {
         document.querySelectorAll("form[id^='addServiceForm']").forEach((form) => {
             form.addEventListener("submit", addService);
         });
     });
-    
+
     function addService(event) {
         event.preventDefault();
-    
+
         const form = event.target;
         const category = form.id.split("-")[1]; // e.g., "nailcare" from "addServiceForm-nailcare"
         const table = document.querySelector(`#${category}-table tbody`);
-    
+
         if (!table) {
             console.error(`Table for category "${category}" not found.`);
             return;
         }
-    
+
         const serviceName = form.querySelector(`input[id$='ServiceName-${category}']`).value;
         const servicePrice = form.querySelector(`input[id$='ServicePrice-${category}']`).value;
         const serviceImageInput = form.querySelector(`input[id$='ServiceImage-${category}']`);
-    
+
         if (serviceImageInput.files.length === 0) {
             alert("Please select an image for the new service.");
             return;
         }
-    
+
         const reader = new FileReader();
         reader.onload = function(e) {
             const imageURL = e.target.result;
-    
+
             const newRow = document.createElement("tr");
             newRow.innerHTML = `
                 <td>${serviceName}</td>
@@ -417,33 +412,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
                 </td>
             `;
-    
+
             table.appendChild(newRow);
-    
+
             // Reset form fields after adding service
             form.querySelector(`input[id$='ServiceName-${category}']`).value = '';
             form.querySelector(`input[id$='ServicePrice-${category}']`).value = '';
             serviceImageInput.value = '';
         };
-    
+
         reader.readAsDataURL(serviceImageInput.files[0]);
     }
-    
-    
+
+
     function editService(button) {
         const row = button.closest('tr');
         const serviceNameCell = row.cells[0];
         const serviceImageCell = row.cells[1];
         const servicePriceCell = row.cells[2];
-    
+
         if (button.textContent === 'Save') {
             const newName = serviceNameCell.querySelector('input').value;
             const newPrice = servicePriceCell.querySelector('input').value;
             const newImageFile = serviceImageCell.querySelector('input[type="file"]').files[0];
-            
+
             serviceNameCell.textContent = newName;
             servicePriceCell.textContent = `$${newPrice}`;
-    
+
             if (newImageFile) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
@@ -454,24 +449,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 const currentImageURL = serviceImageCell.querySelector('img').src;
                 serviceImageCell.innerHTML = `<img src="${currentImageURL}" alt="${newName}" style="width: 80px; height: 60px;">`;
             }
-    
+
             button.textContent = 'Edit';
         } else {
             const currentName = serviceNameCell.textContent;
             const currentPrice = servicePriceCell.textContent.replace('$', '');
             const currentImageURL = serviceImageCell.querySelector('img').src;
-    
+
             serviceNameCell.innerHTML = `<input type="text" value="${currentName}" class="form-control">`;
             servicePriceCell.innerHTML = `<input type="number" value="${currentPrice}" class="form-control">`;
             serviceImageCell.innerHTML = `
                 <img src="${currentImageURL}" alt="${currentName}" style="width: 80px; height: 60px; display:block; margin-bottom: 10px;">
                 <input type="file" class="form-control" style="width: 80px; font-size: 12px;">
             `;
-    
+
             button.textContent = 'Save';
         }
     }
-    
+
     function removeService(button) {
         if (confirm("Are you sure you want to remove this service?")) {
             const row = button.closest('tr');
@@ -479,7 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Service removed");
         }
     }
-    
+
 
 
     //search employee
@@ -488,20 +483,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const query = document.getElementById('search-employee').value.toLowerCase().trim();
         const employeeBoxes = document.querySelectorAll('.employee-info-box');
         let found = false;
-    
+
         if (query === "") {
             alert("Please enter a search term.");
             return;
         }
-    
+
         // Clear any previous highlights
         employeeBoxes.forEach(box => box.style.border = "none");
-    
+
         // Find and scroll to the first matching employee box
         employeeBoxes.forEach(box => {
             const name = box.getAttribute('data-name') ? box.getAttribute('data-name').toLowerCase() : "";
             const phone = box.getAttribute('data-phone') ? box.getAttribute('data-phone').toLowerCase() : "";
-    
+
             if (!found && (name.includes(query) || phone.includes(query))) {
                 box.style.border = "3px solid blue"; // Highlight the found box
                 box.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Smooth scroll to the box
@@ -509,34 +504,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`Match found for: ${query}`); // Log the match for debugging
             }
         });
-    
+
         if (!found) {
             alert("No employee found with that name or phone number.");
             console.log("No match found"); // Log if no match found
         }
     });
-    
-    
 
 
-    // employee edit and delete 
+
+
+    // employee edit and delete
 
     document.addEventListener("DOMContentLoaded", function() {
         // Add event listeners for edit and delete buttons
         document.querySelectorAll(".edit-button-employee").forEach(button => {
             button.addEventListener("click", editEmployee);
         });
-        
+
         document.querySelectorAll(".delete-button-employee").forEach(button => {
             button.addEventListener("click", deleteEmployee);
         });
     });
-    
+
     // Function to handle editing employee details
     function editEmployee(event) {
         const employeeBox = event.target.closest(".employee-info-box");
         const infoDiv = employeeBox.querySelector("#employee-info");
-    
+
         if (event.target.textContent === "Edit") {
             // Switch to edit mode
             infoDiv.innerHTML = `
@@ -554,7 +549,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const position = document.getElementById("edit-position").value;
             const phone = document.getElementById("edit-phone").value;
             const email = document.getElementById("edit-email").value;
-            
+
             // Update the display with new data
             infoDiv.innerHTML = `
                 <h5>Name: [ ${name} ]</h5>
@@ -563,16 +558,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h5>Phone Number: [ ${phone} ]</h5>
                 <h5>Email: [ ${email} ]</h5>
             `;
-            
+
             // Update data attributes for future reference
             employeeBox.setAttribute('data-name', name);
             employeeBox.setAttribute('data-phone', phone);
-            
+
             // Change button text back to "Edit"
             event.target.textContent = "Edit";
         }
     }
-    
+
     // Function to handle deleting an employee
     function deleteEmployee(event) {
         const employeeBox = event.target.closest(".employee-info-box");
@@ -588,20 +583,20 @@ document.addEventListener('DOMContentLoaded', () => {
         // Bind form submission to add new employee
         document.getElementById("addEmployeeForm-editemp").addEventListener("submit", addEmployee);
     });
-    
+
     function addEmployee(event) {
         event.preventDefault();
-    
+
         // Get form values
         const name = document.getElementById("newEmployeeName-editemp").value;
         const phone = document.getElementById("newEmployeePhone-editemp").value;
         const position = document.getElementById("newEmployeePosition-editemp").value;
         const email = document.getElementById("newEmployeeEmail-editemp").value;
-    
+
         // Create new row in the table
         const table = document.getElementById("edit-employee-table").getElementsByTagName("tbody")[0];
         const newRow = document.createElement("tr");
-    
+
         newRow.innerHTML = `
             <td>${name}</td>
             <td>${phone}</td>
@@ -612,33 +607,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
             </td>
         `;
-    
+
         table.appendChild(newRow);
-    
+
         // Clear input fields after adding employee
         document.getElementById("newEmployeeName-editemp").value = '';
         document.getElementById("newEmployeePhone-editemp").value = '';
         document.getElementById("newEmployeePosition-editemp").value = '';
         document.getElementById("newEmployeeEmail-editemp").value = '';
     }
-    
+
     function editEmp(button) {
         const row = button.closest("tr");
         const cells = row.getElementsByTagName("td");
-    
+
         if (button.textContent === "Save") {
             // Save edited values
             const newName = cells[0].querySelector("input").value;
             const newPhone = cells[1].querySelector("input").value;
             const newPosition = cells[2].querySelector("input").value;
             const newEmail = cells[3].querySelector("input").value;
-    
+
             // Set updated values to cells
             cells[0].textContent = newName;
             cells[1].textContent = newPhone;
             cells[2].textContent = newPosition;
             cells[3].textContent = newEmail;
-    
+
             button.textContent = "Edit";
         } else {
             // Switch to edit mode by creating input fields
@@ -646,16 +641,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentPhone = cells[1].textContent.trim();
             const currentPosition = cells[2].textContent.trim();
             const currentEmail = cells[3].textContent.trim();
-    
+
             cells[0].innerHTML = `<input type="text" value="${currentName}" class="form-control">`;
             cells[1].innerHTML = `<input type="text" value="${currentPhone}" class="form-control">`;
             cells[2].innerHTML = `<input type="text" value="${currentPosition}" class="form-control">`;
             cells[3].innerHTML = `<input type="text" value="${currentEmail}" class="form-control">`;
-    
+
             button.textContent = "Save";
         }
     }
-    
+
     function removeEmp(button) {
         if (confirm("Are you sure you want to remove this employee?")) {
             const row = button.closest("tr");
@@ -663,7 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Employee removed");
         }
     }
-    
+
 
     //=======edit store timing======
     function editTime(button) {
@@ -716,7 +711,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     //===========scheudle edit =========
-    
+
    //===========schedule edit =========
 
 function editSch(button) {
@@ -742,5 +737,12 @@ function editSch(button) {
     }
 }
 
-    
+
+
+
+
+
+
+
+
 
