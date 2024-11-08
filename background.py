@@ -146,6 +146,17 @@ def final_confirm():
 
     return jsonify({"status": "success", "bookingNumber": booking_number})
 
+def check_user(name: str) -> bool:
+    cursor = db.cursor()
+    cursor.execute('SELECT * FROM users WHERE UserName = %s', (name,))
+    have_name = cursor.fetchone()
+    db.close()
+    if have_name:
+        return True
+    else:
+        return False
+
+
 def timedelta_to_time(td):
     # Extract total seconds from timedelta
     total_seconds = int(td.total_seconds())
