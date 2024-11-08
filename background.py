@@ -1,7 +1,9 @@
 from flask import Flask, Blueprint, request, redirect, url_for, session, flash, jsonify, make_response
-
+from itsdangerous import URLSafeTimedSerializer
+from flask_mail import Mail, Message
 import mysql.connector
 from mysql.connector import Error
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta, time, date
 
 background_bp = Blueprint('background', __name__)
