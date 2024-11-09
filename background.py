@@ -1,10 +1,7 @@
-from flask import Flask, Blueprint, request, redirect, url_for, session, flash, jsonify, make_response
-from itsdangerous import URLSafeTimedSerializer
-from flask_mail import Mail, Message
+from flask import Blueprint, request, session,jsonify
 import mysql.connector
 from mysql.connector import Error
-from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, timedelta, time, date
+from datetime import datetime, timedelta, time
 
 background_bp = Blueprint('background', __name__)
 
@@ -94,8 +91,39 @@ def cancel_booking():
         cursor.close()
         db.close()
 
+@background_bp.route('/save-week-schedule', methods=['POST'])
+def save_week_schedule():
+    data = request.get_json()
+
+    time_slot = data.get('timeSlot')
+    print(time_slot)
+    managerID = data.get('managerID')
+    print(managerID)
+    days = data.get('days')
+    print(days)
+
+    db = get_db_connection()
+    cursor = db.cursor()
+
+    # Update query using 'days' as a dictionary with the proper values
+    cursor.execute(
+        '''
+        UPDATE `week_schedule` 
+        SET managerID = %s, monday = %s, tuesday = %s, wednesday = %s, thursday = %s, friday = %s, saturday = %s, sunday = %s 
+        WHERE time_slot = %s
+        ''', 
+        (managerID, days['monday'], days['tuesday'], days['wednesday'], days['thursday'], days['friday'], days['saturday'], days['sunday'], time_slot)
+    )
+    db.commit()
+    db.close()
+    cursor.close()
+    return jsonify({"success": "successful"})
 
 
+
+@background_bp.route('/manage-services')
+def manage_service():
+    return
 
 
 @background_bp.route('/final-confirm', methods=['POST'])
@@ -156,6 +184,12 @@ def check_user(name: str) -> bool:
     else:
         return False
 
+def to_24_hour_format(time_str):
+    # Convert the 12-hour format to a datetime object
+    time_obj = datetime.strptime(time_str, "%I:%M %p")  # %I for 12-hour clock, %M for minutes, %p for AM/PM
+
+    # Convert the datetime object to 24-hour format string
+    return time_obj.strftime("%H:%M:%S")  # %H for 24-hour clock
 
 def timedelta_to_time(td):
     # Extract total seconds from timedelta

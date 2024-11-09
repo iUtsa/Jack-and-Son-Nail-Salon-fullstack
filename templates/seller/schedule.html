@@ -65,6 +65,7 @@
         <table id="edit-time-table" class="table table-bordered">
             <thead class="table-dark">
                 <tr>
+                    <th>Updated last by</th>
                     <th>Slots</th>
                     <th>Monday</th>
                     <th>Tuesday</th>
@@ -76,178 +77,28 @@
                     <th>Actions</th>
                 </tr>
             </thead>
+            
             <tbody>
-                <!-- Schedule table -->
-                <tr>
-                    <td>8:00 AM</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editSch(this)">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>9:00 AM</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editSch(this)">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>10:00 AM</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editSch(this)">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>11:00 AM</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editSch(this)">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>12:00 PM</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editSch(this)">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>1:00 PM</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editSch(this)">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2:00 PM</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editSch(this)">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>3:00 PM</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editSch(this)">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>4:00 PM</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editSch(this)">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>5:00 PM</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editSch(this)">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>6:00 PM</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editSch(this)">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>7:00 PM</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editSch(this)">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>8:00 PM</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editSch(this)">Edit</button>
-                    </td>
-                </tr>
                 
+                <!-- Schedule table -->
+                {% for time_slot in schedule %}
+                
+                <tr>
+                    <td>{{ time_slot['firstName'] }} {{ time_slot['lastName']}} ID:{{ time_slot['managerID'] }} </td>
+                    <td>{{ time_slot['time_slot'] }}</td>
+                    <td>{{ time_slot['monday'] }}</td>
+                    <td>{{ time_slot['tuesday'] }}</td>
+                    <td>{{ time_slot['wednesday'] }}</td>
+                    <td>{{ time_slot['thursday'] }}</td>
+                    <td>{{ time_slot['friday'] }}</td>
+                    <td>{{ time_slot['saturday'] }}</td>
+                    <td>{{ time_slot['sunday'] }}</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="editSch(this)">Edit</button>
+                    </td>
+                    
+                </tr>
+                {% endfor %}
                 </tbody>
         </table>
     </div>

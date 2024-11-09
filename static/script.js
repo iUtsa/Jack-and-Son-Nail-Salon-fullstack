@@ -15,15 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-/*document.addEventListener('DOMContentLoaded', function() {
-    // Check if the user is logged in (e.g., check for a token in local storage)
-    const isLoggedIn = localStorage.getItem('authToken') !== null;
-
-    if (!isLoggedIn) {
-        // Redirect to the login page if not logged in
-        window.location.href = '/login';
-    }
-});*/
 
 const cards = document.querySelectorAll('.card');
 const microserviceMenu = document.getElementById('microservice-menu');
@@ -41,43 +32,7 @@ let selectedServices = []; // Store multiple services with dates
 let selectedService = '';
 let selectedServiceId = '';
 let selectedTimeSlot = '';
-// let serviceData = {};
 
-// // Define the services for each main service
-// const serviceData = {
-//     'nail-care': [
-//         'Pink & White Full Set - $60',
-//         'Pink & White Fill In - $50',
-//         'Acrylic Full Set - $50',
-//         'Acrylic Fill In - $40',
-//         'Gel Color Full Set - $50',
-//         'Gel Color Fill In - $40',
-//         'Dipping Powder - $50+',
-//         'UV Gel Full Set - $60',
-//         'UV Gel Fill In - $45',
-//         'Nail Repair - $5+',
-//         'Cut Down Designs - $5+'
-//     ],
-//     'manicure': [
-//         'Pedicure & Manicure - $50',
-//         'Regular Pedicure - $30',
-//         'Regular Manicure - $20',
-//         'Gel Manicure - $35',
-//         'Deluxe Manicure - $30',
-//         'Polish Change - $25+'
-//     ],
-//     'pedicure': ['Basic Pedicure - $35', 'Deluxe Pedicure - $50','Polish Change - $25+', 'Gel Pedicure - $45'],
-//     'waxing': [
-//         'Eyebrows - $10',
-//         'Chin - $8+',
-//         'Lip - $7',
-//         'Full Face - $30+',
-//         'Back - $45+',
-//         'Half Arms / Full Arms - $25+ / $35+',
-//         'Half Legs / Full Legs - $30+ / $40+',
-//         'Bikini - $40+'
-//     ]
-// };
 
 
 function cancelBooking(apptId) {
@@ -106,7 +61,6 @@ function cancelBooking(apptId) {
 
 
 
-// Initialize Flatpickr for the calendar
 let calendar = null;
 
 function initCalendar() {
@@ -115,28 +69,28 @@ function initCalendar() {
     if (!calendar) {
         const now = new Date();
         const maxDate = new Date();
-        maxDate.setDate(now.getDate() + 7); // Set max date to 7 days from now
+        maxDate.setDate(now.getDate() + 14);
 
         calendar = flatpickr('#datepicker', {
             enableTime: true,
             dateFormat: "m/d/Y h:i:S K",
             minDate: now,
-            maxDate: maxDate, // Limit to 7 days ahead
+            maxDate: maxDate,
             minuteIncrement: 30,
 
-            // Enable only the days that are working days
+
             enable: [
                 function(date) {
-                    // Get day of the week (0 for Sunday, 6 for Saturday)
+                    
                     const day = date.getDay();
-                    // Check if the day is a working day (1) in the employee schedule
+                    
                     return employeeSchedule[day] === 1;
                 }
             ],
 
             onChange: function(selectedDates, dateStr, instance) {
-                selectedTimeSlot = dateStr;  // Store selected date and time
-                confirmDateTimeBtn.style.display = 'block';  // Show the button to confirm date and time
+                selectedTimeSlot = dateStr; 
+                confirmDateTimeBtn.style.display = 'block';  
             }
         });
     }
@@ -145,8 +99,7 @@ function initCalendar() {
 // Call fetchServiceData once when the page loads
 document.addEventListener('DOMContentLoaded', () => {
     fetchServiceData().then(() => {
-        // Call the function that uses serviceData once it’s loaded
-        showMicroserviceMenu(serviceType, cardElement); // Pass the appropriate arguments here
+        showMicroserviceMenu(serviceType, cardElement);
     });
 });
 
@@ -154,11 +107,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 let serviceData = {};
 function fetchServiceData() {
-    return fetch('/get_services') // Ensure this route matches your Flask endpoint
+    return fetch('/get_services') 
         .then(response => response.json())
         .then(data => {
             serviceData = data;
-            console.log("Service data loaded:", serviceData); // For debugging
         })
         .catch(error => console.error('Error fetching service data:', error));
 }
@@ -183,8 +135,6 @@ cards.forEach(card => {
         }
     });
 });
-
-
 
 
 
@@ -217,11 +167,8 @@ function showMicroserviceMenu(service, card) {
     serviceItems.forEach(item => {
         item.addEventListener('click', (event) => {
             event.preventDefault();
-            // console.log("Clicked element:", event.target); // Add this to check the element
              selectedService = event.target.getAttribute('data-service');
-             selectedServiceId = event.target.getAttribute('data-service-id');  // Now we retrieve the ID as well
-    
-            // Show the calendar popup and initialize the calendar
+             selectedServiceId = event.target.getAttribute('data-service-id');
             showCalendarPopup();
             initCalendar();
         });
@@ -267,8 +214,7 @@ function showSummary() {
 
     // Generate the summary dynamically
     selectedServices.forEach((item, index) => {
-        const date = new Date(item.timeSlot); // Create a date object from the time slot
-        // const formattedTime = formatTimeTo12Hour(date); // Format time in 12-hour format
+        const date = new Date(item.timeSlot);
 
         const summaryHTML = `
             <div class="summary-item">
@@ -298,7 +244,7 @@ function hideCalendarPopup() {
     calendarPopup.classList.remove('show');  // Slide down the calendar
     setTimeout(() => {
         calendarPopup.style.display = 'none';  // Completely hide after animation
-    }, 500);  // Match the transition time in the CSS
+    }, 500);
 }
 
 // "Add More Service" button allows adding another service without resetting
@@ -314,7 +260,7 @@ addMoreServiceBtn.addEventListener('click', () => {
 
 // Final confirmation button to confirm all services and times
 finalConfirmBtn.addEventListener('click', () => {
-    const bookingNumber = generateBookingNumber();  // Generate a booking number
+    const bookingNumber = generateBookingNumber();
 
     // Save the booking information
     const bookingInfo = {
@@ -347,21 +293,6 @@ finalConfirmBtn.addEventListener('click', () => {
 function generateBookingNumber() {
     return 'BK' + Math.floor(Math.random() * 1000000);
 }
-
-// // Function to save the booking history
-// function saveBookingHistory(bookingNumber) {
-//     // Assuming user profile is managed elsewhere, this will store the booking details
-//     const bookingHistory = {
-//         services: selectedServices,
-//         bookingNumber: bookingNumber,
-//         date: new Date().toLocaleString()
-//     };
-
-//     // Save booking to profile (this can be customized based on how you handle user profiles)
-//     console.log('Booking saved to profile:', bookingHistory);
-//     // Clear selected services after booking is confirmed
-//     selectedServices = [];
-// }
 
 
 
@@ -713,12 +644,22 @@ function generateBookingNumber() {
     //===========scheudle edit =========
 
    //===========schedule edit =========
-
-function editSch(button) {
+   function editSch(button) {
     const row = button.closest('tr');
-    const cells = row.querySelectorAll('td:not(:first-child):not(:last-child)');
+    const cells = row.querySelectorAll('td:not(:first-child):not(:nth-child(2)):not(:last-child)');
+    const timeSlotCell = row.querySelector('td:nth-child(2)');
+    
+    // Log to check what content is retrieved
+    console.log("Time Slot Cell:", timeSlotCell);
 
-    // Check if the cells are already editable
+    const timeSlot = timeSlotCell ? timeSlotCell.textContent.trim() : ""; // Get time slot, safely checking for existence
+
+
+    const managerInfo = row.querySelector('td:first-child').textContent.trim(); // Get full manager info
+
+    // Extract managerID from the managerInfo string (e.g., "John Doe ID:101123")
+    const managerID = managerInfo.split('ID:')[1].trim();  // Extract managerID after 'ID:'
+
     if (button.textContent === 'Edit') {
         cells.forEach(cell => {
             const currentText = cell.textContent;
@@ -726,23 +667,42 @@ function editSch(button) {
         });
         button.textContent = 'Save';
     } else {
-        // Save the input values back to the cells
-        cells.forEach(cell => {
+        // Collect the data to send to the server
+        const dataToSend = { managerID, timeSlot, days: {} };
+
+        cells.forEach((cell, index) => {
+            const dayName = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'][index];
             const input = cell.querySelector('input');
             if (input) {
-                cell.textContent = input.value;
+                cell.textContent = input.value; // Set cell text to input value
+                dataToSend.days[dayName] = input.value; // Add to data object
             }
         });
+    console.log("Time Slot:", timeSlot); // Log the time slot value to see what's being retrieved
+    console.log("Data to send:", dataToSend);
         button.textContent = 'Edit';
+
+        // Send data to server with fetch
+        fetch('/save-week-schedule', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataToSend) // Send structured data
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // alert(data.success);
+                // Reload the profile page to reflect updated schedule
+                location.reload();
+            } else {
+                alert(data.error || 'An error occurred.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
     }
 }
-
-
-
-
-
-
-
-
-
-

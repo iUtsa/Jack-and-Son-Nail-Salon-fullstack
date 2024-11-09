@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, make_response
+from flask import Flask, render_template, request, redirect, url_for, session, flash, make_response
 from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Mail, Message
 import mysql.connector
 from mysql.connector import Error
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, timedelta, time, date
+from datetime import datetime, timedelta
 import background
 
 
@@ -40,44 +40,79 @@ def get_db_connection():
         return None
 
 
-# Home route
+# client home page
 @app.route('/')
 @app.route('/index')
 def home():
     return render_template('client/index.html')
 
+# log in page for employee
 @app.route('/employee-login')
 def seller_login():
     return render_template('seller/sellerlogin.html')
 
+# view and add employee
 @app.route('/employee-editor')
 def employee_editor():
     return render_template('seller/employeeeditor.html')
 
+# A page that display employee's informations
 @app.route('/employee-info')
 def employee_info():
     return render_template('seller/employeeinfo.html')
 
+# profile page for seller side
 @app.route('/seller-homepage')
 def seller_homepage():
     return render_template('seller/index.html')
 
+# Add a manager
 @app.route('/add-manager')
 def add_manager():
     return render_template('seller/addowner.html')
 
+# Adjust prices and services
 @app.route('/price-management')
 def price_manage():
     return render_template('seller/priceeditor.html')
 
+
+# To make weekly schedule
 @app.route('/schedule')
 def schedule():
-    return render_template('seller/schedule.html')
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute(
+        '''
+            SELECT 
+            ws.managerID,
+            ws.time_slot,
+            ws.monday,
+            ws.tuesday,
+            ws.wednesday,
+            ws.thursday,
+            ws.friday,
+            ws.saturday,
+            ws.sunday,
+            m.firstName,
+            m.lastName
+            FROM 
+            week_schedule AS ws
+            JOIN 
+            managers AS m ON ws.managerID = m.managerID;
+            '''
+            )
+    schedule = cursor.fetchall()
 
+
+    return render_template('seller/schedule.html', schedule=schedule)
+
+# TO view and adjust store opening/closing times
 @app.route('/store-schedule')
 def store_schedule():
     return render_template('seller/storetime.html')
 
+# A page to manage/view upcoming appointments
 @app.route('/appt-manage')
 def manage_appt():
     return render_template('seller/viewappt.html')
@@ -220,7 +255,7 @@ def login():
         cursor.execute('SELECT * FROM users WHERE UserName = %s', (UserName,))
         account = cursor.fetchone()
 
-        # If account exists and password matches (no hashing used)
+        # If account exists and password matches
         if account and check_password_hash(account['passcode'], password):
             # Create session data, we can access this data in other routes
             session['loggedin'] = True
@@ -243,6 +278,7 @@ def login():
 # create account
 @app.route('/create_account', methods=['GET', 'POST'])
 def create_account():
+    msg = ''
     if request.method == 'POST':
         UserName = request.form['username']
         passcode = request.form['password']
@@ -264,9 +300,8 @@ def create_account():
             )
             db.commit()
             cursor.close()
-            flash('Account created successfully! Please log in.', 'success')
             return redirect(url_for('login'))
-    return render_template('client/createac.html')
+    return render_template('client/createac.html', msg=msg)
 
 
 
