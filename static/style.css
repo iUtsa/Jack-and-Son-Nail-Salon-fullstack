@@ -33,6 +33,31 @@ body{
     margin-top: 150px;
 }
 
+@media (max-width: 768px) {
+    
+    .col-md-5 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 20px; /* Add space between rows on smaller screens */
+    }
+    
+    .navbar{
+        width: 100%;
+        overflow: hidden;
+        height: auto    ;
+    }
+
+    .navbar-brand img {
+        height: 20px; /* Adjust logo size on smaller screens */
+    }
+
+    .manage-card-container {
+        margin-right: 0; /* Remove extra margin on smaller screens */
+        padding: 0 10px; /* Add padding for better spacing */
+    }
+}
+
+
 .login-form{
     width: 300px;
     height: auto;
