@@ -71,63 +71,16 @@
             </thead>
             <tbody>
                 <!-- timing table -->
-                <tr>
-                    <td>Monday</td>
-                    <td>9:00 AM</td>
-                    <td>7:00 PM</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editTime(this)">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Tuesday</td>
-                    <td>9:00 AM</td>
-                    <td>7:00 PM</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editTime(this)">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Wednesday</td>
-                    <td>9:00 AM</td>
-                    <td>7:00 PM</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editTime(this)">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Thursday</td>
-                    <td>9:00 AM</td>
-                    <td>7:00 PM</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editTime(this)">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Friday</td>
-                    <td>9:00 AM</td>
-                    <td>7:00 PM</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editTime(this)">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Saturday</td>
-                    <td>9:00 AM</td>
-                    <td>7:00 PM</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editTime(this)">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Sunday</td>
-                    <td>0:00 AM</td>
-                    <td>0:00 PM</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editTime(this)">Edit</button>
-                    </td>
-                </tr>
-                
+                 {% for result in results %}
+                    <tr>
+                        <td>{{ result['day'] }}</td>
+                        <td>{{ result['open_hour'] }}</td>
+                        <td>{{ result['close_hour'] }}</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editTime(this)">Edit</button>
+                        </td>
+                    </tr>
+                {% endfor %}
                 </tbody>
         </table>
     </div>

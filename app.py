@@ -67,9 +67,70 @@ def seller_homepage():
     return render_template('seller/index.html')
 
 # Add a manager
-@app.route('/add-manager')
-def add_manager():
+@app.route('/add-manager', methods=['POST', 'GET'])
+def add_manager1():
+    msg = ''
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+        phone = request.form['phone']
+        name = request.form['name']
+        managerID = request.form['manager-id']
+        print(username, password, email, phone, name, managerID)
+
+        hashed_pass = generate_password_hash(password)
+        if background.check_managerid(managerID):
+            msg = 'Manager ID already exist in the database'
+            return render_template('seller/addowner.html', msg = msg)
+        if background.check_manager(username):
+            msg = 'Username already exist in the database'
+            return render_template('seller/addowner.html', msg=msg)
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute('INSERT INTO managers (managerID, UserName, password, Name, phone, email) VALUES (%s, %s,%s, %s, %s, %s)', (managerID, username, hashed_pass, name, phone, email))
+        msg = f'Account successfully created <br> Username {username} <br> Password: {password} <br> managerID: {managerID}'
+        db.commit()
+        db.close()
+        cursor.close()
+        return render_template('seller/sellerlogin.html')
+        
+
+        
+
     return render_template('seller/addowner.html')
+
+@app.route('/employee-login', methods = ['POST', 'GET'])
+def employee_login():
+    msg = ''
+    
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        managerID = int(request.form['manager_id'])
+        current_date = datetime.now()
+        formatted_date = current_date.strftime('%A %m/%d/%Y')
+
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute('SELECT * FROM managers WHERE UserName = %s', (username,))
+        result = cursor.fetchone()
+
+        db.close()
+        cursor.close()
+
+        if result:
+            if check_password_hash(result['password'], password) and result['managerID'] == managerID:
+                session['loggedin'] = True
+                session['ManagerID'] = result['managerID']
+                session['Name'] = result['Name']
+                session['UserName'] = result['UserName']
+                session['Email'] = result['email']
+                return render_template('seller/index.html', formatted_date = formatted_date)
+    else:
+        msg = 'Incorrect username/password/manager ID'
+        return render_template('seller/sellerlogin.html', msg=msg)
+    # return render_template('seller/sellerlogin.html', msg=msg)
 
 # Adjust prices and services
 @app.route('/price-management')
@@ -94,8 +155,7 @@ def schedule():
             ws.friday,
             ws.saturday,
             ws.sunday,
-            m.firstName,
-            m.lastName
+            m.Name
             FROM 
             week_schedule AS ws
             JOIN 
@@ -103,14 +163,25 @@ def schedule():
             '''
             )
     schedule = cursor.fetchall()
-
+    db.close()
+    cursor.close()
 
     return render_template('seller/schedule.html', schedule=schedule)
 
 # TO view and adjust store opening/closing times
 @app.route('/store-schedule')
 def store_schedule():
-    return render_template('seller/storetime.html')
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute('SELECT * FROM business_hours')
+    results = cursor.fetchall()
+    for result in results:
+        result['open_hour'] = background.to_12_hour_no_second(result['open_hour'])
+        result['close_hour']= background.to_12_hour_no_second(result['close_hour'])
+    db.close()
+    cursor.close()
+       
+    return render_template('seller/storetime.html', results=results)
 
 # A page to manage/view upcoming appointments
 @app.route('/appt-manage')
@@ -217,7 +288,7 @@ def profile():
     if appt_avail:
         for appt in appt_avail:
             time_hour_24 = appt['appointment_start_time']
-            time_hour_12 = background.timedelta_to_time(time_hour_24)  # Convert to 12-hour format
+            time_hour_12 = background.to_12_hour(time_hour_24)  # Convert to 12-hour format
             appt['appointment_start_time'] = time_hour_12
 
         appt_list = [appt for appt in appt_avail if appt['service_id'] is not None]
@@ -254,6 +325,9 @@ def login():
         cursor = db.cursor(dictionary=True)
         cursor.execute('SELECT * FROM users WHERE UserName = %s', (UserName,))
         account = cursor.fetchone()
+
+        db.close()
+        cursor.close()
 
         # If account exists and password matches
         if account and check_password_hash(account['passcode'], password):
@@ -299,6 +373,7 @@ def create_account():
                 (UserName, hashed_password, Email, Phone, 'customer')
             )
             db.commit()
+            db.close()
             cursor.close()
             return redirect(url_for('login'))
     return render_template('client/createac.html', msg=msg)
@@ -386,4 +461,3 @@ if __name__ == "__main__":
     # cursor.execute('SELECT appt_id FROM appointments')
     # results = cursor.fetchall();
     # print(results)
-    

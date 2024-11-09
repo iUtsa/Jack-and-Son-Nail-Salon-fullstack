@@ -98,9 +98,7 @@ def save_week_schedule():
     time_slot = data.get('timeSlot')
     print(time_slot)
     managerID = data.get('managerID')
-    print(managerID)
     days = data.get('days')
-    print(days)
 
     db = get_db_connection()
     cursor = db.cursor()
@@ -119,7 +117,30 @@ def save_week_schedule():
     cursor.close()
     return jsonify({"success": "successful"})
 
+@background_bp.route('/change-store-hours', methods=['POST'])
+def change_store_hours():
+    try:
+        data = request.get_json()
 
+        open_hour = data.get('open')
+        close_hour = data.get('close')
+        current_day = data.get('day')
+        print(open_hour, close_hour, current_day)
+
+        if not open_hour or not close_hour or not current_day:
+            return jsonify({"error": "Missing required fields"}), 400
+
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute('UPDATE `business_hours` SET open_hour = %s, close_hour = %s WHERE day = %s', (open_hour, close_hour, current_day))
+        db.commit()
+        db.close()
+        cursor.close()
+        return jsonify({"success": "Successfully changed"})
+    
+    except Exception as e:
+    # Handle any unexpected errors
+        return jsonify({"error": str(e)}), 500
 
 @background_bp.route('/manage-services')
 def manage_service():
@@ -174,37 +195,80 @@ def final_confirm():
 
     return jsonify({"status": "success", "bookingNumber": booking_number})
 
+
+def check_manager(name: str) -> bool:
+    db = get_db_connection()
+    cursor = db.cursor()
+    cursor.execute('SELECT * FROM managers where UserName = %s', (name,))
+    result = cursor.fetchone()
+
+    db.close()
+    cursor.close()
+    
+    if result:
+        return True
+    
+    return False
+
+def check_managerid(num) -> bool:
+    db = get_db_connection()
+    cursor = db.cursor()
+    cursor.execute('SELECT * FROM managers where managerID = %s', (num,))
+    result = cursor.fetchone()
+    
+    db.close()
+    cursor.close()
+    
+    if result:
+        return True
+    
+    return False
+
 def check_user(name: str) -> bool:
     cursor = db.cursor()
     cursor.execute('SELECT * FROM users WHERE UserName = %s', (name,))
     have_name = cursor.fetchone()
+    
     db.close()
+    cursor.close()
+    
     if have_name:
         return True
     else:
         return False
 
 def to_24_hour_format(time_str):
-    # Convert the 12-hour format to a datetime object
-    time_obj = datetime.strptime(time_str, "%I:%M %p")  # %I for 12-hour clock, %M for minutes, %p for AM/PM
+ 
+    time_obj = datetime.strptime(time_str, "%I:%M %p")
 
-    # Convert the datetime object to 24-hour format string
-    return time_obj.strftime("%H:%M:%S")  # %H for 24-hour clock
+ 
+    return time_obj.strftime("%H:%M:%S") 
 
-def timedelta_to_time(td):
-    # Extract total seconds from timedelta
+def to_12_hour(td):
     total_seconds = int(td.total_seconds())
     
-    # Calculate hours, minutes, and seconds
-    hours, remainder = divmod(total_seconds, 3600)  # 3600 seconds in an hour
-    minutes, seconds = divmod(remainder, 60)        # 60 seconds in a minute
+    hours, remainder = divmod(total_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)      
 
-    # Create a time object
-    t = time(hour=hours % 24, minute=minutes, second=seconds)
+    hours_12 = hours % 12
+    if hours_12 == 0:
+        hours_12 = 12
     
-    # Format the time in 12-hour format
-    hour_12 = t.hour % 12 or 12  # Convert to 12-hour format
-    am_pm = "AM" if t.hour < 12 else "PM"
-    
-    return f"{hour_12:02}:{t.minute:02}:{t.second:02} {am_pm}"
+    am_pm = "AM" if hours < 12 else "PM"
 
+    return f"{hours_12:02}:{minutes:02}:{seconds:02} {am_pm}"
+
+def to_12_hour_no_second(td):
+    total_seconds = int(td.total_seconds())
+    
+    hours, remainder = divmod(total_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+
+
+    hours_12 = hours % 12
+    if hours_12 == 0:
+        hours_12 = 12 
+
+    am_pm = "AM" if hours < 12 else "PM"
+
+    return f"{hours_12:02}:{minutes:02} {am_pm}"

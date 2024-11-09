@@ -47,7 +47,8 @@
         </div>
 
         <div class="login-form">
-            <form action="/login" method="post">
+            <form action="/employee-login" method="post">
+                <label style="color: red;">{{msg}}</label>
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
                     <input type="text" class="form-control" id="username" name="username" placeholder="Enter your user name" required>
@@ -58,7 +59,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="manager-id" class="form-label">Manager's ID</label>
-                    <input type="password" class="form-control" id="manager-id" name="manager_id" placeholder="Enter your manager's ID" required>
+                    <input type="text" class="form-control" id="manager-id" name="manager_id" placeholder="Enter your manager's ID" required>
                 </div>
                 
                 <div class="buttons">

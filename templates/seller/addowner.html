@@ -51,7 +51,8 @@
         </div>
 
         <div class="login-form">
-            <form action="/createac" method="post">
+            <form action="/add-manager" method="POST">
+                <label style="color: red;">{{msg}}</label>
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
                     <input type="text" class="form-control" id="username" name="username" placeholder="Enter your user name" required>
@@ -69,8 +70,12 @@
                     <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone number" required>
                 </div>
                 <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
+                </div>
+                <div class="mb-3">
                     <label for="manager-id" class="form-label">Managers ID</label>
-                    <input type="password" class="form-control" id="manager-id" name="address" placeholder="Enter your Manager ID" required>
+                    <input type="text" class="form-control" id="manager-id" name="manager-id" placeholder= "Enter your Manager ID" required>
                 </div>
                 <div class="buttons">
                 <button type="submit" class="btn btn-primary">Create Account</button>

@@ -57,10 +57,10 @@
         </div>
         Hello, Manager!
         <div id="manager-info">
-            <h1>Name: [ Arnab Das Utsa ]</h1>
-            <h2>User Name: [ utsadas6 ]</h2>
-            <h2>Manager ID: [ 123456 ]</h3>
-            <h2>Day: [ Monday ]</h2>
+            <h1>Name: {{ session['Name'] }}</h1>
+            <h2>User Name: {{ session['UserName'] }}</h2>
+            <h2>Manager ID: {{ session['ManagerID']}}</h3>
+            <h2>Day: {{ formatted_date }}</h2>
         </div>
     </div>
 

@@ -594,9 +594,10 @@ function generateBookingNumber() {
     //=======edit store timing======
     function editTime(button) {
         const row = button.closest("tr"); // Get the row of the clicked button
+        const current_day = row.querySelector('td:first-child').textContent.trim();
         const openCell = row.cells[1]; // Access the "Open" cell
         const closeCell = row.cells[2]; // Access the "Close" cell
-
+        
         if (button.textContent === "Edit") {
             // Get the current time values in 12-hour format
             const currentOpen = to12HourFormat(openCell.textContent.trim());
@@ -613,12 +614,40 @@ function generateBookingNumber() {
             const newOpen = openCell.querySelector("input").value;
             const newClose = closeCell.querySelector("input").value;
 
+            const hours = {
+                day: current_day,
+                open: newOpen,
+                close: newClose
+            };
+            console.log(hours);
+
             openCell.textContent = to12HourFormat(newOpen);
             closeCell.textContent = to12HourFormat(newClose);
 
             // Change button text back to "Edit"
             button.textContent = "Edit";
+            // Send data to server with fetch
+        fetch('/change-store-hours', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(hours) // Send structured data
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                
+            } else {
+                alert(data.error || 'An error occurred.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
         }
+
     }
 
     // Function to convert 24-hour time to 12-hour format
