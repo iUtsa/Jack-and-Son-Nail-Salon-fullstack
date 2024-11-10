@@ -46,7 +46,7 @@ Click on each feature for details:
 
 To ensure the boxes appear correctly in your `README.md`, make sure to remove any extra characters around the backticks and use triple backticks without spaces or extra characters. Here’s exactly how it should look:
 
-```markdown
+
 ### 🔧 Setup & Installation
 
 #### 1. Clone the Repository
@@ -77,18 +77,5 @@ flask run
 - Open [localhost](http://127.0.0.1:5000) in your browser to view the application.
 ```
 
-### Explanation
 
-1. Use three backticks (` ``` `) at the start and end of each code block.
-2. Specify the language (`bash` in this case) directly after the opening triple backticks to enable syntax highlighting.
-3. Ensure there are no spaces or extra characters before or after the backticks.
-
-When you copy and paste this directly into your `README.md` file, it should display shaded boxes around each command block on GitHub.
-
-💻 Usage
-Employee Management: Go to the Employee page to add or modify employee details.
-Scheduling: Assign employees to specific shifts and adjust time ranges as needed.
-Booking: Clients book slots based on employee availability shown on the booking calendar.
-🤝 Contributing
-Contributions are welcome! Please fork the repo, make changes, and submit a pull request.
 
