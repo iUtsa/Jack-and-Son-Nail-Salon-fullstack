@@ -81,19 +81,8 @@ Contributions are welcome! Please fork the repo, make changes, and submit a pull
 Enjoy managing your salon with ease!
 
 <script> function toggleDetails(id) { var element = document.getElementById(id); if (element.style.display === "none") { element.style.display = "block"; } else { element.style.display = "none"; } } </script>
-vbnet
-Copy code
 
-### Explanation of Enhancements
 
-1. **Feature Toggles**: The JavaScript function `toggleDetails` allows users to click on each feature's name to expand and view additional details interactively.
-2. **Technology Icons**: Icons are added for each technology, providing a visual indicator of the tech stack.
-3. **Shields and Labels**: Additional badges highlight tools and frameworks.
-4. **Dynamic Interaction**: The JavaScript script enables information toggling directly in the README. 
-
-**Note**: JavaScript won’t run on GitHub’s markdown rendering directly. To achieve this effect live, you’d need to host this markdown on your website or use a GitHub Pages site. However, for a simple README, you may consider replacing the toggle details with simple expandable sections using markdown details syntax, like:
-
-```markdown
 <details>
   <summary>Employee Management</summary>
   - Quickly add, modify, and remove employee records, storing essential details and availability.
