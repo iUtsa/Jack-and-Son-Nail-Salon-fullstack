@@ -1,4 +1,4 @@
-from flask import Blueprint, request, session,jsonify, url_for, current_app
+from flask import Blueprint, request, session,jsonify, url_for, current_app, redirect, render_template
 import mysql.connector
 from mysql.connector import Error
 from datetime import datetime, timedelta
@@ -72,7 +72,7 @@ def get_services():
 @background_bp.route('/cancel_booking', methods=['POST'])
 def cancel_booking():
     appt_id = request.form.get('appt_id')
-
+    
     if not appt_id:
         return jsonify({"error": "Appointment ID is required"}), 400
 
@@ -82,7 +82,7 @@ def cancel_booking():
     try:
         cursor.execute("DELETE FROM appointments WHERE appt_id = %s", (appt_id,))
         db.commit()
-        
+
         if cursor.rowcount == 0:
             return jsonify({"error": "Booking not found"}), 404
 
@@ -92,8 +92,6 @@ def cancel_booking():
         return jsonify({"error": str(e)}), 500
     finally:
         close_db_connection(db, cursor)
-
-
 
 
 @background_bp.route('/final-confirm', methods=['POST'])
@@ -311,7 +309,7 @@ def upload_service_image():
         unique_filename = get_unique_filename(upload_folder, filename)
         file_path = os.path.join(upload_folder, unique_filename)
         file.save(file_path)
-        print(type, name, file_path, price)
+
         db = get_db_connection()
         cursor = db.cursor()
         cursor.execute('INSERT INTO services (service_type, service_name, image, price) VALUES (%s, %s, %s, %s)', (type, name, file_path, price))
@@ -331,7 +329,7 @@ def update_service():
     price = request.form.get('service_price')
     type = request.form.get('type')
     serviceID = request.form.get('id')
-    print(type)
+
     db = get_db_connection()
     cursor = db.cursor()
     
@@ -380,6 +378,23 @@ def remove_service():
     db.commit()
     close_db_connection(db, cursor)
     return jsonify({"success": "successfully removed service"})
+
+@background_bp.route('/search-employee', methods=['GET'])
+def search_employee():
+    data = request.args.get('name', '').strip()
+    results = []
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
+    if data:
+        cursor.execute('SELECT * FROM employee WHERE Employee_name LIKE %s', ('%' + data + '%',))
+    else:
+        cursor.execute('SELECT * FROM employee')
+    results = cursor.fetchall()
+    close_db_connection(db, cursor)
+    
+    return render_template('seller/employeeinfo.html', results=results)
+
+
 
 
 def price_format(price):

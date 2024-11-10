@@ -36,27 +36,32 @@ let selectedTimeSlot = '';
 
 
 function cancelBooking(apptId) {
-    fetch('/cancel_booking', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'appt_id=' + encodeURIComponent(apptId)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(data.success);
-            // Reload the profile page to reflect the updated appointment list
-            location.reload();
-        } else {
-            alert(data.error || 'An error occurred.');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred. Please try again.');
-    });
+    if (confirm("Are you sure you want to cancel this appointment?")) {
+        fetch('/cancel_booking', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'appt_id=' + encodeURIComponent(apptId)
+        })
+        .then(response => {
+            if (!response.ok) {
+                // Handle HTTP errors
+                return response.json().then(data => {
+                    throw new Error(data.error || 'An error occurred.');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert(data.success || 'Booking canceled successfully');
+            location.reload(); // Reload the page to update appointment list
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(error.message || 'An error occurred. Please try again.');
+        });
+    }
 }
 
 
@@ -443,37 +448,37 @@ function generateBookingNumber() {
 
     //search employee
 
-    document.getElementById('search-button').addEventListener('click', function() {
-        const query = document.getElementById('search-employee').value.toLowerCase().trim();
-        const employeeBoxes = document.querySelectorAll('.employee-info-box');
-        let found = false;
+    // document.getElementById('search-button').addEventListener('click', function() {
+    //     const query = document.getElementById('search-employee').value.toLowerCase().trim();
+    //     const employeeBoxes = document.querySelectorAll('.employee-info-box');
+    //     let found = false;
 
-        if (query === "") {
-            alert("Please enter a search term.");
-            return;
-        }
+    //     if (query === "") {
+    //         alert("Please enter a search term.");
+    //         return;
+    //     }
 
-        // Clear any previous highlights
-        employeeBoxes.forEach(box => box.style.border = "none");
+    //     // Clear any previous highlights
+    //     employeeBoxes.forEach(box => box.style.border = "none");
 
-        // Find and scroll to the first matching employee box
-        employeeBoxes.forEach(box => {
-            const name = box.getAttribute('data-name') ? box.getAttribute('data-name').toLowerCase() : "";
-            const phone = box.getAttribute('data-phone') ? box.getAttribute('data-phone').toLowerCase() : "";
+    //     // Find and scroll to the first matching employee box
+    //     employeeBoxes.forEach(box => {
+    //         const name = box.getAttribute('data-name') ? box.getAttribute('data-name').toLowerCase() : "";
+    //         const phone = box.getAttribute('data-phone') ? box.getAttribute('data-phone').toLowerCase() : "";
 
-            if (!found && (name.includes(query) || phone.includes(query))) {
-                box.style.border = "3px solid blue"; // Highlight the found box
-                box.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Smooth scroll to the box
-                found = true; // Stop after the first match
-                console.log(`Match found for: ${query}`); // Log the match for debugging
-            }
-        });
+    //         if (!found && (name.includes(query) || phone.includes(query))) {
+    //             box.style.border = "3px solid blue"; // Highlight the found box
+    //             box.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Smooth scroll to the box
+    //             found = true; // Stop after the first match
+    //             console.log(`Match found for: ${query}`); // Log the match for debugging
+    //         }
+    //     });
 
-        if (!found) {
-            alert("No employee found with that name or phone number.");
-            console.log("No match found"); // Log if no match found
-        }
-    });
+    //     if (!found) {
+    //         alert("No employee found with that name or phone number.");
+    //         console.log("No match found"); // Log if no match found
+    //     }
+    // });
 
 
 
@@ -536,6 +541,13 @@ function generateBookingNumber() {
     function deleteEmployee(event) {
         const employeeBox = event.target.closest(".employee-info-box");
         employeeBox.remove();
+    }
+
+    function confirmCancel() {
+        if (confirm("Are you sure you want to mark this appointment as a no-show?")) {
+            // Submit the form if confirmed
+            document.querySelector('#cancel-booking form').submit();
+        }
     }
 
 
@@ -851,4 +863,36 @@ function generateBookingNumber() {
             alert('An error occurred. Please try again.');
         });
     }
+
+
+
+    //===========search employee =========
+
+   //===========search employee=========
+    function searchEmp(){
+        const user_input = document.getElementById('search-employee').value().trim();
+
+        
+        fetch('/search-employee', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(user_input)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.error, 'Something Went wrong');
+            }
+        })
+        .catch(error => {
+            console.log('Error:', error);
+            alert('An error occured, please try again');
+        });
+    }
+
 }
+

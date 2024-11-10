@@ -57,30 +57,34 @@
     <div id="upcoming-booking">
         <h2>Upcoming Appointments</h2>
         <ol id="booking-details-items">
-            <li>
-                <div id="upcoming-booking-list">
+
+                <!-- <div id="upcoming-booking-list"> -->
                     
                         <!-- Booking items will be dynamically injected here -->
-                    <div>
-                        <p> <strong id="bdi">Name:</strong> [Customer Name]<br>
-                            <strong id="bdi">Service:</strong> [Service Name]<br>
-                            <strong id="bdi">Date:</strong> [Booking Date]<br>
-                            <strong id="bdi">Time:</strong> [Booking Time]<br>
-                            <strong id="bdi">Booking Number:</strong> [Booking-Number]
-                        </p>
-                    </div>
-                        <!-- Cancel Booking Button (STILL NEED TO ADD THIS ON PYCHARM) -->
-                        <div id="cancel-booking">
-                            <form action="{{ url_for('background.cancel_booking') }}" method="POST" style="display:inline;">
-                                <input type="hidden" name="booking_number" value="[Booking-Number]">
-                                <button type="button" class="btn-cancel">Mark No-Show</button>
-                            </form>
-                        </div>
+                    {% for result in results %}
+                        {% if result['appointment_date'] >= current_date %}
+                            <li>
+                                <div id="upcoming-booking-list">
+                                    <p> 
+                                        <strong id="bdi">Name:</strong> {{ result['Name'] }}<br>
+                                        <strong id="bdi">Service:</strong> {{ result['service_name'] }}<br>
+                                        <strong id="bdi">Date:</strong> {{ result['appointment_date'] }}<br>
+                                        <strong id="bdi">Time:</strong> {{ result['appointment_start_time'] }}<br>
+                                        <strong id="bdi">Booking Number:</strong> {{ result['booking_number']}}
+                                        <div id="cancel-booking">
+                                            <button type="button" class="btn-cancel" onclick="cancelBooking('{{ result.appt_id }}')">Makrk no-show</button>
+                                        </div>
+                                            <!-- <form action="{{ url_for('background.cancel_booking') }}" method="POST" style="display:inline;">
+                                                <input type="hidden" name="appt_id" value="{{ result['appt_id'] }}">
+                                                <button type="button" class="btn-cancel"  onclick="cancelBooking('{{ result.appt_id }}')">Mark No-Show</button>
+                                            </form> -->
+                                    </p>    
+                                </div>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                <!-- </div> -->
 
-                </div>
-                
-                
-            </li>
         </ol>
     </div>
 
@@ -91,25 +95,29 @@
         <ul id="booking-history-items">
         <li>  
         <!-- Booking items will be dynamically injected here -->
-        <div id="booking-history-list">
-            <!-- Booking items will be dynamically injected here -->
-            <p>
-                <strong id="bdi">Name:</strong> [Customer Name]<br>
-                <strong id="bdi">Service:</strong> [Service Name]<br>
-                <strong id="bdi">Date:</strong> [Booking Date]<br>
-                <strong id="bdi">Booking Number:</strong> [Booking Number]
-            </p>
-        </div>
+        {% for result in results %}
+            {% if last_7days <= result['appointment_date'] < current_date %}
+                <li>
+                    <div id="booking-history-list">
+                        <p> 
+                            <strong id="bdi">Name:</strong> {{ result['Name'] }}<br>
+                            <strong id="bdi">Service:</strong> {{ result['service_name'] }}<br>
+                            <strong id="bdi">Date:</strong> {{ result['appointment_date'] }}<br>
+                            <strong id="bdi">Time:</strong> {{ result['appointment_start_time'] }}<br>
+                            <strong id="bdi">Booking Number:</strong> {{ result['booking_number']}}
+                        </p>    
+                    </div>
+                </li>
+            {% endif %}
+        {% endfor %}
         </li>
         </ul>
+        <h2 class="center-text">View All Past Appointments</h2>
+        <div id="cancel-booking" class="center-container">
+            <button type="button" class="btn-cancel" onclick="window.location.href = '{{ url_for('view_past_appt') }}';">View All</button>
+        </div>
     </div>
     </div>
-
-
-
-
-     
-
 
 
 
@@ -118,7 +126,7 @@
     <div class="bottom-bar">
         <p>Copyright: all right reserved to Jack&Son Nails Spa <br> and the development team</p>
     </div>
-
+    <script src="/static/script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>

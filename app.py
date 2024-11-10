@@ -199,7 +199,6 @@ def login():
             session['CustomerID'] = account['CustomerID']
             session['UserName'] = account['UserName']
             session['Email'] = account['Email']
-            session['User_type'] = account['User_type']
 
             # Redirect to the home page after successful login
             return redirect(url_for('home'))
@@ -217,27 +216,25 @@ def login():
 def create_account():
     msg = ''
     if request.method == 'POST':
-        UserName = request.form['username']
-        passcode = request.form['password']
-        Email = request.form['email']
-        Phone = request.form['phone']
-
+        UserName = request.form.get('username')
+        passcode = request.form.get('password')
+        Email = request.form.get('email')
+        Phone = request.form.get('phone')
+        name = request.form.get('user_name')
         # Hash the password before saving it
         hashed_password = generate_password_hash(passcode)
         if background.check_user(UserName):
             msg = 'Username is already in use!!!'
             return render_template('client/createac.html', msg=msg)
         else:
-            if not db.is_connected():
-                db.reconnect(attempts=3, delay=5)
+            db = get_db_connection()
             cursor = db.cursor()
             cursor.execute(
-                'INSERT INTO users (UserName, passcode, Email, Phone, User_type) VALUES (%s, %s, %s, %s, %s)',
-                (UserName, hashed_password, Email, Phone, 'customer')
+                'INSERT INTO users (UserName, passcode, Email, Phone, Name) VALUES (%s, %s, %s, %s, %s)',
+                (UserName, hashed_password, Email, Phone, name)
             )
             db.commit()
-            cursor.close()
-            db.close()
+            close_db_connection(db, cursor)
             
             return redirect(url_for('login'))
     return render_template('client/createac.html', msg=msg)
@@ -284,20 +281,31 @@ def employee_login():
 # view and add employee
 @app.route('/employee-editor')
 def employee_editor():
-    db = get_db_connection()
-    cursor = db.cursor(dictionary=True)
-    cursor.execute('SELECT * FROM employee order by EmployeeID ASC')
-    results = cursor.fetchall()
-    cursor.close()
-    db.close()
-    
+    if('manager_loggedin' not in session):
+        return redirect(url_for('employee_login'))
+    else:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute('SELECT * FROM employee order by EmployeeID ASC')
+        results = cursor.fetchall()
+        cursor.close()
+        db.close()
+        
 
-    return render_template('seller/employeeeditor.html',results=results)
+        return render_template('seller/employeeeditor.html',results=results)
 
 # A page that display employee's informations
 @app.route('/employee-info')
 def employee_info():
-    return render_template('seller/employeeinfo.html')
+    if('manager_loggedin' not in session):
+        return redirect(url_for('employee_login'))
+    else:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute('SELECT * FROM employee')
+        results = cursor.fetchall()
+        close_db_connection(db, cursor)
+        return render_template('seller/employeeinfo.html', results=results)
 
 # profile page for seller side
 @app.route('/seller-homepage')
@@ -306,111 +314,173 @@ def seller_homepage():
         current_date = datetime.now()
         formatted_date = current_date.strftime('%A %m/%d/%Y')
         return render_template('seller/index.html', formatted_date=formatted_date)
-    
-    return render_template('seller/sellerlogin.html')
+    else:
+        return render_template('seller/sellerlogin.html')
+
 
 # Add a manager
 @app.route('/add-manager', methods=['POST', 'GET'])
 def add_manager1():
     msg = ''
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        email = request.form['email']
-        phone = request.form['phone']
-        name = request.form['name']
-        managerID = request.form['manager-id']
+    if('manager_loggedin' not in session):
+        return redirect(url_for('employee_login'))
+    else:
+        if request.method == 'POST':
+            username = request.form['username']
+            password = request.form['password']
+            email = request.form['email']
+            phone = request.form['phone']
+            name = request.form['name']
+            managerID = request.form['manager-id']
 
-        hashed_pass = generate_password_hash(password)
-        if background.check_managerid(managerID):
-            msg = 'Manager ID already exist in the database'
-            return render_template('seller/addowner.html', msg = msg)
-        if background.check_manager(username):
-            msg = 'Username already exist in the database'
-            return render_template('seller/addowner.html', msg=msg)
-        db = get_db_connection()
-        cursor = db.cursor(dictionary=True)
-        cursor.execute('INSERT INTO managers (managerID, UserName, password, Name, phone, email) VALUES (%s, %s,%s, %s, %s, %s)', (managerID, username, hashed_pass, name, phone, email))
-        msg = f'Account successfully created <br> Username {username} <br> Password: {password} <br> managerID: {managerID}'
-        db.commit()
-        close_db_connection(db, cursor)
-        
-        return render_template('seller/sellerlogin.html')
-        
+            hashed_pass = generate_password_hash(password)
+            if background.check_managerid(managerID):
+                msg = 'Manager ID already exist in the database'
+                return render_template('seller/addowner.html', msg = msg)
+            if background.check_manager(username):
+                msg = 'Username already exist in the database'
+                return render_template('seller/addowner.html', msg=msg)
+            db = get_db_connection()
+            cursor = db.cursor(dictionary=True)
+            cursor.execute('INSERT INTO managers (managerID, UserName, password, Name, phone, email) VALUES (%s, %s,%s, %s, %s, %s)', (managerID, username, hashed_pass, name, phone, email))
+            msg = f'Account successfully created <br> Username {username} <br> Password: {password} <br> managerID: {managerID}'
+            db.commit()
+            close_db_connection(db, cursor)
+            
+            return render_template('seller/sellerlogin.html')
+            
 
-        
+            
 
-    return render_template('seller/addowner.html')
+        return render_template('seller/addowner.html')
 
 
 # Adjust prices and services
 @app.route('/price-management')
 def price_manage():
-    db = get_db_connection()
-    cursor = db.cursor(dictionary=True)
-    cursor.execute('SELECT service_type FROM services GROUP BY service_type')
-    categories = cursor.fetchall()
-    cursor.execute('SELECT * FROM services')
-    results = cursor.fetchall()
+    if('manager_loggedin' not in session):
+        return redirect(url_for('employee_login'))
+    else:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute('SELECT service_type FROM services GROUP BY service_type')
+        categories = cursor.fetchall()
+        cursor.execute('SELECT * FROM services')
+        results = cursor.fetchall()
 
-    close_db_connection(db, cursor)
+        close_db_connection(db, cursor)
 
-    return render_template('seller/priceeditor.html', categories=categories, results=results)
+        return render_template('seller/priceeditor.html', categories=categories, results=results)
 
 
 # To make weekly schedule
 @app.route('/schedule')
 def schedule():
-    db = get_db_connection()
-    cursor = db.cursor(dictionary=True)
-    cursor.execute(
-        '''
-            SELECT 
-            ws.managerID,
-            ws.time_slot,
-            ws.monday,
-            ws.tuesday,
-            ws.wednesday,
-            ws.thursday,
-            ws.friday,
-            ws.saturday,
-            ws.sunday,
-            m.Name
-            FROM 
-            week_schedule AS ws
-            JOIN 
-            managers AS m ON ws.managerID = m.managerID
-            ORDER BY ws.id ASC;
+    if('manager_loggedin' not in session):
+        return redirect(url_for('employee_login'))
+    else:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute(
             '''
-            )
-    schedule = cursor.fetchall()
-    cursor.close()
-    db.close()
-    
-    return render_template('seller/schedule.html', schedule=schedule)
+                SELECT 
+                ws.managerID,
+                ws.time_slot,
+                ws.monday,
+                ws.tuesday,
+                ws.wednesday,
+                ws.thursday,
+                ws.friday,
+                ws.saturday,
+                ws.sunday,
+                m.Name
+                FROM 
+                week_schedule AS ws
+                JOIN 
+                managers AS m ON ws.managerID = m.managerID
+                ORDER BY ws.id ASC;
+                '''
+                )
+        schedule = cursor.fetchall()
+        cursor.close()
+        db.close()
+        
+        return render_template('seller/schedule.html', schedule=schedule)
+
 
 # TO view and adjust store opening/closing times
 @app.route('/store-schedule')
 def store_schedule():
-    db = get_db_connection()
-    cursor = db.cursor(dictionary=True)
-    cursor.execute('SELECT * FROM business_hours')
-    results = cursor.fetchall()
-    for result in results:
-        result['open_hour'] = background.to_12_hour_no_second(result['open_hour'])
-        result['close_hour']= background.to_12_hour_no_second(result['close_hour'])
-    cursor.close()
-    db.close()
-    
-       
-    return render_template('seller/storetime.html', results=results)
+    if('manager_loggedin' not in session):
+        return redirect(url_for('employee_login'))
+    else:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute('SELECT * FROM business_hours')
+        results = cursor.fetchall()
+        for result in results:
+            result['open_hour'] = background.to_12_hour_no_second(result['open_hour'])
+            result['close_hour']= background.to_12_hour_no_second(result['close_hour'])
+        cursor.close()
+        db.close()
+        
+        
+        return render_template('seller/storetime.html', results=results)
 
 
 
 # A page to manage/view upcoming appointments
 @app.route('/appt-manage')
 def manage_appt():
-    return render_template('seller/viewappt.html')
+    if('manager_loggedin' not in session):
+        return redirect(url_for('employee_login'))
+    else:
+        current_date = datetime.now().date()
+        last_7days = current_date - timedelta(days=7)
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute(
+            '''
+            SELECT a.appt_id, 
+            a.booking_number, 
+            a.customer_id, 
+            s.service_name, 
+            a.appointment_date, 
+            a.appointment_start_time, 
+            u.Name
+            FROM appointments as a JOIN users as u JOIN services as s ON a.customer_id = u.CustomerID AND a.service_id = s.service_id
+            ORDER BY a.appointment_date ASC, a.appointment_start_time DESC
+            ''')
+        results = cursor.fetchall()
+        close_db_connection(db, cursor)
+
+        return render_template('seller/viewappt.html', results=results, current_date=current_date, last_7days=last_7days)
+
+
+@app.route('/past-appt')
+def view_past_appt():
+    if('manager_loggedin' not in session):
+        return redirect(url_for('employee_login'))
+    else:
+        last_7days = datetime.now().date() - timedelta(days=7)
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute(
+            '''
+            SELECT a.appt_id, 
+            a.booking_number, 
+            a.customer_id, 
+            s.service_name, 
+            a.appointment_date, 
+            a.appointment_start_time, 
+            u.Name
+            FROM appointments as a JOIN users as u JOIN services as s ON a.customer_id = u.CustomerID AND a.service_id = s.service_id
+            ORDER BY a.appointment_date ASC, a.appointment_start_time DESC
+            ''')
+        results = cursor.fetchall()
+        close_db_connection(db, cursor)
+
+        return render_template('seller/pastappt.html', results=results, last_7days=last_7days)
 
 
 
