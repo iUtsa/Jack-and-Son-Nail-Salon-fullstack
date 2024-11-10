@@ -13,28 +13,25 @@ Jack and Son Nails Spa is a scheduling and employee management system designed t
 
 Click on each feature for details:
 
-| Feature                 | Description                                                            |
-|-------------------------|------------------------------------------------------------------------|
-| **Employee Management** | <span onclick="toggleDetails('employee')">➤ Add, edit, and remove employees with essential details.</span> |
-| **Shift Scheduling**    | <span onclick="toggleDetails('shift')">➤ Assign shifts to employees with unique color-coded blocks per slot.</span> |
-| **Client Booking**      | <span onclick="toggleDetails('booking')">➤ Clients can view and book based on available time slots.</span> |
-| **Responsive Layout**   | <span onclick="toggleDetails('layout')">➤ Works smoothly on any device, adapting to different screen sizes.</span> |
+<details>
+  <summary>Employee Management</summary>
+  - Quickly add, modify, and remove employee records, storing essential details and availability.
+</details>
 
-<div id="employee" style="display: none;">
-  - **Employee Management**: Quickly add, modify, and remove employee records, storing essential details and availability.
-</div>
+<details>
+  <summary>Shift Scheduling</summary>
+  - Assign shifts with unique color codes, ensuring clear visibility of availability.
+</details>
 
-<div id="shift" style="display: none;">
-  - **Shift Scheduling**: Assign shifts with unique color codes, ensuring clear visibility of availability.
-</div>
+<details>
+  <summary>Client Booking</summary>
+  - Clients can easily book based on available slots, enhancing appointment management.
+</details>
 
-<div id="booking" style="display: none;">
-  - **Client Booking**: Clients can easily book based on available slots, enhancing appointment management.
-</div>
-
-<div id="layout" style="display: none;">
-  - **Responsive Layout**: Fully responsive, ensuring seamless experience on mobile, tablet, and desktop.
-</div>
+<details>
+  <summary>Responsive Layout</summary>
+  - Fully responsive, ensuring seamless experience on mobile, tablet, and desktop.
+</details>
 
 ---
 
@@ -78,12 +75,3 @@ Booking: Clients book slots based on employee availability shown on the booking 
 🤝 Contributing
 Contributions are welcome! Please fork the repo, make changes, and submit a pull request.
 
-Enjoy managing your salon with ease!
-
-<script> function toggleDetails(id) { var element = document.getElementById(id); if (element.style.display === "none") { element.style.display = "block"; } else { element.style.display = "none"; } } </script>
-
-
-<details>
-  <summary>Employee Management</summary>
-  - Quickly add, modify, and remove employee records, storing essential details and availability.
-</details>
