@@ -46,8 +46,10 @@ Click on each feature for details:
 
 ## 🔧 Setup & Installation
 
-### 1. Clone the Repository
-```bash
+### 🔧 Setup & Installation
+1. Clone the Repository
+bash
+Copy code
 git clone https://github.com/yourusername/jack-and-son-nails-spa.git
 cd jack-and-son-nails-spa
 2. Set Up the Environment
@@ -66,7 +68,7 @@ bash
 Copy code
 flask run
 5. Access the Application
-Open localhost to view in your browser.
+Open localhost in your browser to view the application
 
 💻 Usage
 Employee Management: Go to the Employee page to add or modify employee details.
