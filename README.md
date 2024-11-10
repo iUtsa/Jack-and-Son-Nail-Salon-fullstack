@@ -47,28 +47,34 @@ Click on each feature for details:
 ## 🔧 Setup & Installation
 
 ### 🔧 Setup & Installation
-1. Clone the Repository
-bash
-Copy code
+
+#### 1. Clone the Repository
+\```bash
 git clone https://github.com/yourusername/jack-and-son-nails-spa.git
 cd jack-and-son-nails-spa
-2. Set Up the Environment
-Ensure you have Python installed.
-Create and activate a virtual environment:
-bash
-Copy code
-python -m venv venv
-source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-3. Install Dependencies
-bash
-Copy code
+\```
+
+#### 2. Set Up the Environment
+- Ensure you have Python installed.
+- Create and activate a virtual environment:
+  \```bash
+  python -m venv venv
+  source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+  \```
+
+#### 3. Install Dependencies
+\```bash
 pip install -r requirements.txt
-4. Run the Application
-bash
-Copy code
+\```
+
+#### 4. Run the Application
+\```bash
 flask run
-5. Access the Application
-Open localhost in your browser to view the application
+\```
+
+#### 5. Access the Application
+- Open [localhost](http://127.0.0.1:5000) in your browser to view the application.
+
 
 💻 Usage
 Employee Management: Go to the Employee page to add or modify employee details.
