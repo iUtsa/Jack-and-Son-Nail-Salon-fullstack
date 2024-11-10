@@ -9,6 +9,7 @@ import background
 
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'static/photos'
 app.register_blueprint(background.background_bp) 
 app.secret_key = 'your_secret_key'  # Required for session handling
 # Define the secret key for token generation
@@ -16,6 +17,7 @@ app.secret_key = 'your_secret_key'  # Required for session handling
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_TYPE'] = 'filesystem'  # Store session data in the filesystem
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
+
 
 # Database connection
 db = mysql.connector.connect(
@@ -39,155 +41,17 @@ def get_db_connection():
         print("Error connecting to MySQL database:", e)
         return None
 
+def close_db_connection(db, cursor):
+    if db:
+        db.close()
+    if cursor:
+        cursor.close()
 
 # client home page
 @app.route('/')
 @app.route('/index')
 def home():
     return render_template('client/index.html')
-
-# log in page for employee
-@app.route('/employee-login')
-def seller_login():
-    return render_template('seller/sellerlogin.html')
-
-# view and add employee
-@app.route('/employee-editor')
-def employee_editor():
-    return render_template('seller/employeeeditor.html')
-
-# A page that display employee's informations
-@app.route('/employee-info')
-def employee_info():
-    return render_template('seller/employeeinfo.html')
-
-# profile page for seller side
-@app.route('/seller-homepage')
-def seller_homepage():
-    return render_template('seller/index.html')
-
-# Add a manager
-@app.route('/add-manager', methods=['POST', 'GET'])
-def add_manager1():
-    msg = ''
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        email = request.form['email']
-        phone = request.form['phone']
-        name = request.form['name']
-        managerID = request.form['manager-id']
-        print(username, password, email, phone, name, managerID)
-
-        hashed_pass = generate_password_hash(password)
-        if background.check_managerid(managerID):
-            msg = 'Manager ID already exist in the database'
-            return render_template('seller/addowner.html', msg = msg)
-        if background.check_manager(username):
-            msg = 'Username already exist in the database'
-            return render_template('seller/addowner.html', msg=msg)
-        db = get_db_connection()
-        cursor = db.cursor(dictionary=True)
-        cursor.execute('INSERT INTO managers (managerID, UserName, password, Name, phone, email) VALUES (%s, %s,%s, %s, %s, %s)', (managerID, username, hashed_pass, name, phone, email))
-        msg = f'Account successfully created <br> Username {username} <br> Password: {password} <br> managerID: {managerID}'
-        db.commit()
-        db.close()
-        cursor.close()
-        return render_template('seller/sellerlogin.html')
-        
-
-        
-
-    return render_template('seller/addowner.html')
-
-@app.route('/employee-login', methods = ['POST', 'GET'])
-def employee_login():
-    msg = ''
-    
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        managerID = int(request.form['manager_id'])
-        current_date = datetime.now()
-        formatted_date = current_date.strftime('%A %m/%d/%Y')
-
-        db = get_db_connection()
-        cursor = db.cursor(dictionary=True)
-        cursor.execute('SELECT * FROM managers WHERE UserName = %s', (username,))
-        result = cursor.fetchone()
-
-        db.close()
-        cursor.close()
-
-        if result:
-            if check_password_hash(result['password'], password) and result['managerID'] == managerID:
-                session['loggedin'] = True
-                session['ManagerID'] = result['managerID']
-                session['Name'] = result['Name']
-                session['UserName'] = result['UserName']
-                session['Email'] = result['email']
-                return render_template('seller/index.html', formatted_date = formatted_date)
-    else:
-        msg = 'Incorrect username/password/manager ID'
-        return render_template('seller/sellerlogin.html', msg=msg)
-    # return render_template('seller/sellerlogin.html', msg=msg)
-
-# Adjust prices and services
-@app.route('/price-management')
-def price_manage():
-    return render_template('seller/priceeditor.html')
-
-
-# To make weekly schedule
-@app.route('/schedule')
-def schedule():
-    db = get_db_connection()
-    cursor = db.cursor(dictionary=True)
-    cursor.execute(
-        '''
-            SELECT 
-            ws.managerID,
-            ws.time_slot,
-            ws.monday,
-            ws.tuesday,
-            ws.wednesday,
-            ws.thursday,
-            ws.friday,
-            ws.saturday,
-            ws.sunday,
-            m.Name
-            FROM 
-            week_schedule AS ws
-            JOIN 
-            managers AS m ON ws.managerID = m.managerID;
-            '''
-            )
-    schedule = cursor.fetchall()
-    db.close()
-    cursor.close()
-
-    return render_template('seller/schedule.html', schedule=schedule)
-
-# TO view and adjust store opening/closing times
-@app.route('/store-schedule')
-def store_schedule():
-    db = get_db_connection()
-    cursor = db.cursor(dictionary=True)
-    cursor.execute('SELECT * FROM business_hours')
-    results = cursor.fetchall()
-    for result in results:
-        result['open_hour'] = background.to_12_hour_no_second(result['open_hour'])
-        result['close_hour']= background.to_12_hour_no_second(result['close_hour'])
-    db.close()
-    cursor.close()
-       
-    return render_template('seller/storetime.html', results=results)
-
-# A page to manage/view upcoming appointments
-@app.route('/appt-manage')
-def manage_appt():
-    return render_template('seller/viewappt.html')
-
 
 # About page
 @app.route('/about')
@@ -231,7 +95,6 @@ def logout():
 
     return redirect(url_for('home'))
 
-@app.route('/seller/index.html')
 
 @app.route('/reservation')
 def reservation():
@@ -298,8 +161,8 @@ def profile():
     user = cursor.fetchone()
     avatar_url = 'https://via.placeholder.com/150?text=Female+Avatar'
     
-    cursor.close()
-    db.close()
+    close_db_connection(db, cursor)
+    
     
     # Render the profile page with a no-cache header
     response = make_response(render_template(
@@ -325,9 +188,9 @@ def login():
         cursor = db.cursor(dictionary=True)
         cursor.execute('SELECT * FROM users WHERE UserName = %s', (UserName,))
         account = cursor.fetchone()
-
-        db.close()
-        cursor.close()
+        
+        close_db_connection(db, cursor)
+        
 
         # If account exists and password matches
         if account and check_password_hash(account['passcode'], password):
@@ -373,10 +236,182 @@ def create_account():
                 (UserName, hashed_password, Email, Phone, 'customer')
             )
             db.commit()
-            db.close()
             cursor.close()
+            db.close()
+            
             return redirect(url_for('login'))
     return render_template('client/createac.html', msg=msg)
+
+
+# SELLER SIDE
+# 
+# 
+# 
+
+
+# log in page for employee
+@app.route('/employee-login', methods = ['POST', 'GET'])
+def employee_login():
+    msg = ''
+    
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        managerID = int(request.form['manager_id'])
+        # current_date = datetime.now()
+        # formatted_date = current_date.strftime('%A %m/%d/%Y')
+
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute('SELECT * FROM managers WHERE UserName = %s', (username,))
+        result = cursor.fetchone()
+        
+        close_db_connection(db, cursor)
+
+        if result:
+            if check_password_hash(result['password'], password) and result['managerID'] == managerID:
+                session['manager_loggedin'] = True
+                session['ManagerID'] = result['managerID']
+                session['Name'] = result['Name']
+                session['UserName'] = result['UserName']
+                session['Email'] = result['email']
+                return redirect(url_for('seller_homepage'))
+        else:
+            msg = 'Incorrect username/password/manager ID'
+            return render_template('seller/sellerlogin.html', msg=msg)
+    return render_template('seller/sellerlogin.html', msg=msg)
+
+# view and add employee
+@app.route('/employee-editor')
+def employee_editor():
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute('SELECT * FROM employee order by EmployeeID ASC')
+    results = cursor.fetchall()
+    cursor.close()
+    db.close()
+    
+
+    return render_template('seller/employeeeditor.html',results=results)
+
+# A page that display employee's informations
+@app.route('/employee-info')
+def employee_info():
+    return render_template('seller/employeeinfo.html')
+
+# profile page for seller side
+@app.route('/seller-homepage')
+def seller_homepage():
+    if('manager_loggedin' in session):
+        current_date = datetime.now()
+        formatted_date = current_date.strftime('%A %m/%d/%Y')
+        return render_template('seller/index.html', formatted_date=formatted_date)
+    
+    return render_template('seller/sellerlogin.html')
+
+# Add a manager
+@app.route('/add-manager', methods=['POST', 'GET'])
+def add_manager1():
+    msg = ''
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+        phone = request.form['phone']
+        name = request.form['name']
+        managerID = request.form['manager-id']
+
+        hashed_pass = generate_password_hash(password)
+        if background.check_managerid(managerID):
+            msg = 'Manager ID already exist in the database'
+            return render_template('seller/addowner.html', msg = msg)
+        if background.check_manager(username):
+            msg = 'Username already exist in the database'
+            return render_template('seller/addowner.html', msg=msg)
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute('INSERT INTO managers (managerID, UserName, password, Name, phone, email) VALUES (%s, %s,%s, %s, %s, %s)', (managerID, username, hashed_pass, name, phone, email))
+        msg = f'Account successfully created <br> Username {username} <br> Password: {password} <br> managerID: {managerID}'
+        db.commit()
+        close_db_connection(db, cursor)
+        
+        return render_template('seller/sellerlogin.html')
+        
+
+        
+
+    return render_template('seller/addowner.html')
+
+
+# Adjust prices and services
+@app.route('/price-management')
+def price_manage():
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute('SELECT service_type FROM services GROUP BY service_type')
+    categories = cursor.fetchall()
+    cursor.execute('SELECT * FROM services')
+    results = cursor.fetchall()
+
+    close_db_connection(db, cursor)
+
+    return render_template('seller/priceeditor.html', categories=categories, results=results)
+
+
+# To make weekly schedule
+@app.route('/schedule')
+def schedule():
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute(
+        '''
+            SELECT 
+            ws.managerID,
+            ws.time_slot,
+            ws.monday,
+            ws.tuesday,
+            ws.wednesday,
+            ws.thursday,
+            ws.friday,
+            ws.saturday,
+            ws.sunday,
+            m.Name
+            FROM 
+            week_schedule AS ws
+            JOIN 
+            managers AS m ON ws.managerID = m.managerID
+            ORDER BY ws.id ASC;
+            '''
+            )
+    schedule = cursor.fetchall()
+    cursor.close()
+    db.close()
+    
+    return render_template('seller/schedule.html', schedule=schedule)
+
+# TO view and adjust store opening/closing times
+@app.route('/store-schedule')
+def store_schedule():
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute('SELECT * FROM business_hours')
+    results = cursor.fetchall()
+    for result in results:
+        result['open_hour'] = background.to_12_hour_no_second(result['open_hour'])
+        result['close_hour']= background.to_12_hour_no_second(result['close_hour'])
+    cursor.close()
+    db.close()
+    
+       
+    return render_template('seller/storetime.html', results=results)
+
+
+
+# A page to manage/view upcoming appointments
+@app.route('/appt-manage')
+def manage_appt():
+    return render_template('seller/viewappt.html')
+
 
 
 
@@ -424,7 +459,7 @@ def update_user_password(user, hashed_password):
     if username:
         cursor.execute('UPDATE users SET passcode = %s WHERE UserName = %s', (hashed_password, user))
         db.commit()
-        db.close()
+        close_db_connection(db, cursor)
 
 
 @app.route('/resetpass/<token>', methods=['GET', 'POST'])

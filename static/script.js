@@ -308,60 +308,62 @@ function generateBookingNumber() {
         });
     });
 
-    function addService(event) {
+    async function addService(event) {
         event.preventDefault();
-
-        const form = event.target;
-        const category = form.id.split("-")[1]; // e.g., "nailcare" from "addServiceForm-nailcare"
+    
+        const form = event.target.closest('form');
+        const category = form.id.split("-")[1];
         const table = document.querySelector(`#${category}-table tbody`);
-
+    
         if (!table) {
             console.error(`Table for category "${category}" not found.`);
             return;
         }
-
+    
         const serviceName = form.querySelector(`input[id$='ServiceName-${category}']`).value;
         const servicePrice = form.querySelector(`input[id$='ServicePrice-${category}']`).value;
         const serviceImageInput = form.querySelector(`input[id$='ServiceImage-${category}']`);
-
         if (serviceImageInput.files.length === 0) {
             alert("Please select an image for the new service.");
             return;
         }
+    
+        const formData = new FormData();
+        formData.append("type", category);
+        formData.append("service_image", serviceImageInput.files[0]);
+        formData.append("service_name", serviceName);
+        formData.append("service_price", servicePrice);
+    
+        const response = await fetch('/add-service', {
+            method: 'POST',
+            body: formData
+        });
+        
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const imageURL = e.target.result;
-
-            const newRow = document.createElement("tr");
-            newRow.innerHTML = `
-                <td>${serviceName}</td>
-                <td><img src="${imageURL}" alt="${serviceName}" style="width: 80px; height: 60px;"></td>
-                <td>$${servicePrice}</td>
-                <td>
-                    <button class="btn btn-edit" onclick="editService(this)">Edit</button>
-                    <button class="btn btn-remove" onclick="removeService(this)">Remove</button>
-                </td>
-            `;
-
-            table.appendChild(newRow);
-
+        const result = await response.json();
+    
+        if (response.ok) {
+            location.reload();
             // Reset form fields after adding service
             form.querySelector(`input[id$='ServiceName-${category}']`).value = '';
             form.querySelector(`input[id$='ServicePrice-${category}']`).value = '';
             serviceImageInput.value = '';
-        };
-
-        reader.readAsDataURL(serviceImageInput.files[0]);
+        } else {
+            alert("Failed to upload image: " + result.error);
+        }
     }
+    
 
 
-    function editService(button) {
+    async function editService(button) {
         const row = button.closest('tr');
         const serviceNameCell = row.cells[0];
         const serviceImageCell = row.cells[1];
         const servicePriceCell = row.cells[2];
-
+        const serviceID = button.getAttribute('data-service-id');
+        const category = button.getAttribute('data-service-type');
+        let image_changed = false;
+        
         if (button.textContent === 'Save') {
             const newName = serviceNameCell.querySelector('input').value;
             const newPrice = servicePriceCell.querySelector('input').value;
@@ -370,15 +372,32 @@ function generateBookingNumber() {
             serviceNameCell.textContent = newName;
             servicePriceCell.textContent = `$${newPrice}`;
 
+            const formData = new FormData();
+        
             if (newImageFile) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    serviceImageCell.innerHTML = `<img src="${e.target.result}" alt="${newName}" style="width: 80px; height: 60px;">`;
-                };
-                reader.readAsDataURL(newImageFile);
+                formData.append("service_image", newImageFile);
+                image_changed = true;
+            }
+            formData.append("type", category);
+            formData.append("service_name", newName);
+            formData.append("service_price", newPrice);
+            formData.append("id", serviceID);
+            formData.append("image_changed", image_changed.toString());
+            console.log(category, newName, newPrice,serviceID, image_changed);
+        
+            // Upload image to the server
+            const response = await fetch('/update-service', {
+                method: 'POST',
+                body: formData
+            });
+            
+
+            const result = await response.json();
+        
+            if (response.ok) {
+                location.reload();
             } else {
-                const currentImageURL = serviceImageCell.querySelector('img').src;
-                serviceImageCell.innerHTML = `<img src="${currentImageURL}" alt="${newName}" style="width: 80px; height: 60px;">`;
+                alert("Failed to upload image: " + result.error);
             }
 
             button.textContent = 'Edit';
@@ -398,11 +417,25 @@ function generateBookingNumber() {
         }
     }
 
-    function removeService(button) {
+    async function removeService(button) {
         if (confirm("Are you sure you want to remove this service?")) {
             const row = button.closest('tr');
-            row.remove();
-            console.log("Service removed");
+            const serviceID = button.getAttribute('data-service-id');
+
+            const response = await fetch('/remove-service', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(serviceID),
+            });
+            const result = await response.json();
+
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert("Failed to upload image: " + result.error);
+            }
         }
     }
 
@@ -521,25 +554,53 @@ function generateBookingNumber() {
         // Get form values
         const name = document.getElementById("newEmployeeName-editemp").value;
         const phone = document.getElementById("newEmployeePhone-editemp").value;
-        const position = document.getElementById("newEmployeePosition-editemp").value;
+        const expertise = document.getElementById("newEmployeePosition-editemp").value;
         const email = document.getElementById("newEmployeeEmail-editemp").value;
 
-        // Create new row in the table
-        const table = document.getElementById("edit-employee-table").getElementsByTagName("tbody")[0];
-        const newRow = document.createElement("tr");
+        // // Create new row in the table
+        // const table = document.getElementById("edit-employee-table").getElementsByTagName("tbody")[0];
+        // const newRow = document.createElement("tr");
 
-        newRow.innerHTML = `
-            <td>${name}</td>
-            <td>${phone}</td>
-            <td>${position}</td>
-            <td>${email}</td>
-            <td>
-                <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
-                <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
-            </td>
-        `;
+        // newRow.innerHTML = `
+        //     <td>${name}</td>
+        //     <td>${phone}</td>
+        //     <td>${position}</td>
+        //     <td>${email}</td>
+        //     <td>
+        //         <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
+        //         <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
+        //     </td>
+        // `;
 
-        table.appendChild(newRow);
+        // table.appendChild(newRow);
+        const newEmployee = {
+            name: name,
+            phone: phone,
+            expertise: expertise,
+            email: email
+        };
+
+        fetch('/add-employee', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(newEmployee)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success){
+                alert('Employee added successsfully')
+                location.reload()
+            }
+            else{
+                alert(data.error || 'Something went wrong')
+            }
+        })
+        .catch(error => {
+          console.error('Error', error)
+          alert(data.error || 'Something went wrong, please try again')      
+        });
 
         // Clear input fields after adding employee
         document.getElementById("newEmployeeName-editemp").value = '';
@@ -550,8 +611,9 @@ function generateBookingNumber() {
 
     function editEmp(button) {
         const row = button.closest("tr");
-        const cells = row.getElementsByTagName("td");
-
+        // const cells = row.getElementsByTagName("td");
+        const cells = row.querySelectorAll('td:not(:first-child):not(:last-child)');
+        const employeeID = row.querySelector('td:first-child').textContent.trim()
         if (button.textContent === "Save") {
             // Save edited values
             const newName = cells[0].querySelector("input").value;
@@ -564,6 +626,34 @@ function generateBookingNumber() {
             cells[1].textContent = newPhone;
             cells[2].textContent = newPosition;
             cells[3].textContent = newEmail;
+            const dataToSend = {
+                name: newName,
+                phone: newPhone,
+                expertise: newPosition,
+                email: newEmail,
+                id: employeeID
+            };
+            console.log(dataToSend);
+
+            fetch('/edit-employee-info',
+                {
+                    method: 'POST',
+                    headers: {'content-type': 'application/json'},
+                body: JSON.stringify(dataToSend)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success){
+
+                    }
+                    else{
+                        alert(data.error || 'An error has occured')
+                    }
+                })
+                .catch(error => {
+                    console.error('Error', error),
+                    alert(data.error || 'An Error has occured, please try again')
+                });
 
             button.textContent = "Edit";
         } else {
@@ -579,14 +669,44 @@ function generateBookingNumber() {
             cells[3].innerHTML = `<input type="text" value="${currentEmail}" class="form-control">`;
 
             button.textContent = "Save";
+
         }
     }
 
     function removeEmp(button) {
         if (confirm("Are you sure you want to remove this employee?")) {
             const row = button.closest("tr");
-            row.remove();
-            console.log("Employee removed");
+            const employeeID = row.querySelector('td:first-child').textContent.trim();
+            // row.remove();
+            console.log(employeeID)
+            const passing_id = {
+                id: employeeID
+            }
+            fetch('/remove-employee', {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify(employeeID)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success){
+                    alert('Employee removed successfully')
+                    row.remove();
+                }
+                else{
+                    alert(data.error || 'An error has occured')
+                }
+            })
+            .catch(error => {
+                console.error('Error', error),
+                alert(data.error || 'An error has occured, pleast try again')
+            });
+        }
+        else{
+            alert("something went wrong")
+            console.log('something went wrong', employeeID)
         }
     }
 
@@ -683,11 +803,8 @@ function generateBookingNumber() {
 
     const timeSlot = timeSlotCell ? timeSlotCell.textContent.trim() : ""; // Get time slot, safely checking for existence
 
-
-    const managerInfo = row.querySelector('td:first-child').textContent.trim(); // Get full manager info
-
     // Extract managerID from the managerInfo string (e.g., "John Doe ID:101123")
-    const managerID = managerInfo.split('ID:')[1].trim();  // Extract managerID after 'ID:'
+
 
     if (button.textContent === 'Edit') {
         cells.forEach(cell => {
@@ -697,7 +814,7 @@ function generateBookingNumber() {
         button.textContent = 'Save';
     } else {
         // Collect the data to send to the server
-        const dataToSend = { managerID, timeSlot, days: {} };
+        const dataToSend = {timeSlot, days: {} };
 
         cells.forEach((cell, index) => {
             const dayName = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'][index];

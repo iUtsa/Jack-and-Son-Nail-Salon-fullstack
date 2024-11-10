@@ -64,6 +64,7 @@
         <table id="edit-employee-table" class="table table-bordered">
             <thead class="table-dark">
                 <tr>
+                    <th>ID</th>
                     <th>Employee Name</th>
                     <th>Phone Number</th>
                     <th>Position</th>
@@ -73,118 +74,20 @@
             </thead>
             <tbody>
                 <!-- Nail Care Services -->
-                <tr>
-                    <td>David Backham</td>
-                    <td>1234567899</td>
-                    <td>Nailcare Expert</td>
-                    <td>abc@gmail.com</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Lional Messi</td>
-                    <td>1234567899</td>
-                    <td>Manicure Expert</td>
-                    <td>bcd@yahoo.com</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Cristiano Ronaldo</td>
-                    <td>1234567899</td>
-                    <td>Manicure Expert</td>
-                    <td>cde@hotmail.com</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Neymar Jr.</td>
-                    <td>1234567899</td>
-                    <td>Padicure Expert</td>
-                    <td>def@outlook.com</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Vinicius Junior</td>
-                    <td>1234567899</td>
-                    <td>Waxing Expert</td>
-                    <td>fdsd@icould.com</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Diego Maradona</td>
-                    <td>1234567899</td>
-                    <td>Manicure Expert</td>
-                    <td>dfff@gmail.com</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>King Pele</td>
-                    <td>1234567899</td>
-                    <td>Padiicure Expert</td>
-                    <td>fdf@yahoo.com</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Ricardo Kaka</td>
-                    <td>1234567899</td>
-                    <td>Nailcare Expert</td>
-                    <td>kaka@gmail.com</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Roberto Carlos</td>
-                    <td>1234567899</td>
-                    <td>Manicure Expert</td>
-                    <td>carlos@gmail.com</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Zinedin Zidan</td>
-                    <td>1234567899</td>
-                    <td>Padicure Expert</td>
-                    <td>csdvh@gmail.com</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Ronaldinho</td>
-                    <td>1234567899</td>
-                    <td>Waxing Expert</td>
-                    <td>ron@icloud.com</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
-                        <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
-                    </td>
-                </tr>
+                 {% for result in results %}
+                    <tr>
+                        <td>{{ result['EmployeeID'] }}</td>
+                        <td>{{ result['Employee_name'] }}</td>
+                        <td>{{ result['Phone'] }}</td>
+                        <td>{{ result['services_provided'] }}</td>
+                        <td>{{ result['Email'] }}</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
+                        </td>
+                    </tr>
+                 {% endfor %}        
 
-                <!-- Add other services following this format -->
             </tbody>
         </table>
 
