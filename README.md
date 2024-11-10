@@ -74,6 +74,7 @@ flask run
 ```
 
 #### 5. Access the Application
+```
 - Open [localhost](http://127.0.0.1:5000) in your browser to view the application.
 ```
 
