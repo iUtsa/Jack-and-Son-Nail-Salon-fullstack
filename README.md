@@ -44,37 +44,46 @@ Click on each feature for details:
 
 ---
 
-## 🔧 Setup & Installation
+To ensure the boxes appear correctly in your `README.md`, make sure to remove any extra characters around the backticks and use triple backticks without spaces or extra characters. Here’s exactly how it should look:
 
+```markdown
 ### 🔧 Setup & Installation
 
 #### 1. Clone the Repository
-\```bash
+```bash
 git clone https://github.com/yourusername/jack-and-son-nails-spa.git
 cd jack-and-son-nails-spa
-\```
+```
 
 #### 2. Set Up the Environment
 - Ensure you have Python installed.
 - Create and activate a virtual environment:
-  \```bash
+  ```bash
   python -m venv venv
   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-  \```
+  ```
 
 #### 3. Install Dependencies
-\```bash
+```bash
 pip install -r requirements.txt
-\```
+```
 
 #### 4. Run the Application
-\```bash
+```bash
 flask run
-\```
+```
 
 #### 5. Access the Application
 - Open [localhost](http://127.0.0.1:5000) in your browser to view the application.
+```
 
+### Explanation
+
+1. Use three backticks (` ``` `) at the start and end of each code block.
+2. Specify the language (`bash` in this case) directly after the opening triple backticks to enable syntax highlighting.
+3. Ensure there are no spaces or extra characters before or after the backticks.
+
+When you copy and paste this directly into your `README.md` file, it should display shaded boxes around each command block on GitHub.
 
 💻 Usage
 Employee Management: Go to the Employee page to add or modify employee details.
