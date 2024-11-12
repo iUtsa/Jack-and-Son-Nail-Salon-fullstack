@@ -198,17 +198,28 @@
     </div>
 
 
-    <div id="bottom-bar">
-        <div id="bottom-bar-text">
-            <div id="bottom-bar-logo">
-                
-            <p><img src="https://img.icons8.com/?size=100&id=9659&format=png" class="icon-small">(609)380 4341<br>(609)380 4412</p>
-            <p><img src="https://img.icons8.com/?size=100&id=12580&format=png" class="icon-small"> <a href="mailto:jacksonnailsspa@gmail.com" id="mail">jacksonnailsspa@gmail.com</a></p>
-            </div> 
-
-            <p>Copy-right: All copyright reserved to the Administration and the developers team</p>
+    <div id="bottom-bar" style="background-color: #333; color: #fff; padding: 20px; text-align: center;">
+        <div id="bottom-bar-text" style="display: flex; flex-direction: column; align-items: center;">
+            <div id="bottom-bar-logo" style="margin-bottom: 10px;">
+                <p style="margin: 0;">
+                    <img src="https://img.icons8.com/?size=100&id=9659&format=png" class="icon-small" alt="phone-icon">
+                    (609) 380 4341<br>(609) 380 4412
+                </p>
+                <p style="margin: 0;">
+                    <img src="https://img.icons8.com/?size=100&id=12580&format=png" class="icon-small" alt="email-icon">
+                    <a href="mailto:jacksonnailsspa@gmail.com" id="mail" style="color: #fff; text-decoration: underline;">
+                        jacksonnailsspa@gmail.com
+                    </a>
+                </p>
+            </div>
+            <p style="margin-top: 10px;">&copy; <span id="year"></span>&copy; All rights reserved to the Administration and Development Team</p>
         </div>
     </div>
+    
+    <script>
+        // Automatically update the year
+        document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
 
 
 
