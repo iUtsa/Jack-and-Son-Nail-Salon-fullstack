@@ -185,6 +185,7 @@ def login():
         password = request.form['password']
 
         # Check if account exists using MySQL connector
+        db = get_db_connection()
         cursor = db.cursor(dictionary=True)
         cursor.execute('SELECT * FROM users WHERE UserName = %s', (UserName,))
         account = cursor.fetchone()
