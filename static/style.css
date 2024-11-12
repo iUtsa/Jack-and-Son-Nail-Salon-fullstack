@@ -1879,3 +1879,18 @@ body{
     font-size: 0.8rem; /* Smaller font size */
     text-align: center; /* Centers text within the field */
 }
+
+#ft{
+    width:100%;
+    height:auto;
+    z-index: 999;
+    margin-top:50px;
+    bottom:0;
+}
+#bot{
+    width:100%;
+    height:auto;
+    z-index: 999;
+    margin-top:50px;
+    bottom:0;
+}
