@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-=======
-Here’s an enhanced, dynamic `README.md` for your "Jack and Son Nails Spa" project with added icons, GIF placeholders, and JavaScript elements for interactive details. I’ll also include a script to toggle information about each feature for a more engaging experience.
-
-```markdown
->>>>>>> dc6d866 (more dynamic)
 # 🌸 Jack and Son Nails Spa 🌸
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
@@ -18,7 +12,6 @@ Jack and Son Nails Spa is a scheduling and employee management system designed t
 ## 🚀 Features
 
 Click on each feature for details:
-<<<<<<< HEAD
 
 <details>
   <summary>Employee Management</summary>
@@ -39,31 +32,6 @@ Click on each feature for details:
   <summary>Responsive Layout</summary>
   - Fully responsive, ensuring seamless experience on mobile, tablet, and desktop.
 </details>
-=======
-
-| Feature                 | Description                                                            |
-|-------------------------|------------------------------------------------------------------------|
-| **Employee Management** | <span onclick="toggleDetails('employee')">➤ Add, edit, and remove employees with essential details.</span> |
-| **Shift Scheduling**    | <span onclick="toggleDetails('shift')">➤ Assign shifts to employees with unique color-coded blocks per slot.</span> |
-| **Client Booking**      | <span onclick="toggleDetails('booking')">➤ Clients can view and book based on available time slots.</span> |
-| **Responsive Layout**   | <span onclick="toggleDetails('layout')">➤ Works smoothly on any device, adapting to different screen sizes.</span> |
-
-<div id="employee" style="display: none;">
-  - **Employee Management**: Quickly add, modify, and remove employee records, storing essential details and availability.
-</div>
-
-<div id="shift" style="display: none;">
-  - **Shift Scheduling**: Assign shifts with unique color codes, ensuring clear visibility of availability.
-</div>
-
-<div id="booking" style="display: none;">
-  - **Client Booking**: Clients can easily book based on available slots, enhancing appointment management.
-</div>
-
-<div id="layout" style="display: none;">
-  - **Responsive Layout**: Fully responsive, ensuring seamless experience on mobile, tablet, and desktop.
-</div>
->>>>>>> dc6d866 (more dynamic)
 
 ---
 
@@ -73,11 +41,6 @@ Click on each feature for details:
 - **Backend**: ![Flask](https://img.icons8.com/ios-filled/48/000000/flask.png) - Flask for server requests, scheduling logic, and data persistence
 - **Styling**: ![Bootstrap](https://img.icons8.com/color/48/000000/bootstrap.png) - Clean, responsive design for intuitive navigation
 - **Database**: ![MySQL](https://img.icons8.com/color/48/000000/mysql-logo.png) - MySQL for backend efficiency and secure data management
-<<<<<<< HEAD
-=======
-
----
->>>>>>> dc6d866 (more dynamic)
 
 ---
 
@@ -110,7 +73,6 @@ pip install -r requirements.txt
 flask run
 ```
 
-<<<<<<< HEAD
 #### 5. Access the Application
 ```
 - Open [localhost](http://127.0.0.1:5000) in your browser to view the application.
@@ -118,38 +80,3 @@ flask run
 
 
 
-=======
-### 5. Access the Application
-Open [localhost](http://127.0.0.1:5000) to view in your browser.
-
----
-
-## 💻 Usage
-
-- **Employee Management**: Go to the Employee page to add or modify employee details.
-- **Scheduling**: Assign employees to specific shifts and adjust time ranges as needed.
-- **Booking**: Clients book slots based on employee availability shown on the booking calendar.
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please fork the repo, make changes, and submit a pull request.
-
----
-
-*Enjoy managing your salon with ease!*
-
----
-
-<script>
-function toggleDetails(id) {
-  var element = document.getElementById(id);
-  if (element.style.display === "none") {
-    element.style.display = "block";
-  } else {
-    element.style.display = "none";
-  }
-}
-</script>
->>>>>>> dc6d866 (more dynamic)
