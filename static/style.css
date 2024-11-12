@@ -33,6 +33,31 @@ body{
     margin-top: 150px;
 }
 
+@media (max-width: 768px) {
+    
+    .col-md-5 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 20px; /* Add space between rows on smaller screens */
+    }
+    
+    .navbar{
+        width: 100%;
+        overflow: hidden;
+        height: auto    ;
+    }
+
+    .navbar-brand img {
+        height: 20px; /* Adjust logo size on smaller screens */
+    }
+
+    .manage-card-container {
+        margin-right: 0; /* Remove extra margin on smaller screens */
+        padding: 0 10px; /* Add padding for better spacing */
+    }
+}
+
+
 .login-form{
     width: 300px;
     height: auto;
@@ -69,9 +94,9 @@ body{
     top: 0;
     left: 0;
     width: 100%;
-    height: 120%;
+    height: 110%;
     background-image: url('/static/photos/nail2.jpg');
-    background-size: cover;
+    background-size:auto;
     filter: blur(8px); /* Adjust the blur level as needed */
     -webkit-filter: blur(8px); /* For Safari */
     z-index: -10;
@@ -1853,4 +1878,19 @@ body{
     padding: 2px; /* Smaller padding */
     font-size: 0.8rem; /* Smaller font size */
     text-align: center; /* Centers text within the field */
+}
+
+#ft{
+    width:100%;
+    height:auto;
+    z-index: 999;
+    margin-top:50px;
+    bottom:0;
+}
+#bot{
+    width:100%;
+    height:auto;
+    z-index: 999;
+    margin-top:50px;
+    bottom:0;
 }
