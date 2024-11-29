@@ -445,44 +445,6 @@ function generateBookingNumber() {
     }
 
 
-
-    //search employee
-
-    // document.getElementById('search-button').addEventListener('click', function() {
-    //     const query = document.getElementById('search-employee').value.toLowerCase().trim();
-    //     const employeeBoxes = document.querySelectorAll('.employee-info-box');
-    //     let found = false;
-
-    //     if (query === "") {
-    //         alert("Please enter a search term.");
-    //         return;
-    //     }
-
-    //     // Clear any previous highlights
-    //     employeeBoxes.forEach(box => box.style.border = "none");
-
-    //     // Find and scroll to the first matching employee box
-    //     employeeBoxes.forEach(box => {
-    //         const name = box.getAttribute('data-name') ? box.getAttribute('data-name').toLowerCase() : "";
-    //         const phone = box.getAttribute('data-phone') ? box.getAttribute('data-phone').toLowerCase() : "";
-
-    //         if (!found && (name.includes(query) || phone.includes(query))) {
-    //             box.style.border = "3px solid blue"; // Highlight the found box
-    //             box.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Smooth scroll to the box
-    //             found = true; // Stop after the first match
-    //             console.log(`Match found for: ${query}`); // Log the match for debugging
-    //         }
-    //     });
-
-    //     if (!found) {
-    //         alert("No employee found with that name or phone number.");
-    //         console.log("No match found"); // Log if no match found
-    //     }
-    // });
-
-
-
-
     // employee edit and delete
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -569,22 +531,6 @@ function generateBookingNumber() {
         const expertise = document.getElementById("newEmployeePosition-editemp").value;
         const email = document.getElementById("newEmployeeEmail-editemp").value;
 
-        // // Create new row in the table
-        // const table = document.getElementById("edit-employee-table").getElementsByTagName("tbody")[0];
-        // const newRow = document.createElement("tr");
-
-        // newRow.innerHTML = `
-        //     <td>${name}</td>
-        //     <td>${phone}</td>
-        //     <td>${position}</td>
-        //     <td>${email}</td>
-        //     <td>
-        //         <button class="btn btn-edit" onclick="editEmp(this)">Edit</button>
-        //         <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
-        //     </td>
-        // `;
-
-        // table.appendChild(newRow);
         const newEmployee = {
             name: name,
             phone: phone,
@@ -725,10 +671,10 @@ function generateBookingNumber() {
 
     //=======edit store timing======
     function editTime(button) {
-        const row = button.closest("tr"); // Get the row of the clicked button
+        const row = button.closest("tr");
         const current_day = row.querySelector('td:first-child').textContent.trim();
-        const openCell = row.cells[1]; // Access the "Open" cell
-        const closeCell = row.cells[2]; // Access the "Close" cell
+        const openCell = row.cells[1]; 
+        const closeCell = row.cells[2]; 
         
         if (button.textContent === "Edit") {
             // Get the current time values in 12-hour format
@@ -739,7 +685,6 @@ function generateBookingNumber() {
             openCell.innerHTML = `<input type="time" value="${to24HourFormat(currentOpen)}" class="form-control">`;
             closeCell.innerHTML = `<input type="time" value="${to24HourFormat(currentClose)}" class="form-control">`;
 
-            // Change button text to "Save"
             button.textContent = "Save";
         } else {
             // Retrieve values in 24-hour format and convert them to 12-hour format for display
@@ -756,15 +701,14 @@ function generateBookingNumber() {
             openCell.textContent = to12HourFormat(newOpen);
             closeCell.textContent = to12HourFormat(newClose);
 
-            // Change button text back to "Edit"
             button.textContent = "Edit";
-            // Send data to server with fetch
+
         fetch('/change-store-hours', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(hours) // Send structured data
+            body: JSON.stringify(hours)
         })
         .then(response => response.json())
         .then(data => {
@@ -786,7 +730,7 @@ function generateBookingNumber() {
     function to12HourFormat(time) {
         const [hours, minutes] = time.split(":");
         const period = hours >= 12 ? "PM" : "AM";
-        const adjustedHours = hours % 12 || 12; // Adjust 0 or 24 to 12
+        const adjustedHours = hours % 12 || 12; 
         return `${adjustedHours}:${minutes} ${period}`;
     }
 
@@ -896,3 +840,4 @@ function generateBookingNumber() {
 
 }
 
+script.js
