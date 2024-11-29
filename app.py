@@ -51,7 +51,16 @@ def close_db_connection(db, cursor):
 @app.route('/')
 @app.route('/index')
 def home():
-    return render_template('client/index.html')
+
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute('SELECT * FROM business_hours')
+    results = cursor.fetchall()
+    for result in results:
+        result['open_hour'] = background.to_12_hour_no_second(result['open_hour'])
+        result['close_hour'] = background.to_12_hour_no_second(result['close_hour'])
+    close_db_connection(db, cursor)
+    return render_template('client/index.html', results=results)
 
 # About page
 @app.route('/about')
@@ -62,7 +71,15 @@ def about():
 # Services page
 @app.route('/services')
 def services():
-    return render_template('client/services.html')
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute('SELECT service_type FROM services GROUP BY service_type')
+    categories = cursor.fetchall()
+    cursor.execute('SELECT * FROM services')
+    results = cursor.fetchall()
+    close_db_connection(db, cursor)
+    
+    return render_template('client/services.html', results=results, categories=categories)
 
 
 # Nailcare service page
@@ -422,8 +439,7 @@ def store_schedule():
         for result in results:
             result['open_hour'] = background.to_12_hour_no_second(result['open_hour'])
             result['close_hour']= background.to_12_hour_no_second(result['close_hour'])
-        cursor.close()
-        db.close()
+        close_db_connection(fb, cursor)
         
         
         return render_template('seller/storetime.html', results=results)
@@ -562,8 +578,4 @@ def reset_password(token):
 if __name__ == "__main__":
     print("Starting server at http://127.0.0.1:8000/")
     app.run(host='0.0.0.0', port=8000, debug=True)
-    # db = get_db_connection()
-    # cursor = db.cursor(dictionary=True)
-    # cursor.execute('SELECT appt_id FROM appointments')
-    # results = cursor.fetchall();
-    # print(results)
+    
