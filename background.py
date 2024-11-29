@@ -4,8 +4,19 @@ from mysql.connector import Error
 from datetime import datetime, timedelta
 from werkzeug.utils import secure_filename
 import os
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 background_bp = Blueprint('background', __name__)
+
+sender_email = "abishekkumargiri0@gmail.com"
+sender_password = "fcwa cfha gyus tcuw"
+
+smtp_server = "smtp.gmail.com"
+smtp_port = 587
 
 # Database connection
 db = mysql.connector.connect(
@@ -34,6 +45,13 @@ def close_db_connection(db, cursor):
         db.close()
     if cursor:
         cursor.close()
+
+
+
+
+# Shut down the scheduler when exiting the app
+import atexit
+atexit.register(lambda: scheduler.shutdown())
 
 
 @background_bp.route('/get_services')
@@ -103,19 +121,12 @@ def final_confirm():
     booking_number = data.get('bookingNumber')
     start_date_str = data.get('date')
 
-    # Store in the session
-    if 'reservations' not in session:
-        session['reservations'] = []
-
-    session['reservations'].append({
-        'booking_number': booking_number,
-        'start_date': start_date_str,
-        'services': selected_services
-    })
+    booking_details = []
 
     for service in selected_services:
         # Access `service id` and `timeSlot` properties from each entry
         service_id = service['service_id']
+        service_name = service['service']
         time_slot = service['timeSlot']
         
         # making sure the format of time_slot is correct
@@ -129,6 +140,10 @@ def final_confirm():
         end_date = start_date + timedelta(minutes=30)
         end_time = end_date.time()
 
+
+        booking_details.append(f"Service: {service_name} \nDate: {appt_date} \nTime: {start_time}\n")
+
+
         db = get_db_connection()
         cursor = db.cursor()
         cursor.execute(
@@ -138,6 +153,23 @@ def final_confirm():
         db.commit()
     db.close()
     cursor.close()
+
+    email_body = (
+        f"Dear Customer,\n\n"
+        f"Your booking has been confirmed with the following details:\n\n"
+        f"Booking Number: {booking_number}\n"
+        f"Date: {start_date_str}\n"
+        f"Services:\n" + "\n".join(booking_details) + "\n\n"
+        f"Thank you for choosing our services!\n\n"
+        f"Best Regards,\nYour Company Name"
+    )
+
+    # Send the email
+    send_email_smtp(
+        subject="Booking Confirmation",
+        body=email_body,
+        to_email=session['Email']  # Ensure 'CustomerEmail' is stored in session
+    )
 
 
     return jsonify({"status": "success", "bookingNumber": booking_number})
@@ -505,3 +537,79 @@ def to_12_hour_no_second(td):
     am_pm = "AM" if hours < 12 else "PM"
 
     return f"{hours_12:02}:{minutes:02} {am_pm}"
+
+
+def appt_reminder():
+    print('Reminder job is running')
+    now = datetime.now()
+    appt = now  + timedelta(hours=24)
+
+    appt_date = appt.date()
+    appt_time = appt.time()
+    day_of_week = appt_date.strftime('%A')
+
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute(
+    '''
+    SELECT 
+        apt.appt_id, 
+        apt.booking_number, 
+        apt.customer_id, 
+        u.Name,
+        u.Email,
+        apt.service_id, 
+        s.service_name,
+        apt.appointment_date, 
+        apt.appointment_start_time 
+    FROM appointments AS apt
+    JOIN users AS u ON apt.customer_id = u.CustomerID
+    JOIN services AS s ON apt.service_id = s.service_id
+    WHERE apt.appointment_date = %s 
+    AND apt.appointment_start_time = %s;
+    ''', 
+    (appt_date, appt_time,)
+    )
+    results = cursor.fetchall()
+    if results:
+        for result in results:
+            if result and result['Email']:
+                result['appointment_start_time'] = to_12_hour_no_second(result['appointment_start_time'])
+                send_email_smtp(
+                    subject="Appointment Reminder",
+                    body = (
+                        f"Hello {result['Name']}, \n\n"
+                        f"Just a reminder that you have an appointment at Jack&Son Nails Spa\n"
+                        f"On {day_of_week}, {result['appointment_date']} at {result['appointment_start_time']}\n"
+                        f"Service: {result['service_name']}"
+                    ),
+                    to_email=result['Email']
+                )
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(
+        func=appt_reminder,
+        trigger=CronTrigger(minute="0,30")
+    )
+scheduler.start()
+
+
+def send_email_smtp(subject, body, to_email):
+
+    server = smtplib.SMTP(smtp_server, smtp_port)
+    server.starttls()
+    server.login(sender_email, sender_password)
+
+    # Create the email
+    msg = MIMEMultipart()
+    msg["From"] = sender_email
+    msg["To"] = to_email
+    msg["Subject"] = subject
+    msg.attach(MIMEText(body, "plain"))
+
+    # Send the email
+    server.sendmail(sender_email, to_email, msg.as_string())
+    print("Email sent successfully to", to_email)
+
+
+    server.quit()
