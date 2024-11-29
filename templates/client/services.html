@@ -75,204 +75,29 @@
 </div>
 <div class="container-fluide">
     <!-- Nail Care Category -->
-    <div class="service-category">
-        <h3>Nail Care</h3>
-
-        <div class="service-row">
-            <div class="service-carde">
-                <h5>Pink & White Full Set</h5>
-                <img src="{{ url_for('static', filename='photos/nc1final.jpg') }}" alt="Pink & White Full Set">
-                <h6>$60</h6>
-            </div>
-            <div class="service-carde">
-                <h5>Pink & White Fill In</h5>
-                <img src="{{ url_for('static', filename='photos/nc2.jpg') }}" alt="Pink & White Fill In">
-                <h6>$50</h6>
-            </div>
-            <div class="service-carde">
-                <h5>Acrylic Full Set</h5>
-                <img src="{{ url_for('static', filename='photos/nc3.jpg') }}" alt="Acrylic Full Set">
-                <h6>$50</h6>
-            </div>
-        </div>
-
-        <div class="service-row">
-            <div class="service-carde">
-                <h5>Acrylic Fill In</h5>
-                <img src="{{ url_for('static', filename='photos/nc4.jpg') }}" alt="Acrylic Fill In">
-                <h6>$40</h6>
-            </div>
-            <div class="service-carde">
-                <h5>Gel Color Full Set</h5>
-                <img src="{{ url_for('static', filename='photos/nc5.jpg') }}" alt="Gel Color Full Set">
-                <h6>$50</h6>
-            </div>
-            <div class="service-carde">
-                <h5>Gel Color Fill In</h5>
-                <img src="{{ url_for('static', filename='photos/nc6.jpg') }}" alt="Gel Color Fill In">
-                <h6>$40</h6>
-            </div>
-        </div>
-
-        <div class="service-row">
-            <div class="service-carde">
-                <h5>Dipping Powder</h5>
-                <img src="{{ url_for('static', filename='photos/nc7.jpg') }}" alt="Dipping Powder">
-                <h6>$50+</h6>
-            </div>
-            <div class="service-carde">
-                <h5>UV Gel Full Set</h5>
-                <img src="{{ url_for('static', filename='photos/nc8.jpg') }}" alt="UV Gel Full Set">
-                <h6>$60</h6>
-            </div>
-            <div class="service-carde">
-                <h5>UV Gel Fill In</h5>
-                <img src="{{ url_for('static', filename='photos/nc9.jpg') }}" alt="UV Gel Fill In">
-                <h6>$45</h6>
-            </div>
-        </div>
-
-        <div class="service-row">
-            <div class="service-carde">
-                <h5>Nail Repair</h5>
-                <img src="{{ url_for('static', filename='photos/nc10.jpg') }}" alt="Nail Repair">
-                <h6>$5+</h6>
-            </div>
-            <div class="service-carde">
-                <h5>Cut Down Designs</h5>
-                <img src="{{ url_for('static', filename='photos/nc11.jpg') }}" alt="Cut Down Designs">
-                <h6>$5+</h6>
-            </div>
-        </div>
-    </div>
-        <!-- Manicure Category -->
+    {% for category in categories %}
         <div class="service-category">
-    <h3>Manicure</h3>
+            <h3>{{ category['service_type'] }}</h3>
 
-    <div class="service-row">
-        <div class="service-carde">
-            <h5>Pedicure & Manicure</h5>
-            <img src="{{ url_for('static', filename='photos/mani1.jpg') }}" alt="Pedicure & Manicure">
-            <h6>$50</h6>
+            <div class="service-row">
+                {% set count = 0 %}
+                {% for result in results %}
+                    {% if result['service_type'] == category['service_type'] %}
+                        <div class="service-carde">
+                            <h5>{{ result['service_name'] }}</h5>
+                            <img src="{{ result['image'] }}" alt="{{ result['service_type'] }}">
+                            <h6>{{ result['price'] }}</h6>
+                        </div>
+                        
+                        {% set count = count + 1 %}
+                        {% if count % 3 == 0 %}
+                            </div><div class="service-row">
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
-        <div class="service-carde">
-            <h5>Regular Pedicure</h5>
-            <img src="{{ url_for('static', filename='photos/mani2.jpg') }}" alt="Regular Pedicure">
-            <h6>$30</h6>
-        </div>
-        <div class="service-carde">
-            <h5>Regular Manicure</h5>
-            <img src="{{ url_for('static', filename='photos/mani3.jpg') }}" alt="Regular Manicure">
-            <h6>$20</h6>
-        </div>
-    </div>
-
-    <div class="service-row">
-        <div class="service-carde">
-            <h5>Gel Manicure</h5>
-            <img src="{{ url_for('static', filename='photos/mani4.jpg') }}" alt="Gel Manicure">
-            <h6>$35</h6>
-        </div>
-        <div class="service-carde">
-            <h5>Deluxe Manicure</h5>
-            <img src="{{ url_for('static', filename='photos/mani5.jpg') }}" alt="Deluxe Manicure">
-            <h6>$30</h6>
-        </div>
-        <div class="service-carde">
-            <h5>Polish Change</h5>
-            <img src="{{ url_for('static', filename='photos/mani6.jpg') }}" alt="Polish Change">
-            <h6>$25+</h6>
-        </div>
-    </div>
-</div>
-
-
-        <!-- Pedicure Category -->
-        <div class="service-category">
-    <h3>Pedicure</h3>
-
-    <div class="service-row">
-        <div class="service-carde">
-            <h5>Basic Pedicure</h5>
-            <img src="{{ url_for('static', filename='photos/padi1.jpg') }}" alt="Basic Pedicure">
-            <h6>$35</h6>
-        </div>
-        <div class="service-carde">
-            <h5>Deluxe Pedicure</h5>
-            <img src="{{ url_for('static', filename='photos/padi2.jpg') }}" alt="Deluxe Pedicure">
-            <h6>$50</h6>
-        </div>
-        <div class="service-carde">
-            <h5>Polish Change</h5>
-            <img src="{{ url_for('static', filename='photos/padi3.jpg') }}" alt="Polish Change">
-            <h6>$25+</h6>
-        </div>
-    </div>
-
-    <div class="service-row">
-        <div class="service-carde">
-            <h5>Gel Pedicure</h5>
-            <img src="{{ url_for('static', filename='photos/padi4.jpg') }}" alt="Gel Pedicure">
-            <h6>$45</h6>
-        </div>
-    </div>
-
-</div>
-
-        <!-- Waxing Category -->
-        <div class="service-category">
-    <h3>Waxing</h3>
-
-    <div class="service-row">
-        <div class="service-carde">
-            <h5>Eyebrows</h5>
-            <img src="{{ url_for('static', filename='photos/wax1.jpg') }}" alt="Eyebrows">
-            <h6>$10</h6>
-        </div>
-        <div class="service-carde">
-            <h5>Chin</h5>
-            <img src="{{ url_for('static', filename='photos/wax2.jpg') }}" alt="Chin">
-            <h6>$8+</h6>
-        </div>
-        <div class="service-carde">
-            <h5>Lip</h5>
-            <img src="{{ url_for('static', filename='photos/wax3.jpg') }}" alt="Lip">
-            <h6>$7</h6>
-        </div>
-    </div>
-
-    <div class="service-row">
-        <div class="service-carde">
-            <h5>Full Face</h5>
-            <img src="{{ url_for('static', filename='photos/wax4.jpg') }}" alt="Full Face">
-            <h6>$30+</h6>
-        </div>
-        <div class="service-carde">
-            <h5>Back</h5>
-            <img src="{{ url_for('static', filename='photos/wax5.jpg') }}" alt="Back">
-            <h6>$45+</h6>
-        </div>
-        <div class="service-carde">
-            <h5>Half Arms / Full Arms</h5>
-            <img src="{{ url_for('static', filename='photos/wax6.jpg') }}" alt="Half Arms / Full Arms">
-            <h6>$25+ / $35+</h6>
-        </div>
-    </div>
-
-    <div class="service-row">
-        <div class="service-carde">
-            <h5>Half Legs / Full Legs</h5>
-            <img src="{{ url_for('static', filename='photos/wax7.jpg') }}" alt="Half Legs / Full Legs">
-            <h6>$30+ / $40+</h6>
-        </div>
-        <div class="service-carde">
-            <h5>Bikini</h5>
-            <img src="{{ url_for('static', filename='photos/wax8.jpg') }}" alt="Bikini">
-            <h6>$40+</h6>
-        </div>
-    </div>
-
-</div>
+    {% endfor %}
 
 </div>
 
