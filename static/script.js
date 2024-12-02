@@ -862,3 +862,4 @@ function generateBookingNumber() {
 
 }
 
+script.js
