@@ -1,22 +1,18 @@
-from flask import Blueprint, request, session,jsonify, url_for, current_app, redirect, render_template
+from flask import Blueprint, request, session, flash, jsonify, url_for, current_app, redirect, render_template
+from flask_mail import Message
 import mysql.connector
 from mysql.connector import Error
 from datetime import datetime, timedelta
 from werkzeug.utils import secure_filename
 import os
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
+from werkzeug.security import generate_password_hash, check_password_hash
+from itsdangerous import SignatureExpired, BadSignature, URLSafeTimedSerializer
+from config import Config
 
 background_bp = Blueprint('background', __name__)
 
-sender_email = "abishekkumargiri0@gmail.com"
-sender_password = "fcwa cfha gyus tcuw"
-
-smtp_server = "smtp.gmail.com"
-smtp_port = 587
 
 # Database connection
 db = mysql.connector.connect(
@@ -46,12 +42,10 @@ def close_db_connection(db, cursor):
     if cursor:
         cursor.close()
 
-
-
-
 # Shut down the scheduler when exiting the app
 import atexit
 atexit.register(lambda: scheduler.shutdown())
+
 
 
 @background_bp.route('/get_services')
@@ -539,8 +533,20 @@ def to_12_hour_no_second(td):
     return f"{hours_12:02}:{minutes:02} {am_pm}"
 
 
+def send_email_smtp(subject, body, to_email):
+    
+    mail = current_app.extensions['mail']
+
+    msg = Message(subject, recipients=[to_email], body=body)
+    try:
+        mail.send(msg)
+        print(f"Email sent successfully to {to_email}")
+    except Exception as e:
+        print(f"Failed to send email to {to_email}. Error: {str(e)}")
+
+
+
 def appt_reminder():
-    print('Reminder job is running')
     now = datetime.now()
     appt = now  + timedelta(hours=24)
 
@@ -585,6 +591,7 @@ def appt_reminder():
                     ),
                     to_email=result['Email']
                 )
+            
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(
@@ -593,23 +600,78 @@ scheduler.add_job(
     )
 scheduler.start()
 
+def generate_token(email):
+    s = URLSafeTimedSerializer(Config.SECRET_KEY)
+    token = s.dumps(email, salt='password-reset-salt')
+    return token
 
-def send_email_smtp(subject, body, to_email):
+def get_email(token):
+    try:
+        s = URLSafeTimedSerializer(Config.SECRET_KEY)
+        email = s.loads(token, salt='password-reset-salt', max_age=3600)
+        return email
+    except SignatureExpired:
+        # If token is expired
+        print('The reset link has expired.', 'danger')
+        return None
+    
+    except BadSignature:
+        # If token is invalid or tampered with
+        print('The reset link is invalid or has been tampered with.', 'danger')
+        return None
+    
+    except Exception as e:
+        print(f"Error occurred: {str(e)}")
+        flash('An error occurred while processing your request.', 'danger')
+        return None
 
-    server = smtplib.SMTP(smtp_server, smtp_port)
-    server.starttls()
-    server.login(sender_email, sender_password)
 
-    # Create the email
-    msg = MIMEMultipart()
-    msg["From"] = sender_email
-    msg["To"] = to_email
-    msg["Subject"] = subject
-    msg.attach(MIMEText(body, "plain"))
+@background_bp.route('/req_password_', methods=['GET', 'POST'])
+def request_reset():
+    if request.method == 'POST':
+        email = request.form['email']
+        print(email)
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
+        user = cursor.fetchone()
+        if user:
+            token = generate_token(user['Email'])
+            reset_link = url_for('background.reset_password', token=token, _external=True)
+            send_email_smtp(
+                subject="Reset Password",
+                body= (f'Click the following link to reset your password: {reset_link}'),
+                to_email=user['Email']
+            )
+            flash('A password reset email has been sent.', 'info')
+            return redirect(url_for('login'))
+        print('GET request received')
+    return render_template('client/resetpass.html')
 
-    # Send the email
-    server.sendmail(sender_email, to_email, msg.as_string())
-    print("Email sent successfully to", to_email)
 
 
-    server.quit()
+
+@background_bp.route('/resetpass/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+
+    email = get_email(token)
+    print('Email is:', email)
+    # Implement form submission to reset password (update database)
+    if request.method == 'POST':
+        try:
+            new_password = request.form['password']
+            hashed_password = generate_password_hash(new_password)
+            print(new_password)
+            print(f"New Password (hashed): {hashed_password}")
+            db = get_db_connection()
+            cursor = db.cursor()
+            cursor.execute("UPDATE users SET passcode = %s WHERE Email = %s", (hashed_password, email))
+            db.commit()
+            close_db_connection(db, cursor)
+            print('Your password has been updated!', 'success')
+            return redirect(url_for('login'))
+        except Exception as e:
+            print(f"Error updating password: {str(e)}")
+            flash('Failed to update the password. Please try again.', 'danger')
+
+    return render_template('client/resetpass.html', token=token)
