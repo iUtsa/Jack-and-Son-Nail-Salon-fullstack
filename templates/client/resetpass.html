@@ -48,7 +48,7 @@
             </div>
         </div>
     </nav>
-    <form action="{{ url_for('reset_password', token=token) }}" method="POST">
+    <form action="{{ url_for('background.reset_password', token=token) }}" method="POST">
     <div class="mb-3">
         <label for="password" class="form-label">New Password</label>
         <input type="password" class="form-control" id="password" name="password" placeholder="Enter new password" required>
