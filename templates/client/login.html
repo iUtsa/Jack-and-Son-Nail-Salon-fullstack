@@ -77,7 +77,10 @@
                     <p>Don't have an account? <a href="{{ url_for('create_account') }}">Register</a></p>
                 </div>
                 <div class="forgot-pass">
-                    <p>Forgot Password? <a href="{{ url_for('req_password') }}"> Reset Password </a></p>
+                    <p>Forgot Password? <a href="{{ url_for('req_password', usertype='password') }}"> Reset Password </a></p>
+                </div>
+                <div class="forgot-username">
+                    <p>Forgot Username? <a href="{{ url_for('req_password', usertype='username') }}"> Reset Username </a></p>
                 </div>
             </form>
 

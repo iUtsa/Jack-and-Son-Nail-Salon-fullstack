@@ -1,23 +1,27 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, make_response
-from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Mail, Message
-import mysql.connector
+import mysql.connector, background, os
 from mysql.connector import Error
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
+from itsdangerous import SignatureExpired, BadSignature, URLSafeTimedSerializer
 import background
+from config import Config
+
 
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/photos'
-app.register_blueprint(background.background_bp) 
-app.secret_key = 'your_secret_key'  # Required for session handling
-# Define the secret key for token generation
+app.register_blueprint(background.background_bp)
+app.config.from_object(Config)
+app.secret_key = Config.SECRET_KEY
+
 
 app.config['SESSION_PERMANENT'] = False
-app.config['SESSION_TYPE'] = 'filesystem'  # Store session data in the filesystem
+app.config['SESSION_TYPE'] = 'filesystem'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 
+mail = Mail(app)
 
 # Database connection
 db = mysql.connector.connect(
@@ -51,7 +55,16 @@ def close_db_connection(db, cursor):
 @app.route('/')
 @app.route('/index')
 def home():
-    return render_template('client/index.html')
+
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute('SELECT * FROM business_hours')
+    results = cursor.fetchall()
+    for result in results:
+        result['open_hour'] = background.to_12_hour_no_second(result['open_hour'])
+        result['close_hour'] = background.to_12_hour_no_second(result['close_hour'])
+    close_db_connection(db, cursor)
+    return render_template('client/index.html', results=results)
 
 # About page
 @app.route('/about')
@@ -62,7 +75,15 @@ def about():
 # Services page
 @app.route('/services')
 def services():
-    return render_template('client/services.html')
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute('SELECT service_type FROM services GROUP BY service_type')
+    categories = cursor.fetchall()
+    cursor.execute('SELECT * FROM services')
+    results = cursor.fetchall()
+    close_db_connection(db, cursor)
+    
+    return render_template('client/services.html', results=results, categories=categories)
 
 
 # Nailcare service page
@@ -84,7 +105,9 @@ def resetpass():
 
 @app.route('/req_password')
 def req_password():
-    return render_template('client/req_password.html')
+    msg = request.args.get('msg', '')
+    usertype = request.args.get('usertype', '')
+    return render_template('client/req_password.html', usertype=usertype, msg=msg)
 
 
 @app.route('/logout', methods=['POST'])
@@ -184,30 +207,23 @@ def login():
         UserName = request.form['username']
         password = request.form['password']
 
-        # Check if account exists using MySQL connector
         db = get_db_connection()
         cursor = db.cursor(dictionary=True)
         cursor.execute('SELECT * FROM users WHERE UserName = %s', (UserName,))
-        account = cursor.fetchone()
-        
+        account = cursor.fetchone() 
         close_db_connection(db, cursor)
-        
 
-        # If account exists and password matches
+        # Process the account data after closing the connection
         if account and check_password_hash(account['passcode'], password):
-            # Create session data, we can access this data in other routes
+            # Create session data
             session['loggedin'] = True
             session['CustomerID'] = account['CustomerID']
             session['UserName'] = account['UserName']
             session['Email'] = account['Email']
-
-            # Redirect to the home page after successful login
             return redirect(url_for('home'))
         else:
-            # Account doesn't exist or username/password incorrect
             msg = 'Incorrect username/password'
 
-    # If login fails, render the login page again with the error message
     return render_template('client/login.html', msg=msg)
 
 
@@ -226,6 +242,9 @@ def create_account():
         hashed_password = generate_password_hash(passcode)
         if background.check_user(UserName):
             msg = 'Username is already in use!!!'
+            return render_template('client/createac.html', msg=msg)
+        if background.check_email(Email):
+            msg = 'Email is already in use!!!'
             return render_template('client/createac.html', msg=msg)
         else:
             db = get_db_connection()
@@ -334,13 +353,11 @@ def add_manager1():
             name = request.form['name']
             managerID = request.form['manager-id']
 
-            hashed_pass = generate_password_hash(password)
-            if background.check_managerid(managerID):
-                msg = 'Manager ID already exist in the database'
-                return render_template('seller/addowner.html', msg = msg)
-            if background.check_manager(username):
-                msg = 'Username already exist in the database'
+            valid, msg = background.check_manager(username, email, managerID, phone)
+            if not valid:
                 return render_template('seller/addowner.html', msg=msg)
+            
+            hashed_pass = generate_password_hash(password)
             db = get_db_connection()
             cursor = db.cursor(dictionary=True)
             cursor.execute('INSERT INTO managers (managerID, UserName, password, Name, phone, email) VALUES (%s, %s,%s, %s, %s, %s)', (managerID, username, hashed_pass, name, phone, email))
@@ -422,8 +439,7 @@ def store_schedule():
         for result in results:
             result['open_hour'] = background.to_12_hour_no_second(result['open_hour'])
             result['close_hour']= background.to_12_hour_no_second(result['close_hour'])
-        cursor.close()
-        db.close()
+        close_db_connection(db, cursor)
         
         
         return render_template('seller/storetime.html', results=results)
@@ -486,42 +502,6 @@ def view_past_appt():
 
 
 
-# Flask-Mail configuration
-app.config['MAIL_SERVER'] = 'smtp.example.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'your-email@example.com'
-app.config['MAIL_PASSWORD'] = 'your-email-password'
-mail = Mail(app)
-
-# Serializer for generating tokens
-s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-
-
-@app.route('/req_password', methods=['GET', 'POST'])
-def request_reset():
-    if request.method == 'POST':
-        email = request.form['email']
-
-        # user = get_user_by_email(email)
-        cursor = db.cursor()
-        cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
-        user = cursor.fetchone()  # Implement function to get user by email from the database
-        if user:
-            token = s.dumps(user[3], salt='password-reset-salt')
-            reset_link = url_for('reset_password', token=token, _external=True)
-            send_reset_email(user[3], reset_link)
-            flash('A password reset email has been sent.', 'info')
-            return redirect(url_for('login'))
-        print('GET request received')
-    return render_template('client/resetpass.html')
-
-
-def send_reset_email(to_email, reset_link):
-    msg = Message('Password Reset Request', sender='noreply@example.com', recipients=[to_email])
-    msg.body = f'Click the following link to reset your password: {reset_link}'
-    mail.send(msg)
-
 
 def update_user_password(user, hashed_password):
     cursor = db.cursor()
@@ -533,37 +513,8 @@ def update_user_password(user, hashed_password):
         close_db_connection(db, cursor)
 
 
-@app.route('/resetpass/<token>', methods=['GET', 'POST'])
-def reset_password(token):
-    try:
-        email = s.loads(token, salt='password-reset-salt', max_age=3600)  # Token valid for 1 hour
-    except:
-        flash('The reset link is invalid or has expired.', 'danger')
-        return redirect(url_for('request_reset'))
-
-    if request.method == 'POST':
-        password = request.form['password']
-
-        cursor = db.cursor()
-        cursor.execute('SELECT * FROM users WHERE email = %s', email)
-        user = cursor.fetchone()
-        # user = get_user_by_email(email)  # Implement function to get user by email from the database
-        if user:
-            # Hash and update the user's password in the database
-            hashed_password = generate_password_hash(password)
-            update_user_password(user, hashed_password)  # Implement this function to save new password
-            flash('Your password has been updated!', 'success')
-            return redirect(url_for('login'))
-    return render_template('client/reset_password.html', token=token)
-
-
-
 # Run the app
 if __name__ == "__main__":
     print("Starting server at http://127.0.0.1:8000/")
     app.run(host='0.0.0.0', port=8000, debug=True)
-    # db = get_db_connection()
-    # cursor = db.cursor(dictionary=True)
-    # cursor.execute('SELECT appt_id FROM appointments')
-    # results = cursor.fetchall();
-    # print(results)
+    

@@ -1,11 +1,18 @@
-from flask import Blueprint, request, session,jsonify, url_for, current_app, redirect, render_template
+from flask import Blueprint, request, session, flash, jsonify, url_for, current_app, redirect, render_template
+from flask_mail import Message
 import mysql.connector
 from mysql.connector import Error
 from datetime import datetime, timedelta
 from werkzeug.utils import secure_filename
 import os
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+from werkzeug.security import generate_password_hash, check_password_hash
+from itsdangerous import SignatureExpired, BadSignature, URLSafeTimedSerializer
+from config import Config
 
 background_bp = Blueprint('background', __name__)
+
 
 # Database connection
 db = mysql.connector.connect(
@@ -34,6 +41,11 @@ def close_db_connection(db, cursor):
         db.close()
     if cursor:
         cursor.close()
+
+# Shut down the scheduler when exiting the app
+import atexit
+atexit.register(lambda: scheduler.shutdown())
+
 
 
 @background_bp.route('/get_services')
@@ -103,19 +115,12 @@ def final_confirm():
     booking_number = data.get('bookingNumber')
     start_date_str = data.get('date')
 
-    # Store in the session
-    if 'reservations' not in session:
-        session['reservations'] = []
-
-    session['reservations'].append({
-        'booking_number': booking_number,
-        'start_date': start_date_str,
-        'services': selected_services
-    })
+    booking_details = []
 
     for service in selected_services:
         # Access `service id` and `timeSlot` properties from each entry
         service_id = service['service_id']
+        service_name = service['service']
         time_slot = service['timeSlot']
         
         # making sure the format of time_slot is correct
@@ -129,6 +134,10 @@ def final_confirm():
         end_date = start_date + timedelta(minutes=30)
         end_time = end_date.time()
 
+
+        booking_details.append(f"Service: {service_name} \nDate: {appt_date} \nTime: {start_time}\n")
+
+
         db = get_db_connection()
         cursor = db.cursor()
         cursor.execute(
@@ -138,6 +147,23 @@ def final_confirm():
         db.commit()
     db.close()
     cursor.close()
+
+    email_body = (
+        f"Dear Customer,\n\n"
+        f"Your booking has been confirmed with the following details:\n\n"
+        f"Booking Number: {booking_number}\n"
+        f"Date: {start_date_str}\n"
+        f"Services:\n" + "\n".join(booking_details) + "\n\n"
+        f"Thank you for choosing our services!\n\n"
+        f"Best Regards,\nYour Company Name"
+    )
+
+    # Send the email
+    send_email_smtp(
+        subject="Booking Confirmation",
+        body=email_body,
+        to_email=session['Email']  # Ensure 'CustomerEmail' is stored in session
+    )
 
 
     return jsonify({"status": "success", "bookingNumber": booking_number})
@@ -429,35 +455,8 @@ def price_format(price):
     return price
 
 
-def check_manager(name: str) -> bool:
-    db = get_db_connection()
-    cursor = db.cursor()
-    cursor.execute('SELECT * FROM managers where UserName = %s', (name,))
-    result = cursor.fetchone()
-
-    db.close()
-    cursor.close()
-    
-    if result:
-        return True
-    
-    return False
-
-def check_managerid(num) -> bool:
-    db = get_db_connection()
-    cursor = db.cursor()
-    cursor.execute('SELECT * FROM managers where managerID = %s', (num,))
-    result = cursor.fetchone()
-    
-    db.close()
-    cursor.close()
-    
-    if result:
-        return True
-    
-    return False
-
 def check_user(name: str) -> bool:
+    db = get_db_connection()
     cursor = db.cursor()
     cursor.execute('SELECT * FROM users WHERE UserName = %s', (name,))
     have_name = cursor.fetchone()
@@ -469,6 +468,55 @@ def check_user(name: str) -> bool:
         return True
     else:
         return False
+
+def check_email(email: str) -> bool:
+    db = get_db_connection()
+    cursor = db.cursor()
+    cursor.execute('SELECT * FROM users WHERE Email = %s', (email,))
+    have_name = cursor.fetchone()
+    
+    close_db_connection(db, cursor)
+    
+    if have_name:
+        return True
+    else:
+        return False
+
+def check_manager(username: str, email: str, id: int, phone: int) -> bool:
+    db = get_db_connection()
+    cursor = db.cursor()
+    
+    # Check for each condition
+    cursor.execute('SELECT * FROM managers WHERE managerID = %s', (id,))
+    isID = cursor.fetchone()
+    
+    cursor.execute('SELECT * FROM managers WHERE UserName = %s', (username,))
+    isUsername = cursor.fetchone()
+    
+    cursor.execute('SELECT * FROM managers WHERE email = %s', (email,))
+    isEmail = cursor.fetchone()
+    
+    cursor.execute('SELECT * FROM managers WHERE phone = %s', (phone,))
+    isPhone = cursor.fetchone()
+
+
+    msg = ''
+    
+    if isID:
+        msg += 'Manager ID is already taken.' 
+    if isUsername:
+        msg += 'Username is already taken.' 
+    if isEmail:
+        msg += 'Email is already taken.'
+    if isPhone:
+        msg += 'Phone number is already taken.'
+
+    if msg:
+        return False, msg.strip()
+    
+    return True, ''
+
+
 
 def to_24_hour_format(time_str):
  
@@ -505,3 +553,179 @@ def to_12_hour_no_second(td):
     am_pm = "AM" if hours < 12 else "PM"
 
     return f"{hours_12:02}:{minutes:02} {am_pm}"
+
+
+def send_email_smtp(subject, body, to_email):
+    
+    mail = current_app.extensions['mail']
+
+    msg = Message(subject, recipients=[to_email], body=body)
+    try:
+        mail.send(msg)
+        print(f"Email sent successfully to {to_email}")
+    except Exception as e:
+        print(f"Failed to send email to {to_email}. Error: {str(e)}")
+
+
+
+def appt_reminder():
+    now = datetime.now()
+    appt = now  + timedelta(hours=24)
+
+    appt_date = appt.date()
+    appt_time = appt.time()
+    day_of_week = appt_date.strftime('%A')
+
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute(
+    '''
+    SELECT 
+        apt.appt_id, 
+        apt.booking_number, 
+        apt.customer_id, 
+        u.Name,
+        u.Email,
+        apt.service_id, 
+        s.service_name,
+        apt.appointment_date, 
+        apt.appointment_start_time 
+    FROM appointments AS apt
+    JOIN users AS u ON apt.customer_id = u.CustomerID
+    JOIN services AS s ON apt.service_id = s.service_id
+    WHERE apt.appointment_date = %s 
+    AND apt.appointment_start_time = %s;
+    ''', 
+    (appt_date, appt_time,)
+    )
+    results = cursor.fetchall()
+    if results:
+        for result in results:
+            if result and result['Email']:
+                result['appointment_start_time'] = to_12_hour_no_second(result['appointment_start_time'])
+                send_email_smtp(
+                    subject="Appointment Reminder",
+                    body = (
+                        f"Hello {result['Name']}, \n\n"
+                        f"Just a reminder that you have an appointment at Jack&Son Nails Spa\n"
+                        f"On {day_of_week}, {result['appointment_date']} at {result['appointment_start_time']}\n"
+                        f"Service: {result['service_name']}"
+                    ),
+                    to_email=result['Email']
+                )
+            
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(
+        func=appt_reminder,
+        trigger=CronTrigger(minute="0,30")
+    )
+scheduler.start()
+
+def generate_token(email):
+    s = URLSafeTimedSerializer(Config.SECRET_KEY)
+    token = s.dumps(email, salt='password-reset-salt')
+    return token
+
+def get_email(token):
+    try:
+        s = URLSafeTimedSerializer(Config.SECRET_KEY)
+        email = s.loads(token, salt='password-reset-salt', max_age=3600)
+        return email
+    except SignatureExpired:
+        print('The reset link has expired.', 'danger')
+        return None
+    
+    except BadSignature:
+        print('The reset link is invalid or has been tampered with.', 'danger')
+        return None
+    
+    except Exception as e:
+        print(f"Error occurred: {str(e)}")
+        flash('An error occurred while processing your request.', 'danger')
+        return None
+
+
+@background_bp.route('/req_password_', methods=['GET', 'POST'])
+def request_reset():
+    msg = ''
+    usertype = request.args.get('usertype', '')
+    if usertype not in ['password', 'username']:
+        flash('Invalid request type.', 'danger')
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        email = request.form['email']
+        print(email)
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
+        user = cursor.fetchone()
+        close_db_connection(db, cursor)
+        if user:
+            token = generate_token(user['Email'])
+            reset_link = url_for('background.reset_password', token=token, usertype=usertype, _external=True)
+            send_email_smtp(
+                subject=f"Reset {usertype.capitalize()} Request ",
+                body= f'Click the following link to reset your {usertype}: {reset_link}',
+                to_email=user['Email']
+            )
+            flash(f'A {usertype} reset email has been sent.', 'info')
+            print('GET request received')
+            return redirect(url_for('login'))
+        else:
+            msg = f"The email you entered ({email}) does not belong to an account."
+            return redirect(url_for('background.req_password', msg=msg, usertype=usertype))
+    return redirect(url_for('background.req_password', usertype=usertype))
+
+
+@background_bp.route('/resetpass/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    msg = ''
+    usertype = request.args.get('usertype', '') 
+
+    if usertype not in ('password', 'username'):
+        usertype = '' 
+
+    email = get_email(token)  
+    if not email:
+        flash('Invalid or expired token.', 'danger')
+        return redirect(url_for('login'))
+
+    if request.method == 'GET':
+
+        print('method is GET')
+        return render_template('client/resetpass.html', token=token, usertype=usertype)
+
+    if request.method == 'POST':
+        try:
+
+            new_form = request.form.get('password') if usertype == 'password' else request.form.get('username')
+            
+            db = get_db_connection()
+            cursor = db.cursor()
+
+            if usertype == 'password':
+
+                hashed_password = generate_password_hash(new_form)
+                cursor.execute("UPDATE users SET passcode = %s WHERE Email = %s", (hashed_password, email))
+                db.commit()
+                msg = 'Password updated successfully'
+            else:
+                cursor.execute('SELECT * FROM users WHERE UserName = %s', (new_form,))
+                result = cursor.fetchone()
+                if result:
+                    msg = 'Username taken'
+                    return render_template('client/resetpass.html', token=token, usertype=usertype, msg=msg)
+                
+                cursor.execute("UPDATE users SET UserName = %s WHERE Email = %s", (new_form, email))
+                db.commit()
+                msg = 'Username updated successfully'
+
+            close_db_connection(db, cursor)
+            return render_template('client/login.html', msg=msg)
+
+        except Exception as e:
+            print(f"Error updating password: {str(e)}")
+            flash('Failed to update the password. Please try again.', 'danger')
+
+    return render_template('client/req_password.html')

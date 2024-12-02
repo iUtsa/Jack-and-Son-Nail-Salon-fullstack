@@ -31,36 +31,42 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                  <ul class="navbar-nav ml-auto">
-                <li>
-                    <a class="nav-link" href="{{ url_for('home') }}">Home</a>
-                </li>
-                <li>
-                    <a class="nav-link" href="{{ url_for('about') }}">About</a>
-                </li>
-                <li>
-                    <a class="nav-link" href="{{ url_for('services') }}">Services</a>
-                </li>
-                <li>
-                    <a class="nav-link" href="{{ url_for('nailcare') }}">NailCare</a>
-                </li>
-                <li>
-                    <a class="nav-link" href="{{ url_for('reservation') }}">Book</a>
-                </li>
 
-                <!-- Show Profile link if logged in, otherwise show login link -->
-                {% if session.get('loggedin') %}
+                    {% if not session.get('loggedin') %}
+                        <li>
+                            <a class="nav-link" href="{{ url_for('employee_login') }}">Employee Login</a>
+                        </li>
+                    {% endif %}
                     <li>
-                        <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
+                        <a class="nav-link" href="{{ url_for('home') }}">Home</a>
                     </li>
                     <li>
-                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                        <a class="nav-link" href="{{ url_for('about') }}">About</a>
                     </li>
-                {% else %}
                     <li>
-                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                        <a class="nav-link" href="{{ url_for('services') }}">Services</a>
                     </li>
-                {% endif %}
-            </ul>
+                    <li>
+                        <a class="nav-link" href="{{ url_for('nailcare') }}">NailCare</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="{{ url_for('reservation') }}">Book</a>
+                    </li>
+
+                    <!-- Show Profile link if logged in, otherwise show login link -->
+                    {% if session.get('loggedin') %}
+                        <li>
+                            <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
+                        </li>
+                        <li>
+                            <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li>
+                            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                        </li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
     </nav>
@@ -165,34 +171,16 @@
         <h1>Opening Hours</h1>
         <table class="table table-borderless">
             <tbody>
-                <tr>
-                    <td>Monday</td>
-                    <td>9:00 AM - 7:00 PM</td>
-                </tr>
-                <tr>
-                    <td>Tuesday</td>
-                    <td>9:00 AM - 7:00 PM</td>
-                </tr>
-                <tr>
-                    <td>Wednesday</td>
-                    <td>9:00 AM - 7:00 PM</td>
-                </tr>
-                <tr>
-                    <td>Thursday</td>
-                    <td>9:00 AM - 7:00 PM</td>
-                </tr>
-                <tr>
-                    <td>Friday</td>
-                    <td>9:00 AM - 7:00 PM</td>
-                </tr>
-                <tr>
-                    <td>Saturday</td>
-                    <td>9:00 AM - 7:00 PM</td>
-                </tr>
-                <tr>
-                    <td>Sunday</td>
-                    <td><b>CLOSED</b></td>
-                </tr>
+                {% for result in results %}
+                    <tr>
+                        <td>{{ result['day'] }}</td>
+                        {% if result['open_hour'] == '12:00 AM'  %}
+                            <td>CLOSED - CLOSED</td>
+                        {% else %}
+                            <td>{{ result['open_hour'] }} - {{ result['close_hour'] }}</td>
+                        {% endif %}
+                    </tr> 
+                {% endfor%}
             </tbody>
         </table>
     </div>

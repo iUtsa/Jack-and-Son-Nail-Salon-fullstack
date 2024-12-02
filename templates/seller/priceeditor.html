@@ -78,7 +78,7 @@
                             {% if result['service_type'] == category['service_type'] %}
                                 <tr>
                                     <td>{{ result['service_name'] }}</td>
-                                    <td><img src="{{result['image']}}" alt="Pink & White Full Set"></td>
+                                    <td><img src="{{result['image']}}" alt="{{ result['service_name']}}"></td>
                                     <td>{{ result['price'] }}</td>
                                     <td>
                                         <button class="btn btn-edit" onclick="editService(this)" data-service-type="{{result['service_type']}}" data-service-id= "{{result['service_id'] }}">Edit</button>

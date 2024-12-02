@@ -1840,37 +1840,37 @@ body{
 /* Assign different text colors for each day column */
 #edit-time-table th:nth-child(2),
 #edit-time-table td:nth-child(2) {
-    color: green; /* Monday - Orange */
+    color: green; /* Timeslot - Green */
 }
 
 #edit-time-table th:nth-child(3),
 #edit-time-table td:nth-child(3) {
-    color: orange; /* Tuesday - Blue */
+    color: orange; /* Monday - Orange */
 }
 
 #edit-time-table th:nth-child(4),
 #edit-time-table td:nth-child(4) {
-    color: rgb(71, 182, 234); /* Wednesday - Green */
+    color: rgb(9, 130, 187); /* Tuesday - Blue */
 }
 
 #edit-time-table th:nth-child(5),
 #edit-time-table td:nth-child(5) {
-    color: lavender; /* Thursday - Light Orange */
+    color: rgb(104, 104, 182); /* Wednesday - Purple */
 }
 
 #edit-time-table th:nth-child(6),
 #edit-time-table td:nth-child(6) {
-    color: yellow; /* Friday - Red */
+    color: rgb(34, 87, 201); /* Thursday - Dark Blue */
 }
 
 #edit-time-table th:nth-child(7),
 #edit-time-table td:nth-child(7) {
-    color: #9575cd; /* Saturday - Purple */
+    color: #9575cd; /* Friday - Light Purple */
 }
 
 #edit-time-table th:nth-child(8),
 #edit-time-table td:nth-child(8) {
-    color: red; /* Sunday - Yellow */
+    color: red; /* Saturday - Red */
 }
 
 .small-input {
