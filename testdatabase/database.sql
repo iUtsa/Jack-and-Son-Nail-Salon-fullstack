@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `test1` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `test1`;
 -- MySQL dump 10.13  Distrib 8.0.40, for Win64 (x86_64)
 --
 -- Host: localhost    Database: test1
@@ -37,7 +35,7 @@ CREATE TABLE `appointments` (
   KEY `service_id` (`service_id`),
   CONSTRAINT `appointments_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `users` (`CustomerID`),
   CONSTRAINT `appointments_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `services` (`service_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -72,7 +70,7 @@ CREATE TABLE `business_hours` (
 
 LOCK TABLES `business_hours` WRITE;
 /*!40000 ALTER TABLE `business_hours` DISABLE KEYS */;
-INSERT INTO `business_hours` VALUES (8,'Monday','14:30:00','17:00:00'),(9,'Tuesday','05:36:00','19:00:00'),(10,'Wednesday','09:00:00','19:00:00'),(11,'Thursday','09:00:00','19:00:00'),(12,'Friday','09:00:00','19:00:00'),(13,'Saturday','09:00:00','19:00:00'),(14,'Sunday','00:00:00','00:00:00');
+INSERT INTO `business_hours` VALUES (8,'Monday','08:30:00','17:00:00'),(9,'Tuesday','05:36:00','19:00:00'),(10,'Wednesday','09:00:00','19:00:00'),(11,'Thursday','09:00:00','19:00:00'),(12,'Friday','09:00:00','19:00:00'),(13,'Saturday','09:00:00','19:00:00'),(14,'Sunday','00:00:00','00:00:00');
 /*!40000 ALTER TABLE `business_hours` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,7 +88,7 @@ CREATE TABLE `employee` (
   `Phone` varchar(15) NOT NULL,
   `services_provided` varchar(100) NOT NULL,
   PRIMARY KEY (`EmployeeID`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -99,7 +97,7 @@ CREATE TABLE `employee` (
 
 LOCK TABLES `employee` WRITE;
 /*!40000 ALTER TABLE `employee` DISABLE KEYS */;
-INSERT INTO `employee` VALUES (1,'Alice Johnson','alice.johnson@example.com','123-456-1312','Nail Care, Manicure, Pedicure, Waxing'),(2,'Bob Smith','bob.smith@example.com','234-567-8901','Pedidcure, Manicure'),(3,'Cathy Brown','cathy.brown@example.com','345-678-9012','Nail Care'),(4,'David Lee','david.lee@example.com','456-789-0123','Waxing, Nail Care'),(5,'Emily Davis','emily.davis@example.com','567-890-1234','Waxing, Nail Care'),(6,'Franklin Reed','franklin.reed@example.com','678-901-2345','Nail Care, Manicure'),(7,'Grace Kim','grace.kim@example.com','789-012-3456','Nail Care, Pedicure'),(8,'Henry Adams','henry.adams@example.com','890-123-4567','Manicure'),(9,'Irene White','irene.white@example.com','901-234-5678','Pedicure, Manicure'),(10,'Jack Wilson','jack.wilson@example.com','012-345-6789','Haircut'),(12,'Jackson Pham','jack.pham2024@gmail.com','609-209-1920','Nail Care, Manicure, Pedicure');
+INSERT INTO `employee` VALUES (2,'Bob Smith','bob.smith@example.com','234-567-8901','Pedidcure, Manicure'),(3,'Cathy Brown','cathy.brown@example.com','345-678-9012','Nail Care'),(4,'David Lee','david.lee@example.com','456-789-0123','Waxing, Nail Care'),(5,'Emily Davis','emily.davis@example.com','567-890-1234','Waxing, Nail Care'),(6,'Franklin Reed','franklin.reed@example.com','678-901-2345','Nail Care, Manicure'),(7,'Grace Kim','grace.kim@example.com','789-012-3456','Nail Care, Pedicure'),(8,'Henry Adams','henry.adams@example.com','890-123-4567','Manicure'),(9,'Irene White','irene.white@example.com','901-234-5678','Pedicure, Manicure'),(10,'Jack Wilson','jack.wilson@example.com','012-345-6789','Haircut'),(12,'Jackson Pham','jack.pham2024@gmail.com','609-209-1920','Nail Care, Manicure, Pedicure'),(13,'John ','john123@gmail.com','123-123-1231','Waxing, Nail Care');
 /*!40000 ALTER TABLE `employee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -204,7 +202,7 @@ CREATE TABLE `services` (
   `image` varchar(50) NOT NULL,
   `price` varchar(20) NOT NULL,
   PRIMARY KEY (`service_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -213,7 +211,7 @@ CREATE TABLE `services` (
 
 LOCK TABLES `services` WRITE;
 /*!40000 ALTER TABLE `services` DISABLE KEYS */;
-INSERT INTO `services` VALUES (1,'nailcare','Pink & White Full Set','/static/photos/nc1final.jpg','$60.00'),(2,'nailcare','Pink & White Fill In','/static/photos/nc2.jpg','$50.00'),(3,'nailcare','Acrylic Full Set','/static/photos/nc3.jpg','$1231.00'),(4,'nailcare','Acrylic Fill In','/static/photos/nc4.jpg','$40.00'),(5,'nailcare','Gel Color Full Set','/static/photos/nc5.jpg','$50.00'),(6,'nailcare','Gel Color Fill In','/static/photos/nc6.jpg','$40.00'),(7,'nailcare','Dipping Powder','/static/photos/nc7.jpg','$50.00+'),(8,'nailcare','UV Gel Full Set','/static/photos/nc8.jpg','$60.00'),(9,'nailcare','UV Gel Fill In','/static/photos/nc9.jpg','$45.00'),(10,'nailcare','Nail Repair','/static/photos/nc10.jpg','$5.00+'),(11,'nailcare','Cut Down Designs','/static/photos/nc11.jpg','$5.00+'),(12,'manicure','Pedicure & Manicure','/static/photos/mani1.jpg','$50.00'),(13,'manicure','Regular Pedicure','/static/photos/mani2.jpg','$30.00'),(14,'manicure','Regular Manicure','/static/photos/mani3.jpg','$20.00'),(15,'manicure','Gel Manicure','/static/photos/mani4.jpg','$35.00'),(16,'manicure','Deluxe Manicure','/static/photos/mani5.jpg','$30.00'),(17,'manicure','Polish Change','/static/photos/mani6.jpg','$25.00'),(18,'pedicure','Basic Pedicure','/static/photos/padi1.jpg','$35.00'),(19,'pedicure','Deluxe Pedicure','/static/photos/padi2.jpg','$50.00'),(20,'pedicure','Polish Change','/static/photos/padi3.jpg','$25.00'),(21,'pedicure','Gel Pedicure','/static/photos/padi4.jpg','$35.00'),(22,'waxing','Eyebrows','/static/photos/wax1.jpg','$10.00'),(23,'waxing','Chin','/static/photos/wax2.jpg','$8.00+'),(24,'waxing','Lip','/static/photos/wax3.jpg','$7.00'),(25,'waxing','Full Face','/static/photos/wax4.jpg','$30.00+'),(26,'waxing','Back','/static/photos/wax5.jpg','$45.00+'),(27,'waxing','Half Arms','/static/photos/wax6.jpg','$25.00+'),(28,'waxing','Full Arms','/static/photos/wax6.jpg','$35.00+'),(29,'waxing','Half Legs','/static/photos/wax7.jpg','$30.00'),(30,'waxing','Full Legs','/static/photos/wax7.jpg','$40.00'),(31,'waxing','Bikini','/static/photos/wax8.jpg','$40+');
+INSERT INTO `services` VALUES (1,'nailcare','Pink & White Full Set','/static/photos/nc1final.jpg','$60.00'),(2,'nailcare','Pink & White Fill In','/static/photos/nc2.jpg','$50.00'),(3,'nailcare','Acrylic Full Set','/static/photos/nc3.jpg','$1231.00'),(4,'nailcare','Acrylic Fill In','/static/photos/nc4.jpg','$40.00'),(5,'nailcare','Gel Color Full Set','/static/photos/nc5.jpg','$50.00'),(6,'nailcare','Gel Color Fill In','/static/photos/nc6.jpg','$40.00'),(7,'nailcare','Dipping Powder','/static/photos/nc7.jpg','$50.00+'),(8,'nailcare','UV Gel Full Set','/static/photos/nc8.jpg','$60.00'),(9,'nailcare','UV Gel Fill In','/static/photos/nc9.jpg','$45.00'),(10,'nailcare','Nail Repair','/static/photos/nc10.jpg','$5.00+'),(11,'nailcare','Cut Down Designs','/static/photos/nc11.jpg','$5.00+'),(12,'manicure','Pedicure & Manicure','/static/photos/mani1.jpg','$50.00'),(13,'manicure','Regular Pedicure','/static/photos/mani2.jpg','$30.00'),(14,'manicure','Regular Manicure','/static/photos/mani3.jpg','$20.00'),(15,'manicure','Gel Manicure','/static/photos/mani4.jpg','$35.00'),(16,'manicure','Deluxe Manicure','/static/photos/mani5.jpg','$30.00'),(17,'manicure','Polish Change','/static/photos/mani6.jpg','$25.00'),(18,'pedicure','Basic Pedicure','/static/photos/padi1.jpg','$35.00'),(19,'pedicure','Deluxe Pedicure','/static/photos/padi2.jpg','$50.00'),(20,'pedicure','Polish Change','/static/photos/padi3.jpg','$25.00'),(21,'pedicure','Gel Pedicure','/static/photos/padi4.jpg','$35.00'),(22,'waxing','Eyebrowser','/static/photos/wax1.jpg','$20.00'),(23,'waxing','Chin','/static/photos/wax2.jpg','$8.00+'),(24,'waxing','Lip','/static/photos/wax3.jpg','$7.00'),(25,'waxing','Full Face','/static/photos/wax4.jpg','$30.00+'),(26,'waxing','Back','/static/photos/wax5.jpg','$45.00+'),(27,'waxing','Half Arms','/static/photos/wax6.jpg','$25.00+'),(28,'waxing','Full Arms','/static/photos/wax6.jpg','$35.00+'),(29,'waxing','Half Legs','/static/photos/wax7.jpg','$30.00'),(30,'waxing','Full Legs','/static/photos/wax7.jpg','$40.00'),(31,'waxing','Bikini','/static/photos/wax8.jpg','$40+');
 /*!40000 ALTER TABLE `services` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -259,7 +257,7 @@ CREATE TABLE `users` (
   `Phone` varchar(15) NOT NULL,
   `Name` varchar(45) NOT NULL,
   PRIMARY KEY (`CustomerID`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -268,7 +266,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'qwe','qwe','qwe@gmail.com','123123123','Jessi Prowd'),(2,'123','123','123@gmail.com','1231231','Olivia Harper'),(3,'321','scrypt:32768:8:1$A3Y7DkI40RdTtfl4$8506f8a666106facb121cf100ed17485d58bb6086b18fd2baeb4a5ba6a9129e05428e7d675672cdea1de8d0fba3994ca0aab7feab4fb0fe693465c530e738afd','321@gmail.com','321321','Luna Mason'),(4,'111','scrypt:32768:8:1$qyDmLNT1FhQdYiuZ$57339ab8331506006f643dcbebedf7e42ea90bd64bb74ed9fcf6a7afa9248daca36348a17d1674c4ba5cf520fe6c627ff23eaf74444623b1ff7d8a74af3fe5ea','1211@gmail.com','111111','Athena Romano'),(7,'ttt','scrypt:32768:8:1$tn7vM4jVfNTF9gBQ$ac089eb6a87603791aa2941d46597a38a608c03a7e7324ba86c98e0b4fc1648d535514d4f92a68eec4725c5c580af41f73b2dae6f87f2a7aa95f5f8d44c5d73a','ttt@gmail.com','101010','Jack Sparrow'),(8,'101','scrypt:32768:8:1$KxiWL9X9aWjXsxXY$f1c334d4e86aa7edfce8fa9e1b3674e4c9655586a335853fd5cba73d07ab1a0a062fbab6877c424d6516e8dd39fc7e6cb7a1437cea707285763ddfe332b48590','101@gmail.com','101101','Thinh Tran'),(9,'ert','scrypt:32768:8:1$lNYz0XFTVqnbdG2u$d98f43c8e72dedab6fcb6adc6f77dd51273fa94eea003519a7648a560f69120395694e8b370be42396aa8ef0e467d9bc7defbff10636b8d22d5fccdee142d991','thinh2405543926@gmail.com','6092879255','Thinh');
+INSERT INTO `users` VALUES (1,'qwe','qwe','qwe@gmail.com','123123123','Jessi Prowd'),(2,'123','123','123@gmail.com','1231231','Olivia Harper'),(3,'321','scrypt:32768:8:1$A3Y7DkI40RdTtfl4$8506f8a666106facb121cf100ed17485d58bb6086b18fd2baeb4a5ba6a9129e05428e7d675672cdea1de8d0fba3994ca0aab7feab4fb0fe693465c530e738afd','321@gmail.com','321321','Luna Mason'),(4,'111','scrypt:32768:8:1$qyDmLNT1FhQdYiuZ$57339ab8331506006f643dcbebedf7e42ea90bd64bb74ed9fcf6a7afa9248daca36348a17d1674c4ba5cf520fe6c627ff23eaf74444623b1ff7d8a74af3fe5ea','1211@gmail.com','111111','Athena Romano'),(7,'ttt','scrypt:32768:8:1$tn7vM4jVfNTF9gBQ$ac089eb6a87603791aa2941d46597a38a608c03a7e7324ba86c98e0b4fc1648d535514d4f92a68eec4725c5c580af41f73b2dae6f87f2a7aa95f5f8d44c5d73a','ttt@gmail.com','101010','Jack Sparrow');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -303,7 +301,7 @@ CREATE TABLE `week_schedule` (
 
 LOCK TABLES `week_schedule` WRITE;
 /*!40000 ALTER TABLE `week_schedule` DISABLE KEYS */;
-INSERT INTO `week_schedule` VALUES (1,101101,'8:00 AM','Arnab, Fred, Abhi','','Jacob, T','T, Fred, Arnab','Jessi, Fred, Jackson, Tina','trtrt',''),(2,101101,'9:00 AM','','Leo, Jack','','Sony','','Lisa, Jessi, Sony, John',''),(3,101101,'10:00 AM','','','','','','',''),(4,101101,'11:00 AM','','','','','','',''),(5,101101,'12:00 PM','fesdfe','sefs','','esfdf','','',''),(6,101101,'1:00 PM','Fred','','Jacob','Fred','Tina','',''),(7,101123,'2:00 PM','','','','','','',''),(8,101123,'3:00 PM','','','','','','',''),(9,101123,'4:00 PM','Arnab, Thinh','','Thinh','','Jessi','',''),(10,101123,'5:00 PM','','','','','','',''),(11,101123,'6:00 PM','','','','','','',''),(12,101123,'7:00 PM','','Jack, Leo','','','','','');
+INSERT INTO `week_schedule` VALUES (1,101123,'8:00 AM','Arnab, Fred, Abhi','John, Thinh, Elein','Jacob, T','T, Fred, Arnab','Jessi, Fred, Jackson, Tina','trtrt',''),(2,101101,'9:00 AM','','Leo, Jack','','Sony','','Lisa, Jessi, Sony, John',''),(3,101101,'10:00 AM','','','','','','',''),(4,101101,'11:00 AM','','','','','','',''),(5,101101,'12:00 PM','fesdfe','sefs','','esfdf','','',''),(6,101101,'1:00 PM','Fred','','Jacob','Fred','Tina','',''),(7,101123,'2:00 PM','','','','','','',''),(8,101123,'3:00 PM','','','','','','',''),(9,101123,'4:00 PM','Arnab, Thinh','','Thinh','','Jessi','',''),(10,101123,'5:00 PM','','','','','','',''),(11,101123,'6:00 PM','','','','','','',''),(12,101123,'7:00 PM','','Jack, Leo','','','','','');
 /*!40000 ALTER TABLE `week_schedule` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -316,4 +314,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-01 14:28:31
+-- Dump completed on 2024-12-01 23:45:52
