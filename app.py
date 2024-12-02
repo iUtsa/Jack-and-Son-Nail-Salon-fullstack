@@ -1,23 +1,27 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, make_response
-from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Mail, Message
-import mysql.connector
+import mysql.connector, background, os
 from mysql.connector import Error
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
+from itsdangerous import SignatureExpired, BadSignature, URLSafeTimedSerializer
 import background
+from config import Config
+
 
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/photos'
-app.register_blueprint(background.background_bp) 
-app.secret_key = 'your_secret_key'  # Required for session handling
+app.register_blueprint(background.background_bp)
+app.config.from_object(Config)  # Apply the config settings to the app
+app.secret_key = Config.SECRET_KEY  # Required for session handling
 # Define the secret key for token generation
 
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_TYPE'] = 'filesystem'  # Store session data in the filesystem
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 
+mail = Mail(app)
 
 # Database connection
 db = mysql.connector.connect(
@@ -502,42 +506,6 @@ def view_past_appt():
 
 
 
-# Flask-Mail configuration
-app.config['MAIL_SERVER'] = 'smtp.example.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'your-email@example.com'
-app.config['MAIL_PASSWORD'] = 'your-email-password'
-mail = Mail(app)
-
-# Serializer for generating tokens
-s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-
-
-@app.route('/req_password', methods=['GET', 'POST'])
-def request_reset():
-    if request.method == 'POST':
-        email = request.form['email']
-
-        # user = get_user_by_email(email)
-        cursor = db.cursor()
-        cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
-        user = cursor.fetchone()  # Implement function to get user by email from the database
-        if user:
-            token = s.dumps(user[3], salt='password-reset-salt')
-            reset_link = url_for('reset_password', token=token, _external=True)
-            send_reset_email(user[3], reset_link)
-            flash('A password reset email has been sent.', 'info')
-            return redirect(url_for('login'))
-        print('GET request received')
-    return render_template('client/resetpass.html')
-
-
-def send_reset_email(to_email, reset_link):
-    msg = Message('Password Reset Request', sender='noreply@example.com', recipients=[to_email])
-    msg.body = f'Click the following link to reset your password: {reset_link}'
-    mail.send(msg)
-
 
 def update_user_password(user, hashed_password):
     cursor = db.cursor()
@@ -547,31 +515,6 @@ def update_user_password(user, hashed_password):
         cursor.execute('UPDATE users SET passcode = %s WHERE UserName = %s', (hashed_password, user))
         db.commit()
         close_db_connection(db, cursor)
-
-
-@app.route('/resetpass/<token>', methods=['GET', 'POST'])
-def reset_password(token):
-    try:
-        email = s.loads(token, salt='password-reset-salt', max_age=3600)  # Token valid for 1 hour
-    except:
-        flash('The reset link is invalid or has expired.', 'danger')
-        return redirect(url_for('request_reset'))
-
-    if request.method == 'POST':
-        password = request.form['password']
-
-        cursor = db.cursor()
-        cursor.execute('SELECT * FROM users WHERE email = %s', email)
-        user = cursor.fetchone()
-        # user = get_user_by_email(email)  # Implement function to get user by email from the database
-        if user:
-            # Hash and update the user's password in the database
-            hashed_password = generate_password_hash(password)
-            update_user_password(user, hashed_password)  # Implement this function to save new password
-            flash('Your password has been updated!', 'success')
-            return redirect(url_for('login'))
-    return render_template('client/reset_password.html', token=token)
-
 
 
 # Run the app
