@@ -182,15 +182,11 @@ def profile():
     # Fetch user information
     cursor.execute('SELECT * FROM users WHERE CustomerID = %s', (customer_id,))
     user = cursor.fetchone()
-    avatar_url = 'https://via.placeholder.com/150?text=Female+Avatar'
-    
     close_db_connection(db, cursor)
     
     
     # Render the profile page with a no-cache header
-    response = make_response(render_template(
-        'client/profile.html', user=user, avatar_url=avatar_url, appt_list=appt_list, current_date=current_date
-    ))
+    response = make_response(render_template('client/profile.html', user=user, appt_list=appt_list, current_date=current_date))
     response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '-1'
@@ -255,8 +251,8 @@ def create_account():
             )
             db.commit()
             close_db_connection(db, cursor)
-            
-            return redirect(url_for('login'))
+            msg = 'Account created successfully'
+            return render_template('client/login.html', msg=msg)
     return render_template('client/createac.html', msg=msg)
 
 

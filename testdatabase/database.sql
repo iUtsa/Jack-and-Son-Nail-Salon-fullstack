@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `test1` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `test1`;
 -- MySQL dump 10.13  Distrib 8.0.40, for Win64 (x86_64)
 --
 -- Host: localhost    Database: test1
@@ -35,7 +37,7 @@ CREATE TABLE `appointments` (
   KEY `service_id` (`service_id`),
   CONSTRAINT `appointments_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `users` (`CustomerID`),
   CONSTRAINT `appointments_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `services` (`service_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -88,7 +90,7 @@ CREATE TABLE `employee` (
   `Phone` varchar(15) NOT NULL,
   `services_provided` varchar(100) NOT NULL,
   PRIMARY KEY (`EmployeeID`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -97,7 +99,7 @@ CREATE TABLE `employee` (
 
 LOCK TABLES `employee` WRITE;
 /*!40000 ALTER TABLE `employee` DISABLE KEYS */;
-INSERT INTO `employee` VALUES (2,'Bob Smith','bob.smith@example.com','234-567-8901','Pedidcure, Manicure'),(3,'Cathy Brown','cathy.brown@example.com','345-678-9012','Nail Care'),(4,'David Lee','david.lee@example.com','456-789-0123','Waxing, Nail Care'),(5,'Emily Davis','emily.davis@example.com','567-890-1234','Waxing, Nail Care'),(6,'Franklin Reed','franklin.reed@example.com','678-901-2345','Nail Care, Manicure'),(7,'Grace Kim','grace.kim@example.com','789-012-3456','Nail Care, Pedicure'),(8,'Henry Adams','henry.adams@example.com','890-123-4567','Manicure'),(9,'Irene White','irene.white@example.com','901-234-5678','Pedicure, Manicure'),(10,'Jack Wilson','jack.wilson@example.com','012-345-6789','Haircut'),(12,'Jackson Pham','jack.pham2024@gmail.com','609-209-1920','Nail Care, Manicure, Pedicure'),(13,'John ','john123@gmail.com','123-123-1231','Waxing, Nail Care');
+INSERT INTO `employee` VALUES (2,'Bob Smith','bob.smith@example.com','234-567-8901','Pedidcure, Manicure'),(3,'Cathy Brown','cathy.brown@example.com','345-678-9012','Nail Care'),(4,'David Lee','david.lee@example.com','456-789-0123','Waxing, Nail Care'),(5,'Emily Davis','emily.davis@example.com','567-890-1234','Waxing, Nail Care'),(6,'Franklin Reed','franklin.reed@example.com','678-901-2345','Nail Care, Manicure'),(7,'Grace Kim','grace.kim@example.com','789-012-3456','Nail Care, Pedicure'),(8,'Henry Adams','henry.adams@example.com','890-123-4567','Manicure'),(9,'Irene White','irene.white@example.com','901-234-5678','Pedicure, Manicure'),(10,'Jack Wilson','jack.wilson@example.com','012-345-6789','Haircut'),(12,'Jackson Pham','jack.pham2024@gmail.com','609-209-1920','Nail Care, Manicure, Pedicure');
 /*!40000 ALTER TABLE `employee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -175,7 +177,7 @@ CREATE TABLE `managers` (
   `email` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `managerID` (`managerID`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -184,7 +186,7 @@ CREATE TABLE `managers` (
 
 LOCK TABLES `managers` WRITE;
 /*!40000 ALTER TABLE `managers` DISABLE KEYS */;
-INSERT INTO `managers` VALUES (1,101123,'tinaPham','scrypt:32768:8:1$ZGKc2gpxyBpJiVBh$ffefad81869a2d84d05942da4f8a0d0f0f323fed393298cd67f2f89290507829daa68309af7b97b240ced1311c6af96b316e6ec2d25a73f2d1072ff6758fd25d','Tina Pham','6098889898','managerTina@gmail.com'),(9,101101,'t2024','scrypt:32768:8:1$dNGko36u2NUEyimn$0e94f409a2fde00248aa80653587091dae31b3dd0cf29d15c4649eab218694d4ff381cdead7527dc213daa480e1f8e69007275655afd1f41b852364499cfc6ff','Thinh Tran','13123132','t2024@gmail.com');
+INSERT INTO `managers` VALUES (1,101123,'tinaPham','scrypt:32768:8:1$ZGKc2gpxyBpJiVBh$ffefad81869a2d84d05942da4f8a0d0f0f323fed393298cd67f2f89290507829daa68309af7b97b240ced1311c6af96b316e6ec2d25a73f2d1072ff6758fd25d','Tina Pham','6098889898','managerTina@gmail.com');
 /*!40000 ALTER TABLE `managers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -257,7 +259,7 @@ CREATE TABLE `users` (
   `Phone` varchar(15) NOT NULL,
   `Name` varchar(45) NOT NULL,
   PRIMARY KEY (`CustomerID`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -301,7 +303,7 @@ CREATE TABLE `week_schedule` (
 
 LOCK TABLES `week_schedule` WRITE;
 /*!40000 ALTER TABLE `week_schedule` DISABLE KEYS */;
-INSERT INTO `week_schedule` VALUES (1,101123,'8:00 AM','Arnab, Fred, Abhi','John, Thinh, Elein','Jacob, T','T, Fred, Arnab','Jessi, Fred, Jackson, Tina','trtrt',''),(2,101101,'9:00 AM','','Leo, Jack','','Sony','','Lisa, Jessi, Sony, John',''),(3,101101,'10:00 AM','','','','','','',''),(4,101101,'11:00 AM','','','','','','',''),(5,101101,'12:00 PM','fesdfe','sefs','','esfdf','','',''),(6,101101,'1:00 PM','Fred','','Jacob','Fred','Tina','',''),(7,101123,'2:00 PM','','','','','','',''),(8,101123,'3:00 PM','','','','','','',''),(9,101123,'4:00 PM','Arnab, Thinh','','Thinh','','Jessi','',''),(10,101123,'5:00 PM','','','','','','',''),(11,101123,'6:00 PM','','','','','','',''),(12,101123,'7:00 PM','','Jack, Leo','','','','','');
+INSERT INTO `week_schedule` VALUES (1,101123,'8:00 AM','Arnab, Fred, Abhi','John, Thinh, Elein','Jacob, T','T, Fred, Arnab','Jessi, Fred, Jackson, Tina','trtrt',''),(2,101123,'9:00 AM','','Leo, Jack','','Sony','','Lisa, Jessi, Sony, John',''),(3,101123,'10:00 AM','','','','','','',''),(4,101123,'11:00 AM','','','','','','',''),(5,101123,'12:00 PM','fesdfe','sefs','','esfdf','','',''),(6,101123,'1:00 PM','Fred','','Jacob','Fred','Tina','',''),(7,101123,'2:00 PM','','','','','','',''),(8,101123,'3:00 PM','','','','','','',''),(9,101123,'4:00 PM','Arnab, Thinh','','Thinh','','Jessi','',''),(10,101123,'5:00 PM','','','','','','',''),(11,101123,'6:00 PM','','','','','','',''),(12,101123,'7:00 PM','','Jack, Leo','','','','','');
 /*!40000 ALTER TABLE `week_schedule` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -314,4 +316,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-01 23:45:52
+-- Dump completed on 2024-12-04  0:38:54

@@ -716,16 +716,12 @@ function generateBookingNumber() {
             const row = button.closest("tr");
             const employeeID = row.querySelector('td:first-child').textContent.trim();
             // row.remove();
-            console.log(employeeID)
-            const passing_id = {
-                id: employeeID
-            }
             fetch('/remove-employee', {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json'
                 },
-                body: JSON.stringify(employeeID)
+                body: JSON.stringify({employeeID})
             })
             .then(response => response.json())
             .then(data => {
@@ -734,6 +730,7 @@ function generateBookingNumber() {
                     row.remove();
                 }
                 else{
+                    console.error('Error', error);
                     alert(data.error || 'An error has occured')
                 }
             })
@@ -749,25 +746,21 @@ function generateBookingNumber() {
     }
 
     function removeManager(button) {
-        if (confirm("Are you sure you want to remove this employee?")) {
+        if (confirm("Are you sure you want to remove this manager?")) {
             const row = button.closest("tr");
             const employeeID = row.querySelector('td:first-child').textContent.trim();
-            // row.remove();
-            console.log(employeeID)
-            const passing_id = {
-                id: employeeID
-            }
+
             fetch('/remove-manager', {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json'
                 },
-                body: JSON.stringify(employeeID)
+                body: JSON.stringify({employeeID})
             })
             .then(response => response.json())
             .then(data => {
                 if(data.success){
-                    alert('Employee removed successfully')
+                    alert('Manager removed successfully')
                     row.remove();
                 }
                 else{

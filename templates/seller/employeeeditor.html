@@ -53,38 +53,40 @@
         </div>
 
     </nav>
-
-    <div id="employee-header">
-        <h1>Managers</h1>
-    </div>
-    <div class="table-container" id="edit-emp-table">
-        <table id="edit-employee-table" class="table table-bordered">
-            <thead class="table-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>Employee Name</th>
-                    <th>Phone Number</th>
-                    <th>Email</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for result in manager_results %}
-                   <tr>
-                       <td>{{ result['managerID'] }}</td>
-                       <td>{{ result['Name'] }}</td>
-                       <td>{{ result['phone'] }}</td>
-                       <td>{{ result['email'] }}</td>
-                       <td>
-                           <button class="btn btn-edit" onclick="editManager(this)">Edit</button>
-                           <button class="btn btn-remove" onclick="removeEmp(this)">Remove</button>
-                       </td>
-                   </tr>
-                {% endfor %}        
+    {% if manager_results %}
+        <div id="employee-header">
+            <h1>Managers</h1>
+        </div>
+        <div class="table-container" id="edit-emp-table">
+            <table id="edit-employee-table" class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Employee Name</th>
+                        <th>Phone Number</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in manager_results %}
+                    <tr>
+                        <td>{{ result['managerID'] }}</td>
+                        <td>{{ result['Name'] }}</td>
+                        <td>{{ result['phone'] }}</td>
+                        <td>{{ result['email'] }}</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editManager(this)">Edit</button>
+                            <button class="btn btn-remove" onclick="removeManager(this)">Remove</button>
+                        </td>
+                    </tr>
+                    {% endfor %}        
+        
+            </tbody>
+            </table>    
+        </div>
+    {% endif %}
     
-           </tbody>
-        </table>    
-    </div>
     
     
     <div id="employee-header">

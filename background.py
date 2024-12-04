@@ -277,10 +277,11 @@ def edit_manager_info():
 def remove_employee():
     try:
         data = request.get_json()
+        id = data.get('employeeID')
 
         db = get_db_connection()
         cursor = db.cursor()
-        cursor.execute('DELETE FROM employee where EmployeeID = %s', (data,))
+        cursor.execute('DELETE FROM employee where EmployeeID = %s', (id,))
         db.commit()
         db.close()
         cursor.close()
@@ -294,10 +295,12 @@ def remove_employee():
 def remove_manager():
     try:
         data = request.get_json()
-
+        id = data.get('employeeID')
+        print(data)
         db = get_db_connection()
         cursor = db.cursor()
-        cursor.execute('DELETE FROM managers where managerID = %s', (data,))
+        cursor.execute('''UPDATE week_schedule SET managerID = %s WHERE managerID = %s''', ('101123', id))
+        cursor.execute('DELETE FROM managers where managerID = %s', (id,))
         db.commit()
         db.close()
         cursor.close()
