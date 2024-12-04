@@ -41,14 +41,27 @@
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <!-- Add other navigation items here -->
+                </ul>
+            </div>
         </div>
     </nav>
-    <form action="{{ url_for('background.reset_password', token=token) }}" method="POST">
+    <form action="{{ url_for('background.manager_reset_password', token=token, usertype=usertype)}}" method="POST">
+        <input type="hidden" name="usertype" value="{{ usertype }}">
     <div class="mb-3" style="margin: 130px;">
-        <label for="password" class="form-label">New Username</label>
-        <input type="password" class="form-control" id="password" name="password" placeholder="Enter new password" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Reset Username</button>
+        <label for="password" class="form-label">New {{usertype|capitalize()}}</label>
+        {% if usertype == 'password' %}
+            <input type="password" class="form-control" id="password" name="password" placeholder="Enter new password" required>
+        {% else %}
+            <h1 style="color: red;">{{msg}}</h1>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Enter new username" required>
+        {% endif %}
+    
+    
+        </div>
+    <button type="submit" class="btn btn-primary">Reset {{usertype|capitalize()}}</button>
 </form>
 
 

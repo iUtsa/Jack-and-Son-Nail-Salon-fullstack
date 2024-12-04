@@ -613,7 +613,6 @@ function generateBookingNumber() {
                 email: newEmail,
                 id: employeeID
             };
-            console.log(dataToSend);
 
             fetch('/edit-employee-info',
                 {
@@ -647,6 +646,65 @@ function generateBookingNumber() {
             cells[1].innerHTML = `<input type="text" value="${currentPhone}" class="form-control">`;
             cells[2].innerHTML = `<input type="text" value="${currentPosition}" class="form-control">`;
             cells[3].innerHTML = `<input type="text" value="${currentEmail}" class="form-control">`;
+
+            button.textContent = "Save";
+
+        }
+    }
+
+    function editManager(button) {
+        const row = button.closest("tr");
+        // const cells = row.getElementsByTagName("td");
+        const cells = row.querySelectorAll('td:not(:first-child):not(:last-child)');
+        const managerID = row.querySelector('td:first-child').textContent.trim()
+        if (button.textContent === "Save") {
+            // Save edited values
+            const newName = cells[0].querySelector("input").value;
+            const newPhone = cells[1].querySelector("input").value;
+            const newEmail = cells[2].querySelector("input").value;
+
+            // Set updated values to cells
+            cells[0].textContent = newName;
+            cells[1].textContent = newPhone;
+            cells[2].textContent = newEmail;
+            const dataToSend = {
+                name: newName,
+                phone: newPhone,
+                email: newEmail,
+                id: managerID
+            };
+            console.log(dataToSend);
+
+            fetch('/edit-manager-info',
+                {
+                    method: 'POST',
+                    headers: {'content-type': 'application/json'},
+                body: JSON.stringify(dataToSend)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success){
+
+                    }
+                    else{
+                        alert(data.error || 'An error has occured')
+                    }
+                })
+                .catch(error => {
+                    console.error('Error', error),
+                    alert(data.error || 'An Error has occured, please try again')
+                });
+
+            button.textContent = "Edit";
+        } else {
+            // Switch to edit mode by creating input fields
+            const currentName = cells[0].textContent.trim();
+            const currentPhone = cells[1].textContent.trim();
+            const currentPosition = cells[2].textContent.trim();
+
+            cells[0].innerHTML = `<input type="text" value="${currentName}" class="form-control">`;
+            cells[1].innerHTML = `<input type="text" value="${currentPhone}" class="form-control">`;
+            cells[2].innerHTML = `<input type="text" value="${currentPosition}" class="form-control">`;
 
             button.textContent = "Save";
 
@@ -690,6 +748,42 @@ function generateBookingNumber() {
         }
     }
 
+    function removeManager(button) {
+        if (confirm("Are you sure you want to remove this employee?")) {
+            const row = button.closest("tr");
+            const employeeID = row.querySelector('td:first-child').textContent.trim();
+            // row.remove();
+            console.log(employeeID)
+            const passing_id = {
+                id: employeeID
+            }
+            fetch('/remove-manager', {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify(employeeID)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success){
+                    alert('Employee removed successfully')
+                    row.remove();
+                }
+                else{
+                    alert(data.error || 'An error has occured')
+                }
+            })
+            .catch(error => {
+                console.error('Error', error),
+                alert(data.error || 'An error has occured, pleast try again')
+            });
+        }
+        else{
+            alert("something went wrong")
+            console.log('something went wrong', employeeID)
+        }
+    }
 
     //=======edit store timing======
     function editTime(button) {

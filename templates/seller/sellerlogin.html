@@ -60,11 +60,17 @@
                 </div>
                 <div class="mb-3">
                     <label for="manager-id" class="form-label">Manager's ID</label>
-                    <input type="text" class="form-control" id="manager-id" name="manager_id" placeholder="Enter your manager's ID" required>
+                    <input type="number" class="form-control" id="manager-id" name="manager_id" placeholder="Enter your manager's ID" required min="0" step="1" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 </div>
                 
                 <div class="buttons">
                 <button type="submit" class="btn btn-primary">Manager Login</button>
+                </div>
+                <div class="forgot-pass">
+                    <p>Forgot Password? <a href="{{ url_for('manager_req_password', usertype='password') }}"> Reset Password </a></p>
+                </div>
+                <div class="forgot-username">
+                    <p>Forgot Username? <a href="{{ url_for('manager_req_password', usertype='username') }}"> Reset Username </a></p>
                 </div>
             </form>
         </div>

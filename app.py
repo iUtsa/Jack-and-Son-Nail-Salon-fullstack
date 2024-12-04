@@ -265,6 +265,12 @@ def create_account():
 # 
 # 
 
+@app.route('/manager-reset-password')
+def manager_req_password():
+    msg = request.args.get('msg', '')
+    usertype = request.args.get('usertype', '')
+    return render_template('seller/req_password.html', usertype=usertype, msg=msg)
+
 
 # log in page for employee
 @app.route('/employee-login', methods = ['POST', 'GET'])
@@ -304,28 +310,43 @@ def employee_editor():
     if('manager_loggedin' not in session):
         return redirect(url_for('employee_login'))
     else:
+        manager_results = []
         db = get_db_connection()
         cursor = db.cursor(dictionary=True)
         cursor.execute('SELECT * FROM employee order by EmployeeID ASC')
-        results = cursor.fetchall()
-        cursor.close()
-        db.close()
-        
+        employee_results = cursor.fetchall()
+        if(session['ManagerID'] == 101123):
+            cursor.execute('SELECT * FROM managers')
+            manager_results = cursor.fetchall()
+        close_db_connection(db, cursor)
+        return render_template('seller/employeeeditor.html',employee_results=employee_results, manager_results=manager_results)
 
-        return render_template('seller/employeeeditor.html',results=results)
 
-# A page that display employee's informations
 @app.route('/employee-info')
 def employee_info():
-    if('manager_loggedin' not in session):
+    if 'manager_loggedin' not in session:
         return redirect(url_for('employee_login'))
     else:
+        # Connect to the database
         db = get_db_connection()
         cursor = db.cursor(dictionary=True)
-        cursor.execute('SELECT * FROM employee')
+        
+        # Pagination logic
+        per_page = 5
+        page = request.args.get('page', 1, type=int)
+        offset = (page - 1) * per_page
+        
+        # Query with LIMIT and OFFSET for pagination
+        cursor.execute('SELECT * FROM employee LIMIT %s OFFSET %s', (per_page, offset))
         results = cursor.fetchall()
+        
+        # Get the total number of employees
+        cursor.execute('SELECT COUNT(*) AS total FROM employee')
+        total = cursor.fetchone()['total']
+        
         close_db_connection(db, cursor)
-        return render_template('seller/employeeinfo.html', results=results)
+        
+        return render_template('seller/employeeinfo.html', results=results, page=page, total=total, per_page=per_page)
 
 # profile page for seller side
 @app.route('/seller-homepage')

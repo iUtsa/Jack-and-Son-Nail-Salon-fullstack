@@ -251,6 +251,27 @@ def edit_employee_info():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+@background_bp.route('/edit-manager-info', methods=['POST'])
+def edit_manager_info():
+    data = request.get_json()
+
+    try:
+        managerID = data.get('id')
+        name = data.get('name')
+        phone = data.get('phone')
+        email = data.get('email')
+
+        db = get_db_connection()
+        cursor = db.cursor()
+        cursor.execute('UPDATE managers SET Name = %s, email = %s, phone = %s WHERE managerID = %s' , (name, email, phone, managerID))
+        
+        db.commit()
+        db.close()
+        cursor.close()
+
+        return jsonify({"success": "Succesffuly changed"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @background_bp.route('/remove-employee', methods=['POST'])
 def remove_employee():
@@ -260,6 +281,23 @@ def remove_employee():
         db = get_db_connection()
         cursor = db.cursor()
         cursor.execute('DELETE FROM employee where EmployeeID = %s', (data,))
+        db.commit()
+        db.close()
+        cursor.close()
+
+        return jsonify({"success": "Succesffuly changed"})
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@background_bp.route('/remove-manager', methods=['POST'])
+def remove_manager():
+    try:
+        data = request.get_json()
+
+        db = get_db_connection()
+        cursor = db.cursor()
+        cursor.execute('DELETE FROM managers where managerID = %s', (data,))
         db.commit()
         db.close()
         cursor.close()
@@ -407,20 +445,38 @@ def remove_service():
 
 @background_bp.route('/search-employee', methods=['GET'])
 def search_employee():
-    data = request.args.get('name', '').strip()
-    results = []
+
+    search_term = request.args.get('name', '').strip()
+    
+    per_page = 5 
+    page = request.args.get('page', 1, type=int) 
+    offset = (page - 1) * per_page
+
     db = get_db_connection()
     cursor = db.cursor(dictionary=True)
-    if data:
-        cursor.execute('SELECT * FROM employee WHERE Employee_name LIKE %s', ('%' + data + '%',))
-    else:
-        cursor.execute('SELECT * FROM employee')
-    results = cursor.fetchall()
-    close_db_connection(db, cursor)
     
-    return render_template('seller/employeeinfo.html', results=results)
+    try:
+        # Build the query with pagination and search term if provided
+        if search_term:
+            query = 'SELECT * FROM employee WHERE Employee_name LIKE %s LIMIT %s OFFSET %s'
+            cursor.execute(query, ('%' + search_term + '%', per_page, offset))
+        else:
+            query = 'SELECT * FROM employee LIMIT %s OFFSET %s'
+            cursor.execute(query, (per_page, offset))
 
+        results = cursor.fetchall()
 
+        cursor.execute('SELECT COUNT(*) AS total FROM employee WHERE Employee_name LIKE %s', ('%' + search_term + '%',))
+        total = cursor.fetchone()['total']
+
+    except Exception as e:
+        print(f"Error querying database: {e}")
+    finally:
+        close_db_connection(db, cursor)
+
+    total_pages = (total // per_page) + (1 if total % per_page > 0 else 0)
+
+    return render_template('seller/employeeinfo.html', results=results, search_term=search_term, page=page, total=total, total_pages=total_pages, per_page=per_page)
 
 
 def price_format(price):
@@ -677,6 +733,37 @@ def request_reset():
             return redirect(url_for('background.req_password', msg=msg, usertype=usertype))
     return redirect(url_for('background.req_password', usertype=usertype))
 
+@background_bp.route('/maanegr_req_password_', methods=['GET', 'POST'])
+def manager_request_reset():
+    msg = ''
+    usertype = request.args.get('usertype', '')
+    if usertype not in ['password', 'username']:
+        flash('Invalid request type.', 'danger')
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        email = request.form['email']
+        id = request.form['ID']
+        print(email)
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM managers WHERE email = %s AND managerID = %s", (email, id,))
+        user = cursor.fetchone()
+        close_db_connection(db, cursor)
+        if user:
+            token = generate_token(user['email'])
+            reset_link = url_for('background.manager_reset_password', token=token, usertype=usertype, _external=True)
+            send_email_smtp(
+                subject=f"Reset {usertype.capitalize()} Request ",
+                body= f'Click the following link to reset your {usertype}: {reset_link}',
+                to_email=user['email']
+            )
+            flash(f'A {usertype} reset email has been sent.', 'info')
+            print('GET request received')
+            return redirect(url_for('employee_login'))
+        else:
+            msg = f"The email ({email}) or ID ({id}) you entered does not belong to an account."
+            return redirect(url_for('manager_req_password', msg=msg, usertype=usertype))
+    return redirect(url_for('manager_req_password', usertype=usertype))
 
 @background_bp.route('/resetpass/<token>', methods=['GET', 'POST'])
 def reset_password(token):
@@ -715,7 +802,7 @@ def reset_password(token):
                 result = cursor.fetchone()
                 if result:
                     msg = 'Username taken'
-                    return render_template('client/resetpass.html', token=token, usertype=usertype, msg=msg)
+                    return render_template('client/resetpass.html', msg=msg)
                 
                 cursor.execute("UPDATE users SET UserName = %s WHERE Email = %s", (new_form, email))
                 db.commit()
@@ -729,3 +816,56 @@ def reset_password(token):
             flash('Failed to update the password. Please try again.', 'danger')
 
     return render_template('client/req_password.html')
+
+@background_bp.route('/manager-resetpass/<token>', methods=['GET', 'POST'])
+def manager_reset_password(token):
+    msg = ''
+    usertype = request.args.get('usertype', '') 
+
+    if usertype not in ('password', 'username'):
+        usertype = '' 
+
+    email = get_email(token)  
+    if not email:
+        flash('Invalid or expired token.', 'danger')
+        return redirect(url_for('login'))
+
+    if request.method == 'GET':
+
+        print('method is GET')
+        return render_template('seller/resetpass.html', token=token, usertype=usertype)
+
+    if request.method == 'POST':
+        try:
+
+            new_form = request.form.get('password') if usertype == 'password' else request.form.get('username')
+            
+            db = get_db_connection()
+            cursor = db.cursor()
+
+            if usertype == 'password':
+
+                hashed_password = generate_password_hash(new_form)
+                cursor.execute("UPDATE managers SET password = %s WHERE email = %s", (hashed_password, email))
+                db.commit()
+                msg = 'Password updated successfully'
+            else:
+                cursor.execute('SELECT * FROM managers WHERE UserName = %s', (new_form,))
+                result = cursor.fetchone()
+                if result:
+                    msg = 'Username taken'
+                    return render_template('seller/resetpass.html', token=token, usertype=usertype, msg=msg)
+                
+                cursor.execute("UPDATE managers SET UserName = %s WHERE Email = %s", (new_form, email))
+                db.commit()
+                msg = 'Username updated successfully'
+
+            close_db_connection(db, cursor)
+            return render_template('seller/sellerlogin.html', msg=msg)
+
+        except Exception as e:
+            print(f"Error updating password: {str(e)}")
+            flash('Failed to update the password. Please try again.', 'danger')
+
+    return render_template('seller/sellerlogin.html')
+
